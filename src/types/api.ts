@@ -1,11 +1,3 @@
-// API Response types
-export interface ApiResponse<T = any> {
-  data: T;
-  message: string;
-  success: boolean;
-  statusCode: number;
-}
-
 export interface ApiError {
   message: string;
   error: string;
@@ -21,19 +13,16 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-// Auth types
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role: string;
-  };
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
 }
 
 export interface RefreshTokenResponse {
-  accessToken: string;
-  refreshToken: string;
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  type: "user" | "employee";
 }
+

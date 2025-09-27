@@ -6,11 +6,7 @@ import type {
   InternalAxiosRequestConfig,
 } from "axios";
 import { tokenStorage } from "../../utils/token";
-import type {
-  ApiResponse,
-  ApiError,
-  RefreshTokenResponse,
-} from "../../types/api";
+import type { ApiError, RefreshTokenResponse } from "../../types/api";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
@@ -73,17 +69,10 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse<ApiResponse>) => {
+  (response: AxiosResponse<any>) => {
     if (import.meta.env.DEV) {
-      console.log(
-        `✅ [API Response] ${response.config.method?.toUpperCase()} ${response.config.url}`,
-        {
-          status: response.status,
-          data: response.data,
-        }
-      );
+      console.log(`✅ [API Response] ${response.data} `);
     }
-
     return response;
   },
   async (error: AxiosError<ApiError>) => {
@@ -132,7 +121,8 @@ axiosInstance.interceptors.response.use(
             }
           );
 
-          const { accessToken, refreshToken: newRefreshToken } = response.data;
+          const { access_token: accessToken, refresh_token: newRefreshToken } =
+            response.data;
 
           tokenStorage.setTokens(accessToken, newRefreshToken);
 
@@ -162,9 +152,9 @@ axiosInstance.interceptors.response.use(
 
     let errorMessage = "An unexpected error occurred";
 
-    switch (error.response?.status) {
+    switch (error.status) {
       case 400:
-        errorMessage = error.response.data?.message || "Bad request";
+        errorMessage = error?.response?.data?.message || "Bad request";
         break;
       case 403:
         errorMessage = "Access forbidden";
@@ -173,7 +163,7 @@ axiosInstance.interceptors.response.use(
         errorMessage = "Resource not found";
         break;
       case 422:
-        errorMessage = error.response.data?.message || "Validation error";
+        errorMessage = error?.response?.data?.message || "Validation error";
         break;
       case 500:
         errorMessage = "Internal server error";
@@ -191,8 +181,8 @@ axiosInstance.interceptors.response.use(
 
     const apiError: ApiError = {
       message: errorMessage,
-      error: error.response?.data?.error || "API Error",
-      statusCode: error.response?.status || 500,
+      error: error?.response?.data?.error || "API Error",
+      statusCode: error?.response?.status || 500,
       timestamp: new Date().toISOString(),
     };
 

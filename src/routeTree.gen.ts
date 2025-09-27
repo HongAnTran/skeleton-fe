@@ -8,39 +8,132 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UUserLayoutRouteImport } from './routes/u/_userLayout'
+import { Route as EEmployeeLayoutRouteImport } from './routes/e/_employeeLayout'
+import { Route as UUserLayoutIndexRouteImport } from './routes/u/_userLayout/index'
+import { Route as EEmployeeLayoutIndexRouteImport } from './routes/e/_employeeLayout/index'
+import { Route as UUserLayoutLoginRouteImport } from './routes/u/_userLayout/login'
+import { Route as EEmployeeLayoutLoginRouteImport } from './routes/e/_employeeLayout/login'
 
+const URouteImport = createFileRoute('/u')()
+const ERouteImport = createFileRoute('/e')()
+
+const URoute = URouteImport.update({
+  id: '/u',
+  path: '/u',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ERoute = ERouteImport.update({
+  id: '/e',
+  path: '/e',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UUserLayoutRoute = UUserLayoutRouteImport.update({
+  id: '/_userLayout',
+  getParentRoute: () => URoute,
+} as any)
+const EEmployeeLayoutRoute = EEmployeeLayoutRouteImport.update({
+  id: '/_employeeLayout',
+  getParentRoute: () => ERoute,
+} as any)
+const UUserLayoutIndexRoute = UUserLayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UUserLayoutRoute,
+} as any)
+const EEmployeeLayoutIndexRoute = EEmployeeLayoutIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EEmployeeLayoutRoute,
+} as any)
+const UUserLayoutLoginRoute = UUserLayoutLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => UUserLayoutRoute,
+} as any)
+const EEmployeeLayoutLoginRoute = EEmployeeLayoutLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => EEmployeeLayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/e': typeof EEmployeeLayoutRouteWithChildren
+  '/u': typeof UUserLayoutRouteWithChildren
+  '/e/login': typeof EEmployeeLayoutLoginRoute
+  '/u/login': typeof UUserLayoutLoginRoute
+  '/e/': typeof EEmployeeLayoutIndexRoute
+  '/u/': typeof UUserLayoutIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/e': typeof EEmployeeLayoutIndexRoute
+  '/u': typeof UUserLayoutIndexRoute
+  '/e/login': typeof EEmployeeLayoutLoginRoute
+  '/u/login': typeof UUserLayoutLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/e': typeof ERouteWithChildren
+  '/e/_employeeLayout': typeof EEmployeeLayoutRouteWithChildren
+  '/u': typeof URouteWithChildren
+  '/u/_userLayout': typeof UUserLayoutRouteWithChildren
+  '/e/_employeeLayout/login': typeof EEmployeeLayoutLoginRoute
+  '/u/_userLayout/login': typeof UUserLayoutLoginRoute
+  '/e/_employeeLayout/': typeof EEmployeeLayoutIndexRoute
+  '/u/_userLayout/': typeof UUserLayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/e' | '/u' | '/e/login' | '/u/login' | '/e/' | '/u/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/e' | '/u' | '/e/login' | '/u/login'
+  id:
+    | '__root__'
+    | '/'
+    | '/e'
+    | '/e/_employeeLayout'
+    | '/u'
+    | '/u/_userLayout'
+    | '/e/_employeeLayout/login'
+    | '/u/_userLayout/login'
+    | '/e/_employeeLayout/'
+    | '/u/_userLayout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ERoute: typeof ERouteWithChildren
+  URoute: typeof URouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/u': {
+      id: '/u'
+      path: '/u'
+      fullPath: '/u'
+      preLoaderRoute: typeof URouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/e': {
+      id: '/e'
+      path: '/e'
+      fullPath: '/e'
+      preLoaderRoute: typeof ERouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +141,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/u/_userLayout': {
+      id: '/u/_userLayout'
+      path: '/u'
+      fullPath: '/u'
+      preLoaderRoute: typeof UUserLayoutRouteImport
+      parentRoute: typeof URoute
+    }
+    '/e/_employeeLayout': {
+      id: '/e/_employeeLayout'
+      path: '/e'
+      fullPath: '/e'
+      preLoaderRoute: typeof EEmployeeLayoutRouteImport
+      parentRoute: typeof ERoute
+    }
+    '/u/_userLayout/': {
+      id: '/u/_userLayout/'
+      path: '/'
+      fullPath: '/u/'
+      preLoaderRoute: typeof UUserLayoutIndexRouteImport
+      parentRoute: typeof UUserLayoutRoute
+    }
+    '/e/_employeeLayout/': {
+      id: '/e/_employeeLayout/'
+      path: '/'
+      fullPath: '/e/'
+      preLoaderRoute: typeof EEmployeeLayoutIndexRouteImport
+      parentRoute: typeof EEmployeeLayoutRoute
+    }
+    '/u/_userLayout/login': {
+      id: '/u/_userLayout/login'
+      path: '/login'
+      fullPath: '/u/login'
+      preLoaderRoute: typeof UUserLayoutLoginRouteImport
+      parentRoute: typeof UUserLayoutRoute
+    }
+    '/e/_employeeLayout/login': {
+      id: '/e/_employeeLayout/login'
+      path: '/login'
+      fullPath: '/e/login'
+      preLoaderRoute: typeof EEmployeeLayoutLoginRouteImport
+      parentRoute: typeof EEmployeeLayoutRoute
+    }
   }
 }
 
+interface EEmployeeLayoutRouteChildren {
+  EEmployeeLayoutLoginRoute: typeof EEmployeeLayoutLoginRoute
+  EEmployeeLayoutIndexRoute: typeof EEmployeeLayoutIndexRoute
+}
+
+const EEmployeeLayoutRouteChildren: EEmployeeLayoutRouteChildren = {
+  EEmployeeLayoutLoginRoute: EEmployeeLayoutLoginRoute,
+  EEmployeeLayoutIndexRoute: EEmployeeLayoutIndexRoute,
+}
+
+const EEmployeeLayoutRouteWithChildren = EEmployeeLayoutRoute._addFileChildren(
+  EEmployeeLayoutRouteChildren,
+)
+
+interface ERouteChildren {
+  EEmployeeLayoutRoute: typeof EEmployeeLayoutRouteWithChildren
+}
+
+const ERouteChildren: ERouteChildren = {
+  EEmployeeLayoutRoute: EEmployeeLayoutRouteWithChildren,
+}
+
+const ERouteWithChildren = ERoute._addFileChildren(ERouteChildren)
+
+interface UUserLayoutRouteChildren {
+  UUserLayoutLoginRoute: typeof UUserLayoutLoginRoute
+  UUserLayoutIndexRoute: typeof UUserLayoutIndexRoute
+}
+
+const UUserLayoutRouteChildren: UUserLayoutRouteChildren = {
+  UUserLayoutLoginRoute: UUserLayoutLoginRoute,
+  UUserLayoutIndexRoute: UUserLayoutIndexRoute,
+}
+
+const UUserLayoutRouteWithChildren = UUserLayoutRoute._addFileChildren(
+  UUserLayoutRouteChildren,
+)
+
+interface URouteChildren {
+  UUserLayoutRoute: typeof UUserLayoutRouteWithChildren
+}
+
+const URouteChildren: URouteChildren = {
+  UUserLayoutRoute: UUserLayoutRouteWithChildren,
+}
+
+const URouteWithChildren = URoute._addFileChildren(URouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ERoute: ERouteWithChildren,
+  URoute: URouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

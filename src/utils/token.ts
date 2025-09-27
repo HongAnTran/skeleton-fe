@@ -60,7 +60,6 @@ export const tokenStorage = {
     return !!this.getAccessToken();
   },
 
-  // Check if token is expired (basic check)
   isTokenExpired(token: string): boolean {
     try {
       if (!token) return true;
