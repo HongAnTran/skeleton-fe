@@ -1,0 +1,45 @@
+import { axiosInstance } from "../lib/axios";
+import type { PaginatedResult } from "../types/api";
+import type {
+  ShiftSignup,
+  CreateShiftSignupDto,
+  CancelShiftSignupDto,
+  ShiftSignupListParams,
+} from "../types/shiftSignup";
+
+export class ShiftSignupService {
+  static url = "/shift-signups";
+
+  static async getList(params: ShiftSignupListParams) {
+    const { data } = await axiosInstance.get<PaginatedResult<ShiftSignup>>(
+      this.url,
+      { params }
+    );
+    return data;
+  }
+
+  static async getById(id: string): Promise<ShiftSignup> {
+    const { data } = await axiosInstance.get<ShiftSignup>(`${this.url}/${id}`);
+    return data;
+  }
+
+  static async create(request: CreateShiftSignupDto): Promise<ShiftSignup> {
+    const { data } = await axiosInstance.post<ShiftSignup>(this.url, request);
+    return data;
+  }
+
+  static async cancel(
+    id: string,
+    request: CancelShiftSignupDto
+  ): Promise<ShiftSignup> {
+    const { data } = await axiosInstance.patch<ShiftSignup>(
+      `${this.url}/${id}`,
+      request
+    );
+    return data;
+  }
+
+  static async delete(id: string): Promise<void> {
+    await axiosInstance.delete(`${this.url}/${id}`);
+  }
+}

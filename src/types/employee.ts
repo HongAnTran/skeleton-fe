@@ -1,14 +1,54 @@
+import type { Branch } from "./branch";
+import type { Department } from "./department";
+
 export interface Employee {
-  id: string;
-  userId: string;
-  active: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  branchId: string | null;
-  departmentId: string | null;
-  fullName: string;
-  accountId: string | null;
-  phone: string | null;
-  avatar: string | null;
-  currentLevel: number;
+  id: string; // UUID
+  userId: string; // UUID của user sở hữu employee
+  avatar?: string; // Avatar của nhân viên
+  branchId?: string; // UUID của branch (optional)
+  departmentId?: string; // UUID của department (optional)
+  name: string; // Tên đầy đủ nhân viên
+  phone?: string; // Số điện thoại (optional)
+  active: boolean; // Trạng thái hoạt động
+  currentLevel: number; // Cấp độ hiện tại
+  createdAt: Date; // Ngày tạo
+  updatedAt: Date; // Ngày cập nhật
+
+  branch?: Pick<Branch, "id" | "name">; // Thông tin branch
+  department?: Pick<Department, "id" | "name">; // Thông tin department
+  account: {
+    id: string;
+    email: string;
+  }; // Thông tin account
+  shiftSignups?: any[]; // Danh sách ca làm việc
+  tasks?: any[]; // Danh sách task
+}
+
+export interface CreateEmployeeDto {
+  branchId?: string; // Optional: UUID của branch
+  departmentId?: string; // Optional: UUID của department
+  name: string; // Required: Tên nhân viên
+  email: string; // Required: Email (VD: "employee@example.com")
+  password: string; // Required: Mật khẩu (VD: "1234567890")
+  phone?: string; // Optional: Số điện thoại (VD: "+1234567890")
+  active?: boolean; // Optional: Trạng thái hoạt động (default: true)
+  provider?: string; // Optional: Provider (VD: "local")
+}
+
+export interface UpdateEmployeeDto {
+  branchId?: string; // Optional
+  departmentId?: string; // Optional
+  name?: string; // Optional
+  email?: string; // Optional
+  password?: string; // Optional
+  phone?: string; // Optional
+  active?: boolean; // Optional
+  provider?: string; // Optional
+}
+
+export interface EmployeeListParams {
+  page?: number;
+  limit?: number;
+  branchId?: string;
+  departmentId?: string;
 }

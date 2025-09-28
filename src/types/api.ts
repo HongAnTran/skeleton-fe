@@ -5,14 +5,6 @@ export interface ApiError {
   timestamp: string;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
 export interface LoginResponse {
   access_token: string;
   refresh_token: string;
@@ -23,6 +15,14 @@ export interface RefreshTokenResponse {
   access_token: string;
   refresh_token: string;
   expires_in: number;
-  type: "user" | "employee";
 }
 
+export interface PaginatedResult<T> {
+  data: T[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

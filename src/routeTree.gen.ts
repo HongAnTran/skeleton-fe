@@ -14,10 +14,22 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUserLayoutRouteImport } from './routes/u/_userLayout'
 import { Route as EEmployeeLayoutRouteImport } from './routes/e/_employeeLayout'
-import { Route as UUserLayoutIndexRouteImport } from './routes/u/_userLayout/index'
-import { Route as EEmployeeLayoutIndexRouteImport } from './routes/e/_employeeLayout/index'
 import { Route as UUserLayoutLoginRouteImport } from './routes/u/_userLayout/login'
+import { Route as UUserLayoutDashboardLayoutRouteImport } from './routes/u/_userLayout/_dashboardLayout'
 import { Route as EEmployeeLayoutLoginRouteImport } from './routes/e/_employeeLayout/login'
+import { Route as EEmployeeLayoutDashboardLayoutRouteImport } from './routes/e/_employeeLayout/_dashboardLayout'
+import { Route as UUserLayoutDashboardLayoutIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/index'
+import { Route as EEmployeeLayoutDashboardLayoutIndexRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/index'
+import { Route as UUserLayoutDashboardLayoutTasksRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks'
+import { Route as UUserLayoutDashboardLayoutShiftSlotsRouteImport } from './routes/u/_userLayout/_dashboardLayout/shift-slots'
+import { Route as UUserLayoutDashboardLayoutShiftSlotTypesRouteImport } from './routes/u/_userLayout/_dashboardLayout/shift-slot-types'
+import { Route as UUserLayoutDashboardLayoutSettingsRouteImport } from './routes/u/_userLayout/_dashboardLayout/settings'
+import { Route as UUserLayoutDashboardLayoutDepartmentsRouteImport } from './routes/u/_userLayout/_dashboardLayout/departments'
+import { Route as UUserLayoutDashboardLayoutBranchsRouteImport } from './routes/u/_userLayout/_dashboardLayout/branchs'
+import { Route as EEmployeeLayoutDashboardLayoutTasksRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/tasks'
+import { Route as EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/shift-slots'
+import { Route as EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/change-shift-requests'
+import { Route as UUserLayoutDashboardLayoutEmployeesIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/index'
 
 const URouteImport = createFileRoute('/u')()
 const ERouteImport = createFileRoute('/e')()
@@ -45,42 +57,134 @@ const EEmployeeLayoutRoute = EEmployeeLayoutRouteImport.update({
   id: '/_employeeLayout',
   getParentRoute: () => ERoute,
 } as any)
-const UUserLayoutIndexRoute = UUserLayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => UUserLayoutRoute,
-} as any)
-const EEmployeeLayoutIndexRoute = EEmployeeLayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => EEmployeeLayoutRoute,
-} as any)
 const UUserLayoutLoginRoute = UUserLayoutLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => UUserLayoutRoute,
 } as any)
+const UUserLayoutDashboardLayoutRoute =
+  UUserLayoutDashboardLayoutRouteImport.update({
+    id: '/_dashboardLayout',
+    getParentRoute: () => UUserLayoutRoute,
+  } as any)
 const EEmployeeLayoutLoginRoute = EEmployeeLayoutLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => EEmployeeLayoutRoute,
 } as any)
+const EEmployeeLayoutDashboardLayoutRoute =
+  EEmployeeLayoutDashboardLayoutRouteImport.update({
+    id: '/_dashboardLayout',
+    getParentRoute: () => EEmployeeLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutIndexRoute =
+  UUserLayoutDashboardLayoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const EEmployeeLayoutDashboardLayoutIndexRoute =
+  EEmployeeLayoutDashboardLayoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutTasksRoute =
+  UUserLayoutDashboardLayoutTasksRouteImport.update({
+    id: '/tasks',
+    path: '/tasks',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutShiftSlotsRoute =
+  UUserLayoutDashboardLayoutShiftSlotsRouteImport.update({
+    id: '/shift-slots',
+    path: '/shift-slots',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutShiftSlotTypesRoute =
+  UUserLayoutDashboardLayoutShiftSlotTypesRouteImport.update({
+    id: '/shift-slot-types',
+    path: '/shift-slot-types',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutSettingsRoute =
+  UUserLayoutDashboardLayoutSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutDepartmentsRoute =
+  UUserLayoutDashboardLayoutDepartmentsRouteImport.update({
+    id: '/departments',
+    path: '/departments',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutBranchsRoute =
+  UUserLayoutDashboardLayoutBranchsRouteImport.update({
+    id: '/branchs',
+    path: '/branchs',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const EEmployeeLayoutDashboardLayoutTasksRoute =
+  EEmployeeLayoutDashboardLayoutTasksRouteImport.update({
+    id: '/tasks',
+    path: '/tasks',
+    getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
+  } as any)
+const EEmployeeLayoutDashboardLayoutShiftSlotsRoute =
+  EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport.update({
+    id: '/shift-slots',
+    path: '/shift-slots',
+    getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
+  } as any)
+const EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute =
+  EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport.update({
+    id: '/change-shift-requests',
+    path: '/change-shift-requests',
+    getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutEmployeesIndexRoute =
+  UUserLayoutDashboardLayoutEmployeesIndexRouteImport.update({
+    id: '/employees/',
+    path: '/employees/',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/e': typeof EEmployeeLayoutRouteWithChildren
-  '/u': typeof UUserLayoutRouteWithChildren
+  '/e': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
+  '/u': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/e/login': typeof EEmployeeLayoutLoginRoute
   '/u/login': typeof UUserLayoutLoginRoute
-  '/e/': typeof EEmployeeLayoutIndexRoute
-  '/u/': typeof UUserLayoutIndexRoute
+  '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
+  '/e/shift-slots': typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
+  '/e/tasks': typeof EEmployeeLayoutDashboardLayoutTasksRoute
+  '/u/branchs': typeof UUserLayoutDashboardLayoutBranchsRoute
+  '/u/departments': typeof UUserLayoutDashboardLayoutDepartmentsRoute
+  '/u/settings': typeof UUserLayoutDashboardLayoutSettingsRoute
+  '/u/shift-slot-types': typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
+  '/u/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
+  '/u/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
+  '/e/': typeof EEmployeeLayoutDashboardLayoutIndexRoute
+  '/u/': typeof UUserLayoutDashboardLayoutIndexRoute
+  '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/e': typeof EEmployeeLayoutIndexRoute
-  '/u': typeof UUserLayoutIndexRoute
+  '/e': typeof EEmployeeLayoutDashboardLayoutIndexRoute
+  '/u': typeof UUserLayoutDashboardLayoutIndexRoute
   '/e/login': typeof EEmployeeLayoutLoginRoute
   '/u/login': typeof UUserLayoutLoginRoute
+  '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
+  '/e/shift-slots': typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
+  '/e/tasks': typeof EEmployeeLayoutDashboardLayoutTasksRoute
+  '/u/branchs': typeof UUserLayoutDashboardLayoutBranchsRoute
+  '/u/departments': typeof UUserLayoutDashboardLayoutDepartmentsRoute
+  '/u/settings': typeof UUserLayoutDashboardLayoutSettingsRoute
+  '/u/shift-slot-types': typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
+  '/u/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
+  '/u/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
+  '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,16 +193,60 @@ export interface FileRoutesById {
   '/e/_employeeLayout': typeof EEmployeeLayoutRouteWithChildren
   '/u': typeof URouteWithChildren
   '/u/_userLayout': typeof UUserLayoutRouteWithChildren
+  '/e/_employeeLayout/_dashboardLayout': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/e/_employeeLayout/login': typeof EEmployeeLayoutLoginRoute
+  '/u/_userLayout/_dashboardLayout': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/u/_userLayout/login': typeof UUserLayoutLoginRoute
-  '/e/_employeeLayout/': typeof EEmployeeLayoutIndexRoute
-  '/u/_userLayout/': typeof UUserLayoutIndexRoute
+  '/e/_employeeLayout/_dashboardLayout/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
+  '/e/_employeeLayout/_dashboardLayout/shift-slots': typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
+  '/e/_employeeLayout/_dashboardLayout/tasks': typeof EEmployeeLayoutDashboardLayoutTasksRoute
+  '/u/_userLayout/_dashboardLayout/branchs': typeof UUserLayoutDashboardLayoutBranchsRoute
+  '/u/_userLayout/_dashboardLayout/departments': typeof UUserLayoutDashboardLayoutDepartmentsRoute
+  '/u/_userLayout/_dashboardLayout/settings': typeof UUserLayoutDashboardLayoutSettingsRoute
+  '/u/_userLayout/_dashboardLayout/shift-slot-types': typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
+  '/u/_userLayout/_dashboardLayout/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
+  '/u/_userLayout/_dashboardLayout/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
+  '/e/_employeeLayout/_dashboardLayout/': typeof EEmployeeLayoutDashboardLayoutIndexRoute
+  '/u/_userLayout/_dashboardLayout/': typeof UUserLayoutDashboardLayoutIndexRoute
+  '/u/_userLayout/_dashboardLayout/employees/': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/e' | '/u' | '/e/login' | '/u/login' | '/e/' | '/u/'
+  fullPaths:
+    | '/'
+    | '/e'
+    | '/u'
+    | '/e/login'
+    | '/u/login'
+    | '/e/change-shift-requests'
+    | '/e/shift-slots'
+    | '/e/tasks'
+    | '/u/branchs'
+    | '/u/departments'
+    | '/u/settings'
+    | '/u/shift-slot-types'
+    | '/u/shift-slots'
+    | '/u/tasks'
+    | '/e/'
+    | '/u/'
+    | '/u/employees'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/e' | '/u' | '/e/login' | '/u/login'
+  to:
+    | '/'
+    | '/e'
+    | '/u'
+    | '/e/login'
+    | '/u/login'
+    | '/e/change-shift-requests'
+    | '/e/shift-slots'
+    | '/e/tasks'
+    | '/u/branchs'
+    | '/u/departments'
+    | '/u/settings'
+    | '/u/shift-slot-types'
+    | '/u/shift-slots'
+    | '/u/tasks'
+    | '/u/employees'
   id:
     | '__root__'
     | '/'
@@ -106,10 +254,22 @@ export interface FileRouteTypes {
     | '/e/_employeeLayout'
     | '/u'
     | '/u/_userLayout'
+    | '/e/_employeeLayout/_dashboardLayout'
     | '/e/_employeeLayout/login'
+    | '/u/_userLayout/_dashboardLayout'
     | '/u/_userLayout/login'
-    | '/e/_employeeLayout/'
-    | '/u/_userLayout/'
+    | '/e/_employeeLayout/_dashboardLayout/change-shift-requests'
+    | '/e/_employeeLayout/_dashboardLayout/shift-slots'
+    | '/e/_employeeLayout/_dashboardLayout/tasks'
+    | '/u/_userLayout/_dashboardLayout/branchs'
+    | '/u/_userLayout/_dashboardLayout/departments'
+    | '/u/_userLayout/_dashboardLayout/settings'
+    | '/u/_userLayout/_dashboardLayout/shift-slot-types'
+    | '/u/_userLayout/_dashboardLayout/shift-slots'
+    | '/u/_userLayout/_dashboardLayout/tasks'
+    | '/e/_employeeLayout/_dashboardLayout/'
+    | '/u/_userLayout/_dashboardLayout/'
+    | '/u/_userLayout/_dashboardLayout/employees/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -155,25 +315,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EEmployeeLayoutRouteImport
       parentRoute: typeof ERoute
     }
-    '/u/_userLayout/': {
-      id: '/u/_userLayout/'
-      path: '/'
-      fullPath: '/u/'
-      preLoaderRoute: typeof UUserLayoutIndexRouteImport
-      parentRoute: typeof UUserLayoutRoute
-    }
-    '/e/_employeeLayout/': {
-      id: '/e/_employeeLayout/'
-      path: '/'
-      fullPath: '/e/'
-      preLoaderRoute: typeof EEmployeeLayoutIndexRouteImport
-      parentRoute: typeof EEmployeeLayoutRoute
-    }
     '/u/_userLayout/login': {
       id: '/u/_userLayout/login'
       path: '/login'
       fullPath: '/u/login'
       preLoaderRoute: typeof UUserLayoutLoginRouteImport
+      parentRoute: typeof UUserLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout': {
+      id: '/u/_userLayout/_dashboardLayout'
+      path: ''
+      fullPath: '/u'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutRouteImport
       parentRoute: typeof UUserLayoutRoute
     }
     '/e/_employeeLayout/login': {
@@ -183,17 +336,133 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EEmployeeLayoutLoginRouteImport
       parentRoute: typeof EEmployeeLayoutRoute
     }
+    '/e/_employeeLayout/_dashboardLayout': {
+      id: '/e/_employeeLayout/_dashboardLayout'
+      path: ''
+      fullPath: '/e'
+      preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutRouteImport
+      parentRoute: typeof EEmployeeLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/': {
+      id: '/u/_userLayout/_dashboardLayout/'
+      path: '/'
+      fullPath: '/u/'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutIndexRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/e/_employeeLayout/_dashboardLayout/': {
+      id: '/e/_employeeLayout/_dashboardLayout/'
+      path: '/'
+      fullPath: '/e/'
+      preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutIndexRouteImport
+      parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/tasks': {
+      id: '/u/_userLayout/_dashboardLayout/tasks'
+      path: '/tasks'
+      fullPath: '/u/tasks'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutTasksRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/shift-slots': {
+      id: '/u/_userLayout/_dashboardLayout/shift-slots'
+      path: '/shift-slots'
+      fullPath: '/u/shift-slots'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutShiftSlotsRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/shift-slot-types': {
+      id: '/u/_userLayout/_dashboardLayout/shift-slot-types'
+      path: '/shift-slot-types'
+      fullPath: '/u/shift-slot-types'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutShiftSlotTypesRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/settings': {
+      id: '/u/_userLayout/_dashboardLayout/settings'
+      path: '/settings'
+      fullPath: '/u/settings'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutSettingsRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/departments': {
+      id: '/u/_userLayout/_dashboardLayout/departments'
+      path: '/departments'
+      fullPath: '/u/departments'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutDepartmentsRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/branchs': {
+      id: '/u/_userLayout/_dashboardLayout/branchs'
+      path: '/branchs'
+      fullPath: '/u/branchs'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutBranchsRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/e/_employeeLayout/_dashboardLayout/tasks': {
+      id: '/e/_employeeLayout/_dashboardLayout/tasks'
+      path: '/tasks'
+      fullPath: '/e/tasks'
+      preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutTasksRouteImport
+      parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
+    }
+    '/e/_employeeLayout/_dashboardLayout/shift-slots': {
+      id: '/e/_employeeLayout/_dashboardLayout/shift-slots'
+      path: '/shift-slots'
+      fullPath: '/e/shift-slots'
+      preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport
+      parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
+    }
+    '/e/_employeeLayout/_dashboardLayout/change-shift-requests': {
+      id: '/e/_employeeLayout/_dashboardLayout/change-shift-requests'
+      path: '/change-shift-requests'
+      fullPath: '/e/change-shift-requests'
+      preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport
+      parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/employees/': {
+      id: '/u/_userLayout/_dashboardLayout/employees/'
+      path: '/employees'
+      fullPath: '/u/employees'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
   }
 }
 
+interface EEmployeeLayoutDashboardLayoutRouteChildren {
+  EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute: typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
+  EEmployeeLayoutDashboardLayoutShiftSlotsRoute: typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
+  EEmployeeLayoutDashboardLayoutTasksRoute: typeof EEmployeeLayoutDashboardLayoutTasksRoute
+  EEmployeeLayoutDashboardLayoutIndexRoute: typeof EEmployeeLayoutDashboardLayoutIndexRoute
+}
+
+const EEmployeeLayoutDashboardLayoutRouteChildren: EEmployeeLayoutDashboardLayoutRouteChildren =
+  {
+    EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute:
+      EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute,
+    EEmployeeLayoutDashboardLayoutShiftSlotsRoute:
+      EEmployeeLayoutDashboardLayoutShiftSlotsRoute,
+    EEmployeeLayoutDashboardLayoutTasksRoute:
+      EEmployeeLayoutDashboardLayoutTasksRoute,
+    EEmployeeLayoutDashboardLayoutIndexRoute:
+      EEmployeeLayoutDashboardLayoutIndexRoute,
+  }
+
+const EEmployeeLayoutDashboardLayoutRouteWithChildren =
+  EEmployeeLayoutDashboardLayoutRoute._addFileChildren(
+    EEmployeeLayoutDashboardLayoutRouteChildren,
+  )
+
 interface EEmployeeLayoutRouteChildren {
+  EEmployeeLayoutDashboardLayoutRoute: typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   EEmployeeLayoutLoginRoute: typeof EEmployeeLayoutLoginRoute
-  EEmployeeLayoutIndexRoute: typeof EEmployeeLayoutIndexRoute
 }
 
 const EEmployeeLayoutRouteChildren: EEmployeeLayoutRouteChildren = {
+  EEmployeeLayoutDashboardLayoutRoute:
+    EEmployeeLayoutDashboardLayoutRouteWithChildren,
   EEmployeeLayoutLoginRoute: EEmployeeLayoutLoginRoute,
-  EEmployeeLayoutIndexRoute: EEmployeeLayoutIndexRoute,
 }
 
 const EEmployeeLayoutRouteWithChildren = EEmployeeLayoutRoute._addFileChildren(
@@ -210,14 +479,48 @@ const ERouteChildren: ERouteChildren = {
 
 const ERouteWithChildren = ERoute._addFileChildren(ERouteChildren)
 
+interface UUserLayoutDashboardLayoutRouteChildren {
+  UUserLayoutDashboardLayoutBranchsRoute: typeof UUserLayoutDashboardLayoutBranchsRoute
+  UUserLayoutDashboardLayoutDepartmentsRoute: typeof UUserLayoutDashboardLayoutDepartmentsRoute
+  UUserLayoutDashboardLayoutSettingsRoute: typeof UUserLayoutDashboardLayoutSettingsRoute
+  UUserLayoutDashboardLayoutShiftSlotTypesRoute: typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
+  UUserLayoutDashboardLayoutShiftSlotsRoute: typeof UUserLayoutDashboardLayoutShiftSlotsRoute
+  UUserLayoutDashboardLayoutTasksRoute: typeof UUserLayoutDashboardLayoutTasksRoute
+  UUserLayoutDashboardLayoutIndexRoute: typeof UUserLayoutDashboardLayoutIndexRoute
+  UUserLayoutDashboardLayoutEmployeesIndexRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
+}
+
+const UUserLayoutDashboardLayoutRouteChildren: UUserLayoutDashboardLayoutRouteChildren =
+  {
+    UUserLayoutDashboardLayoutBranchsRoute:
+      UUserLayoutDashboardLayoutBranchsRoute,
+    UUserLayoutDashboardLayoutDepartmentsRoute:
+      UUserLayoutDashboardLayoutDepartmentsRoute,
+    UUserLayoutDashboardLayoutSettingsRoute:
+      UUserLayoutDashboardLayoutSettingsRoute,
+    UUserLayoutDashboardLayoutShiftSlotTypesRoute:
+      UUserLayoutDashboardLayoutShiftSlotTypesRoute,
+    UUserLayoutDashboardLayoutShiftSlotsRoute:
+      UUserLayoutDashboardLayoutShiftSlotsRoute,
+    UUserLayoutDashboardLayoutTasksRoute: UUserLayoutDashboardLayoutTasksRoute,
+    UUserLayoutDashboardLayoutIndexRoute: UUserLayoutDashboardLayoutIndexRoute,
+    UUserLayoutDashboardLayoutEmployeesIndexRoute:
+      UUserLayoutDashboardLayoutEmployeesIndexRoute,
+  }
+
+const UUserLayoutDashboardLayoutRouteWithChildren =
+  UUserLayoutDashboardLayoutRoute._addFileChildren(
+    UUserLayoutDashboardLayoutRouteChildren,
+  )
+
 interface UUserLayoutRouteChildren {
+  UUserLayoutDashboardLayoutRoute: typeof UUserLayoutDashboardLayoutRouteWithChildren
   UUserLayoutLoginRoute: typeof UUserLayoutLoginRoute
-  UUserLayoutIndexRoute: typeof UUserLayoutIndexRoute
 }
 
 const UUserLayoutRouteChildren: UUserLayoutRouteChildren = {
+  UUserLayoutDashboardLayoutRoute: UUserLayoutDashboardLayoutRouteWithChildren,
   UUserLayoutLoginRoute: UUserLayoutLoginRoute,
-  UUserLayoutIndexRoute: UUserLayoutIndexRoute,
 }
 
 const UUserLayoutRouteWithChildren = UUserLayoutRoute._addFileChildren(

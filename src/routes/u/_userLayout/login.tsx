@@ -44,9 +44,7 @@ function LoginPage() {
             <Title level={2} className="text-gray-900">
               Đăng nhập
             </Title>
-            <Text type="secondary">
-              Vui lòng nhập thông tin đăng nhập của bạn
-            </Text>
+            <Text type="secondary">Trang đăng nhập cho quản trị viên</Text>
           </div>
 
           <Form

@@ -34,7 +34,10 @@ export class AuthUserService {
     }
 
     const { data } = await axiosInstance.post<RefreshTokenResponse>(
-      `${this.url}/refresh`
+      `${this.url}/refresh`,
+      {
+        refreshToken: refreshToken,
+      }
     );
 
     if (data) {

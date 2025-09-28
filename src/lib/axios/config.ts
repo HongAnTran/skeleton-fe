@@ -115,7 +115,7 @@ axiosInstance.interceptors.response.use(
       if (refreshToken) {
         try {
           const response = await axios.post<RefreshTokenResponse>(
-            `${BASE_URL}/auth/refresh`,
+            `${BASE_URL}/auth/user/refresh`,
             {
               refreshToken: refreshToken,
             }
@@ -137,7 +137,7 @@ axiosInstance.interceptors.response.use(
           processQueue(refreshError, null);
           tokenStorage.clearTokens();
 
-          window.location.href = "/login";
+          window.location.href = "/";
 
           return Promise.reject(refreshError);
         } finally {
@@ -145,38 +145,38 @@ axiosInstance.interceptors.response.use(
         }
       } else {
         tokenStorage.clearTokens();
-        window.location.href = "/login";
+        window.location.href = "/";
         return Promise.reject(error);
       }
     }
 
-    let errorMessage = "An unexpected error occurred";
-
-    switch (error.status) {
-      case 400:
-        errorMessage = error?.response?.data?.message || "Bad request";
-        break;
-      case 403:
-        errorMessage = "Access forbidden";
-        break;
-      case 404:
-        errorMessage = "Resource not found";
-        break;
-      case 422:
-        errorMessage = error?.response?.data?.message || "Validation error";
-        break;
-      case 500:
-        errorMessage = "Internal server error";
-        break;
-      case 502:
-        errorMessage = "Bad gateway";
-        break;
-      case 503:
-        errorMessage = "Service unavailable";
-        break;
-      default:
-        errorMessage =
-          error.response?.data?.message || error.message || errorMessage;
+    let errorMessage = error?.response?.data?.message;
+    if (!errorMessage) {
+      switch (error.status) {
+        case 400:
+          errorMessage = "Bad request";
+          break;
+        case 403:
+          errorMessage = "Access forbidden";
+          break;
+        case 404:
+          errorMessage = "Resource not found";
+          break;
+        case 422:
+          errorMessage = "Validation error";
+          break;
+        case 500:
+          errorMessage = "Internal server error";
+          break;
+        case 502:
+          errorMessage = "Bad gateway";
+          break;
+        case 503:
+          errorMessage = "Service unavailable";
+          break;
+        default:
+          errorMessage = "An unexpected error occurred";
+      }
     }
 
     const apiError: ApiError = {

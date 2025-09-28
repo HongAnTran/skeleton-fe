@@ -21,15 +21,12 @@ function LoginPage() {
   const [form] = Form.useForm();
   const router = useRouter();
   const { login: loginEmployee, loading: loadingEmployee } = useEmployeeAuth();
-
   const onFinish = async (values: LoginRequest) => {
     try {
       await loginEmployee(values);
       message.success("Đăng nhập thành công!");
-
       const searchParams = new URLSearchParams(window.location.search);
       const redirectTo = searchParams.get("redirect") || "/e";
-
       router.navigate({ to: redirectTo });
     } catch (error: any) {
       message.error(error.message || "Đăng nhập thất bại!");
@@ -44,9 +41,7 @@ function LoginPage() {
             <Title level={2} className="text-gray-900">
               Đăng nhập
             </Title>
-            <Text type="secondary">
-              Vui lòng nhập thông tin đăng nhập của bạn
-            </Text>
+            <Text type="secondary">Trang đăng nhập cho nhân viên</Text>
           </div>
           <Form
             form={form}

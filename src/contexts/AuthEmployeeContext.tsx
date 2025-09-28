@@ -14,7 +14,7 @@ import { useRouter } from "@tanstack/react-router";
 interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
-  employee: Employee;
+  employee: Employee | null;
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -32,7 +32,7 @@ export const AuthEmployeeProvider: React.FC<AuthProviderProps> = ({
     tokenStorage.isAuthenticated()
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [employee, setEmployee] = useState<Employee>();
+  const [employee, setEmployee] = useState<Employee | null>(null);
   const router = useRouter();
   useEffect(() => {
     initializeAuth();
@@ -101,7 +101,7 @@ export const AuthEmployeeProvider: React.FC<AuthProviderProps> = ({
 
   const handleLogout = async () => {
     tokenStorage.clearTokens();
-    setEmployee(undefined);
+    setEmployee(null);
     setIsAuthenticated(false);
     router.navigate({ to: "/e/login" });
   };
@@ -109,7 +109,7 @@ export const AuthEmployeeProvider: React.FC<AuthProviderProps> = ({
   const contextValue: AuthContextType = {
     isAuthenticated,
     loading,
-    employee: employee || ({} as Employee),
+    employee,
     login,
     logout,
   };
@@ -120,10 +120,6 @@ export const AuthEmployeeProvider: React.FC<AuthProviderProps> = ({
         <Spin size="large" />
       </div>
     );
-  }
-
-  if (!employee?.id) {
-    throw new Error("Employee not found");
   }
 
   return (
