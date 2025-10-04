@@ -18,7 +18,7 @@ export class ShiftSlotService {
     );
     return data;
   }
-  static async getListByEmployee(params: ShiftSlotListParams) {
+  static async getListByEmployee(params?: ShiftSlotListParams) {
     const { data } = await axiosInstance.get<ShiftSlotList[]>(
       `${this.url}/employee`,
       { params }

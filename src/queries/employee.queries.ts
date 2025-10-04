@@ -5,6 +5,7 @@ import type {
   CreateEmployeeDto,
   UpdateEmployeeDto,
   EmployeeListParams,
+  EmployeeShiftSummaryParams,
 } from "../types/employee";
 import type { ReactQueryOptions } from "../types/reactQuery";
 
@@ -16,6 +17,8 @@ export const EMPLOYEE_KEYS = {
   details: () => [...EMPLOYEE_KEYS.all, "detail"] as const,
   detail: (id: string) => [...EMPLOYEE_KEYS.details(), id] as const,
   dropdown: () => [...EMPLOYEE_KEYS.all, "dropdown"] as const,
+  shiftSummary: (id: string, params: EmployeeShiftSummaryParams) =>
+    [...EMPLOYEE_KEYS.detail(id), "shift-summary", params] as const,
 };
 
 // Get employees with pagination and filters
@@ -41,12 +44,17 @@ export const useEmployee = (id: string, options?: ReactQueryOptions) => {
   });
 };
 
-// Get all employees for dropdown/selection
-export const useEmployeesDropdown = (options?: ReactQueryOptions) => {
+// Get employee shift summary
+export const useEmployeeShiftSummary = (
+  id: string,
+  params: EmployeeShiftSummaryParams,
+  options?: ReactQueryOptions
+) => {
   return useQuery({
-    queryKey: EMPLOYEE_KEYS.dropdown(),
-    queryFn: () => EmployeeService.getAll(),
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    queryKey: EMPLOYEE_KEYS.shiftSummary(id, params),
+    queryFn: () => EmployeeService.getShiftSummary(id, params),
+    enabled: !!id && !!params.startDate && !!params.endDate,
+    staleTime: 2 * 60 * 1000, // 2 minutes
     ...options,
   });
 };

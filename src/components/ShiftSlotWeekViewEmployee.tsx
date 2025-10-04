@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Button, Typography, Badge, Row, Col, List, Tag } from "antd";
+import { Card, Button, Typography, Badge, Row, Col, Tag } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -10,6 +10,7 @@ dayjs.extend(weekday);
 dayjs.Ls.en.weekStart = 1; // 1 = Monday
 import type { ShiftSlot } from "../types/shiftSlot";
 import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
+import { ShiftSignupStatus } from "../types/shiftSignup";
 
 const { Title, Text } = Typography;
 
@@ -109,39 +110,46 @@ export default function ShiftSlotWeekViewEmployee({
                       </Text>
                     </div>
                   ) : (
-                    shifts.map((shift) => (
-                      <div key={shift.id} className="text-xs">
-                        <Badge
-                          status={
-                            shift.signups.length === shift.capacity
-                              ? "success"
-                              : "default"
-                          }
-                          text={
-                            <>
-                              <Text className=" font-bold">
-                                {shift.type?.name} ({shift.signups.length} /{" "}
-                                {shift.capacity})
-                              </Text>
-                              <ul className="text-xs ml-8 list-decimal">
-                                {shift.signups.map((signup) => (
-                                  <li
-                                    key={signup.id}
-                                    className="flex items-center justify-between gap-2"
-                                  >
-                                    {signup.employee?.name}
-
-                                    {signup.employee?.id === employee?.id && (
-                                      <Tag color="green">Bạn</Tag>
-                                    )}
-                                  </li>
-                                ))}
-                              </ul>
-                            </>
-                          }
-                        />
-                      </div>
-                    ))
+                    shifts.map((shift) => {
+                      const signups = shift.signups.filter(
+                        (signup) =>
+                          signup.status !== ShiftSignupStatus.CANCELLED
+                      );
+                      return (
+                        <div key={shift.id} className="text-xs">
+                          <Badge
+                            status={
+                              signups.length === shift.capacity
+                                ? "success"
+                                : "default"
+                            }
+                            text={
+                              <>
+                                <Text className=" font-bold">
+                                  {shift.type?.name} ({signups.length} /{" "}
+                                  {shift.capacity})
+                                </Text>
+                                <ul className="text-xs ml-8 list-decimal">
+                                  {signups.map((signup) => (
+                                    <li
+                                      key={signup.id}
+                                      className="flex items-center justify-between gap-2 mb-1"
+                                    >
+                                      <Tag color="green">
+                                        {signup.employee?.name}
+                                      </Tag>
+                                      {signup.employee?.id === employee?.id && (
+                                        <Tag color="blue">Bạn</Tag>
+                                      )}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </>
+                            }
+                          />
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               </Card>

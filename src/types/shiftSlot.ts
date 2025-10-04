@@ -1,4 +1,5 @@
 import type { Branch } from "./branch";
+import type { Department } from "./department";
 import type { ShiftSignup } from "./shiftSignup";
 import type { ShiftSlotType } from "./shiftSlotType";
 export interface ShiftSlot {
@@ -14,6 +15,7 @@ export interface ShiftSlot {
   updatedAt: Date;
 
   // Relations
+  department?: Pick<Department, "id" | "name">;
   branch?: Pick<Branch, "id" | "name">;
   type?: Pick<ShiftSlotType, "id" | "name" | "startDate" | "endDate">;
   signups: ShiftSignup[];
@@ -32,6 +34,7 @@ export interface ShiftSlotList {
   updatedAt: Date;
 
   // Relations
+  department?: Pick<Department, "id" | "name">;
   branch?: Pick<Branch, "id" | "name">;
   type?: Pick<ShiftSlotType, "id" | "name" | "startDate" | "endDate">;
 
@@ -39,6 +42,7 @@ export interface ShiftSlotList {
 }
 
 export interface CreateShiftSlotDto {
+  departmentId: string;
   branchId: string; // UUID của chi nhánh
   capacity: number; // Số lượng người tối đa (min: 1)
   note?: string; // Ghi chú (optional)
@@ -62,4 +66,5 @@ export interface ShiftSlotListParams {
   startDate?: string; // Filter từ ngày
   endDate?: string; // Filter đến ngày
   typeId?: string; // Filter theo loại ca
+  departmentId?: string; // Filter theo phòng ban
 }

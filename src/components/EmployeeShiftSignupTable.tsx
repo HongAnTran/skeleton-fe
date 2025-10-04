@@ -20,9 +20,10 @@ import {
   useShiftSignups,
   useCancelShiftSignup,
 } from "../queries/shiftSignup.queries";
-import type { ShiftSignup } from "../types/shiftSignup";
+import { ShiftSignupStatus, type ShiftSignup } from "../types/shiftSignup";
 import type { ColumnsType } from "antd/es/table";
 import { ShiftSignupCancelModal } from "./ShiftSignupCancelModal";
+import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -36,7 +37,7 @@ export function EmployeeShiftSignupTable() {
     null
   );
   const [cancelReason, setCancelReason] = useState("");
-
+  const { employee } = useEmployeeAuth();
   const { data, isLoading } = useShiftSignups({
     page: currentPage,
     limit: pageSize,
@@ -130,14 +131,20 @@ export function EmployeeShiftSignupTable() {
       title: "Trạng thái",
       key: "status",
       render: (_, record) => {
-        if (record.isCanceled) {
-          return <Tag color="red">Đã hủy</Tag>;
+        if (record.status === ShiftSignupStatus.CANCELLED) {
+          return (
+            <div>
+              <Tag color="red">Đã hủy</Tag>
+              <Tag color="red">
+                {record.canceledBy === employee?.id
+                  ? "Bạn hủy"
+                  : "Hủy bởi Admin"}
+              </Tag>
+            </div>
+          );
         }
 
-        const now = dayjs();
-        const slotDate = dayjs(record.slot?.date);
-
-        if (slotDate.isBefore(now, "day")) {
+        if (record.status === ShiftSignupStatus.COMPLETED) {
           return <Tag color="default">Đã hoàn thành</Tag>;
         }
 
@@ -159,7 +166,7 @@ export function EmployeeShiftSignupTable() {
       dataIndex: "cancelReason",
       key: "cancelReason",
       render: (cancelReason: string, record) => {
-        if (!record.isCanceled) return "-";
+        if (record.status !== ShiftSignupStatus.CANCELLED) return "-";
         return (
           <Text ellipsis={{ tooltip: cancelReason }} className="max-w-[150px]">
             {cancelReason || "-"}
@@ -183,7 +190,7 @@ export function EmployeeShiftSignupTable() {
       render: (_, record) => {
         // Only show cancel button if not canceled and shift is in the future
         const canCancel =
-          !record.isCanceled &&
+          record.status !== ShiftSignupStatus.CANCELLED &&
           dayjs(record.slot?.date).isAfter(dayjs(), "day");
 
         if (!canCancel) return null;

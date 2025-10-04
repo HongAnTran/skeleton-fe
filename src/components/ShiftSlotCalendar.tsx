@@ -4,7 +4,6 @@ import {
   Card,
   Badge,
   Button,
-  Space,
   Typography,
   Drawer,
   Select,
@@ -40,6 +39,7 @@ import { ShiftSlotDetailItem } from "./ShiftSlotDetailItem";
 import ShiftSlotWeekView from "./ShiftSlotWeekView";
 import type { ShiftSlot } from "../types/shiftSlot";
 import { useShiftSlotTypes } from "../queries/shiftSlotType.queries";
+import { useDepartments } from "../queries/department.queries";
 
 const { Title, Text } = Typography;
 
@@ -51,6 +51,7 @@ export function ShiftSlotCalendar() {
   const [selectedWeek, setSelectedWeek] = useState(dayjs().startOf("week"));
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [branchFilter, setBranchFilter] = useState<string>();
+  const [departmentFilter, setDepartmentFilter] = useState<string>();
   const [typeFilter, setTypeFilter] = useState<string>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingShiftSlot, setEditingShiftSlot] = useState<ShiftSlot | null>(
@@ -76,29 +77,28 @@ export function ShiftSlotCalendar() {
     limit: 1000,
     branchId: branchFilter,
     typeId: typeFilter,
+    departmentId: departmentFilter,
   });
 
   const { data: branchesData } = useBranches({
     page: 1,
-    limit: 1000,
+    limit: 100,
   });
 
   const { data: shiftSlotTypesData } = useShiftSlotTypes({
     page: 1,
-    limit: 1000,
+    limit: 100,
+  });
+
+  const { data: departmentsData } = useDepartments({
+    page: 1,
+    limit: 100,
   });
 
   const createShiftSlotMutation = useCreateShiftSlot();
   const createManyShiftSlotsMutation = useCreateManyShiftSlots();
   const updateShiftSlotMutation = useUpdateShiftSlot();
   const deleteShiftSlotMutation = useDeleteShiftSlot();
-
-  // Filter shift slots based on selected filters
-  const filteredShiftSlots = shiftSlots?.data?.filter((slot) => {
-    if (branchFilter && slot.branchId !== branchFilter) return false;
-    if (typeFilter && slot.type?.id !== typeFilter) return false;
-    return true;
-  });
 
   useEffect(() => {
     if (branchesData?.data) {
@@ -110,7 +110,7 @@ export function ShiftSlotCalendar() {
 
   const getShiftSlotsForDate = (date: Dayjs) => {
     return (
-      filteredShiftSlots?.filter((slot) =>
+      shiftSlots?.data?.filter((slot) =>
         dayjs(slot.date).isSame(date, "day")
       ) || []
     );
@@ -210,11 +210,6 @@ export function ShiftSlotCalendar() {
 
   const handleFormSubmit = async (formData: any) => {
     try {
-      // Set the selected date if creating new shift
-      if (!editingShiftSlot) {
-        formData.date = selectedDate.format("YYYY-MM-DD");
-      }
-
       if (editingShiftSlot) {
         await updateShiftSlotMutation.mutateAsync({
           id: editingShiftSlot.id,
@@ -264,7 +259,7 @@ export function ShiftSlotCalendar() {
 
       <Card size="small" style={{ marginBottom: 16 }}>
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={6}>
             <Flex className="w-full" align="center" gap={8}>
               <Typography.Text strong>Chi nhánh</Typography.Text>
               <Select
@@ -281,7 +276,27 @@ export function ShiftSlotCalendar() {
               </Select>
             </Flex>
           </Col>
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={6}>
+            <Flex className="w-full" align="center" gap={8}>
+              <Typography.Text strong className=" shrink-0">
+                Phòng ban
+              </Typography.Text>
+              <Select
+                allowClear
+                placeholder="Lọc theo phòng ban"
+                value={departmentFilter}
+                onChange={setDepartmentFilter}
+                className="w-full"
+              >
+                {departmentsData?.data?.map((department) => (
+                  <Select.Option key={department.id} value={department.id}>
+                    {department.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Flex>
+          </Col>
+          <Col xs={24} sm={12} md={6}>
             <Select
               placeholder="Lọc theo loại ca"
               value={typeFilter}
@@ -296,11 +311,12 @@ export function ShiftSlotCalendar() {
               ))}
             </Select>
           </Col>
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={6}>
             <Button
               onClick={() => {
                 setBranchFilter(undefined);
                 setTypeFilter(undefined);
+                setDepartmentFilter(undefined);
               }}
               className="w-full"
             >
@@ -368,6 +384,7 @@ export function ShiftSlotCalendar() {
           dataSource={selectedDayShifts}
           renderItem={(shift) => (
             <ShiftSlotDetailItem
+              onClose={() => setIsDetailModalOpen(false)}
               key={shift.id}
               shift={shift}
               onEdit={handleEdit}

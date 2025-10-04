@@ -20,6 +20,7 @@ import type {
 } from "../types/shiftSlot";
 import { useBranches } from "../queries/branch.queries";
 import { useShiftSlotTypes } from "../queries/shiftSlotType.queries";
+import { useDepartments } from "../queries/department.queries";
 
 interface ShiftSlotFormProps {
   shiftSlot?: ShiftSlot | null;
@@ -55,6 +56,11 @@ export function ShiftSlotForm({
     page: 1,
     limit: 1000,
   });
+  const { data: departmentsData, isLoading: departmentsLoading } =
+    useDepartments({
+      page: 1,
+      limit: 1000,
+    });
 
   const { data: shiftSlotTypesData, isLoading: shiftSlotTypesLoading } =
     useShiftSlotTypes({
@@ -78,6 +84,7 @@ export function ShiftSlotForm({
       } else if (createMultiple && values.endDate && onSubmitMany) {
         const endDate = values.endDate.format("YYYY-MM-DD");
         const createManyData: CreateShiftSlotDto = {
+          departmentId: values.departmentId,
           branchId: values.branchId,
           capacity: values.capacity,
           note: values.note || undefined,
@@ -88,7 +95,9 @@ export function ShiftSlotForm({
         await onSubmitMany(createManyData);
       } else {
         // Create single shift slot
+        console.log(date);
         const createData: CreateShiftSlotDto = {
+          departmentId: values.departmentId,
           branchId: values.branchId,
           capacity: values.capacity,
           note: values.note || undefined,
@@ -153,6 +162,26 @@ export function ShiftSlotForm({
               {branchesData?.data?.map((branch) => (
                 <Select.Option key={branch.id} value={branch.id}>
                   {branch.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item
+            label="Phòng ban"
+            name="departmentId"
+            rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
+          >
+            <Select
+              placeholder="Chọn phòng ban"
+              loading={departmentsLoading}
+              showSearch
+              optionFilterProp="children"
+            >
+              {departmentsData?.data?.map((department) => (
+                <Select.Option key={department.id} value={department.id}>
+                  {department.name}
                 </Select.Option>
               ))}
             </Select>

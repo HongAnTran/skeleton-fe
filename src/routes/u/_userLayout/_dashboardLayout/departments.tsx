@@ -18,7 +18,6 @@ import {
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
-  ReloadOutlined,
 } from "@ant-design/icons";
 import type { TableColumnsType, TableProps } from "antd";
 import {
@@ -143,10 +142,6 @@ function RouteComponent() {
   const handleEdit = (department: Department) => {
     setEditingDepartment(department);
     setIsModalOpen(true);
-  };
-
-  const handleRefresh = () => {
-    window.location.reload();
   };
 
   const handleDelete = async (id: string) => {

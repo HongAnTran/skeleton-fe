@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   Card,
@@ -12,6 +12,7 @@ import {
   List,
   Modal,
   Tag,
+  Flex,
 } from "antd";
 import {
   CalendarOutlined,
@@ -40,6 +41,7 @@ import ShiftSlotWeekViewEmployee from "./ShiftSlotWeekViewEmployee";
 import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
 import type { ShiftSignup } from "../types/shiftSignup";
 import { ShiftSignupCancelModal } from "./ShiftSignupCancelModal";
+import { useDepartments } from "../queries/department.queries";
 
 const { Title, Text } = Typography;
 
@@ -142,11 +144,14 @@ function EmployeeShiftSlotDetailItem({
 }
 
 export function EmployeeShiftSlotCalendar() {
+  const { employee } = useEmployeeAuth();
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [viewMode, setViewMode] = useState<ViewMode>("week");
   const [selectedWeek, setSelectedWeek] = useState(dayjs().startOf("week"));
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [typeFilter, setTypeFilter] = useState<string>();
+  const [departmentFilter, setDepartmentFilter] = useState<string>();
+
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedDayShifts, setSelectedDayShifts] = useState<ShiftSlot[]>([]);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
@@ -173,12 +178,19 @@ export function EmployeeShiftSlotCalendar() {
     startDate: startDate.toISOString(),
     endDate: endDate.toISOString(),
     typeId: typeFilter,
+    departmentId: departmentFilter,
   });
 
   const { data: shiftSlotTypesData } = useShiftSlotTypes({
     page: 1,
-    limit: 1000,
+    limit: 100,
   });
+  const { data: departmentsData } = useDepartments({
+    page: 1,
+    limit: 100,
+  });
+
+  const departmentFilterData = departmentsData?.data || [];
 
   const createShiftSignupMutation = useCreateShiftSignup();
 
@@ -186,6 +198,12 @@ export function EmployeeShiftSlotCalendar() {
     if (typeFilter && slot.type?.id !== typeFilter) return false;
     return true;
   });
+
+  useEffect(() => {
+    if (employee?.departmentId) {
+      setDepartmentFilter(employee.departmentId);
+    }
+  }, [employee?.departmentId]);
 
   const getShiftSlotsForDate = (date: Dayjs) => {
     return (
@@ -338,24 +356,49 @@ export function EmployeeShiftSlotCalendar() {
       <Card size="small" className="mb-4">
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={8}>
-            <Select
-              placeholder="Lọc theo loại ca"
-              value={typeFilter}
-              onChange={setTypeFilter}
-              allowClear
-              className="w-full"
-            >
-              {shiftSlotTypesData?.data?.map((type) => (
-                <Select.Option key={type.id} value={type.id}>
-                  {type.name}
-                </Select.Option>
-              ))}
-            </Select>
+            <Flex className="w-full" align="center" gap={8}>
+              <Typography.Text strong className=" shrink-0">
+                Loại ca
+              </Typography.Text>
+              <Select
+                placeholder="Lọc theo loại ca"
+                value={typeFilter}
+                onChange={setTypeFilter}
+                allowClear
+                className="w-full"
+              >
+                {shiftSlotTypesData?.data?.map((type) => (
+                  <Select.Option key={type.id} value={type.id}>
+                    {type.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Flex>
+          </Col>
+          <Col xs={24} sm={12} md={8}>
+            <Flex className="w-full" align="center" gap={8}>
+              <Typography.Text strong className=" shrink-0">
+                Phòng ban
+              </Typography.Text>
+              <Select
+                placeholder="Lọc theo phòng ban"
+                value={departmentFilter}
+                onChange={setDepartmentFilter}
+                className="w-full"
+              >
+                {departmentFilterData.map((department) => (
+                  <Select.Option key={department.id} value={department.id}>
+                    {department.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Flex>
           </Col>
           <Col xs={24} sm={12} md={8}>
             <Button
               onClick={() => {
                 setTypeFilter(undefined);
+                setDepartmentFilter(undefined);
               }}
               className="w-full"
             >

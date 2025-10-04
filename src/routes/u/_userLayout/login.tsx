@@ -1,4 +1,9 @@
-import { createFileRoute, useRouter, redirect } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useRouter,
+  redirect,
+  Link,
+} from "@tanstack/react-router";
 import { Button, Form, Input, Card, Typography, message, Spin } from "antd";
 import { tokenStorage } from "../../../utils/token";
 import type { LoginRequest } from "../../../types/auth";
@@ -40,11 +45,14 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <Card className="shadow-lg">
-          <div className="text-center mb-8">
+          <div className="flex  flex-col items-center gap-4">
+            <Link to="/">
+              <img src="/logo.webp" alt="logo" className="w-10 h-10" />
+            </Link>
             <Title level={2} className="text-gray-900">
               Đăng nhập
             </Title>
-            <Text type="secondary">Trang đăng nhập cho quản trị viên</Text>
+            <Text>Trang đăng nhập cho quản trị viên</Text>
           </div>
 
           <Form
@@ -56,20 +64,19 @@ function LoginPage() {
             autoComplete="off"
           >
             <Form.Item
-              name="email"
-              label="Email"
+              name="emailOrUsername"
+              label="Email hoặc tên đăng nhập"
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập email!",
-                },
-                {
-                  type: "email",
-                  message: "Email không hợp lệ!",
+                  message: "Vui lòng nhập email hoặc tên đăng nhập!",
                 },
               ]}
             >
-              <Input placeholder="user@example.com" autoComplete="username" />
+              <Input
+                placeholder="user@example.com hoặc tên đăng nhập"
+                autoComplete="username"
+              />
             </Form.Item>
 
             <Form.Item
@@ -105,6 +112,11 @@ function LoginPage() {
               </Button>
             </Form.Item>
           </Form>
+          <Link to="/e/login">
+            <Button type="link" className="w-full">
+              Chuyển đến trang đăng nhập nhân viên
+            </Button>
+          </Link>
         </Card>
       </div>
     </div>

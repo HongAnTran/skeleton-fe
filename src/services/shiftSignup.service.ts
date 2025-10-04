@@ -3,6 +3,7 @@ import type { PaginatedResult } from "../types/api";
 import type {
   ShiftSignup,
   CreateShiftSignupDto,
+  CreateShiftSignupByAdminDto,
   CancelShiftSignupDto,
   ShiftSignupListParams,
 } from "../types/shiftSignup";
@@ -13,6 +14,21 @@ export class ShiftSignupService {
   static async getList(params: ShiftSignupListParams) {
     const { data } = await axiosInstance.get<PaginatedResult<ShiftSignup>>(
       this.url,
+      { params }
+    );
+    return data;
+  }
+
+  static async getListByEmployee(
+    params: Pick<
+      ShiftSignupListParams,
+      "page" | "limit" | "startDate" | "endDate"
+    > & {
+      employeeId: string;
+    }
+  ) {
+    const { data } = await axiosInstance.get<PaginatedResult<ShiftSignup>>(
+      this.url + "/employee",
       { params }
     );
     return data;
@@ -41,5 +57,27 @@ export class ShiftSignupService {
 
   static async delete(id: string): Promise<void> {
     await axiosInstance.delete(`${this.url}/${id}`);
+  }
+
+  // Admin methods
+  static async cancelByAdmin(
+    id: string,
+    cancelReason: string
+  ): Promise<ShiftSignup> {
+    const { data } = await axiosInstance.patch<ShiftSignup>(
+      `${this.url}/${id}/cancel-by-admin`,
+      { cancelReason }
+    );
+    return data;
+  }
+
+  static async createByAdmin(
+    request: CreateShiftSignupByAdminDto
+  ): Promise<ShiftSignup> {
+    const { data } = await axiosInstance.post<ShiftSignup>(
+      `${this.url}/admin`,
+      request
+    );
+    return data;
   }
 }

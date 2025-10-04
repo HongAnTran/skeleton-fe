@@ -13,9 +13,12 @@ import {
   PlusOutlined,
   ClockCircleOutlined,
   EnvironmentOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import type { ShiftSlot } from "../types/shiftSlot";
+import { ShiftSignupStatus } from "../types/shiftSignup";
+import { AdminShiftSignupActions } from "./AdminShiftSignupActions";
 
 const { Text } = Typography;
 
@@ -24,6 +27,7 @@ interface ShiftSlotDetailItemProps {
   onEdit: (shift: ShiftSlot) => void;
   onDelete: (id: string) => void;
   deleteLoading?: boolean;
+  onClose: () => void;
 }
 
 export function ShiftSlotDetailItem({
@@ -31,8 +35,11 @@ export function ShiftSlotDetailItem({
   onEdit,
   onDelete,
   deleteLoading = false,
+  onClose,
 }: ShiftSlotDetailItemProps) {
-  const signups = shift.signups.filter((signup) => !signup.isCanceled);
+  const signups = shift.signups.filter(
+    (signup) => signup.status !== ShiftSignupStatus.CANCELLED
+  );
 
   const signupPercentage = Math.round((signups.length / shift.capacity) * 100);
 
@@ -65,6 +72,9 @@ export function ShiftSlotDetailItem({
               <Typography.Text strong className="uppercase">
                 {shift.branch?.name}
               </Typography.Text>
+            </Tag>
+            <Tag color="green" icon={<TeamOutlined />}>
+              {shift.department?.name}
             </Tag>
             <Tag color="blue" icon={<ClockCircleOutlined />}>
               {shift.type?.name}
@@ -106,15 +116,25 @@ export function ShiftSlotDetailItem({
                                 </div>
                               </div>
 
-                              {signup.isCanceled ? (
+                              {signup.status === ShiftSignupStatus.CANCELLED ? (
                                 <Tag color="red">Đã hủy</Tag>
-                              ) : null}
+                              ) : (
+                                <Tag color="green">Hoạt động</Tag>
+                              )}
 
                               {signup.cancelReason && (
                                 <div className="text-xs text-gray-500">
                                   lí do: {signup.cancelReason}
                                 </div>
                               )}
+                            </div>
+                            <div className="flex gap-1">
+                              <AdminShiftSignupActions
+                                shiftId={shift.id}
+                                signups={[signup]}
+                                showCreateButton={false}
+                                showCancelButtons={true}
+                              />
                             </div>
                           </div>
                         </Card>
@@ -133,6 +153,15 @@ export function ShiftSlotDetailItem({
                 />
               </div>
             )}
+            <div className="mt-3">
+              <AdminShiftSignupActions
+                shiftId={shift.id}
+                signups={[]}
+                showCreateButton={true}
+                showCancelButtons={false}
+                onSuccess={onClose}
+              />
+            </div>
             {shift.note && (
               <>
                 <Divider className="my-2" />

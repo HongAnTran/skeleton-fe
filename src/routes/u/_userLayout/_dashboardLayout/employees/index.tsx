@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Card,
@@ -263,11 +263,6 @@ function RouteComponent() {
     setIsCreateModalOpen(true);
   };
 
-  const handleView = (employee: Employee) => {
-    setViewingEmployee(employee);
-    setIsDetailModalOpen(true);
-  };
-
   const handleDelete = async (id: string) => {
     try {
       await deleteEmployeeMutation.mutateAsync(id);
@@ -387,12 +382,9 @@ function RouteComponent() {
       render: (_, record) => (
         <Space size="small">
           <Tooltip title="Xem chi tiết">
-            <Button
-              type="text"
-              icon={<EyeOutlined />}
-              onClick={() => handleView(record)}
-              size="small"
-            />
+            <Link to="/u/employees/$id" params={{ id: record.id }}>
+              <Button type="text" icon={<EyeOutlined />} size="small" />
+            </Link>
           </Tooltip>
           <Tooltip title="Chỉnh sửa">
             <Button

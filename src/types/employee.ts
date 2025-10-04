@@ -25,6 +25,7 @@ export interface Employee {
 }
 
 export interface CreateEmployeeDto {
+  username: string; // Required: Tên đăng nhập
   branchId?: string; // Optional: UUID của branch
   departmentId?: string; // Optional: UUID của department
   name: string; // Required: Tên nhân viên
@@ -39,7 +40,6 @@ export interface UpdateEmployeeDto {
   branchId?: string; // Optional
   departmentId?: string; // Optional
   name?: string; // Optional
-  email?: string; // Optional
   password?: string; // Optional
   phone?: string; // Optional
   active?: boolean; // Optional
@@ -51,4 +51,44 @@ export interface EmployeeListParams {
   limit?: number;
   branchId?: string;
   departmentId?: string;
+}
+
+export interface ShiftSignupSummary {
+  id: string;
+  employeeId: string;
+  slotId: string;
+  status: string;
+  totalHours: number;
+  createdAt: Date;
+  updatedAt: Date;
+  slot: {
+    id: string;
+    date: Date;
+    capacity: number;
+    note?: string;
+    branch: {
+      id: string;
+      name: string;
+    };
+    department: {
+      id: string;
+      name: string;
+    };
+    type: {
+      id: string;
+      name: string;
+    };
+  };
+}
+
+export interface EmployeeShiftSummaryResponse {
+  employee: Employee;
+  totalHours: number;
+  shiftCount: number;
+  shifts: ShiftSignupSummary[];
+}
+
+export interface EmployeeShiftSummaryParams {
+  startDate: string;
+  endDate: string;
 }

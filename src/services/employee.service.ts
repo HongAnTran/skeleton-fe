@@ -5,6 +5,8 @@ import type {
   CreateEmployeeDto,
   UpdateEmployeeDto,
   EmployeeListParams,
+  EmployeeShiftSummaryResponse,
+  EmployeeShiftSummaryParams,
 } from "../types/employee";
 
 export class EmployeeService {
@@ -51,6 +53,18 @@ export class EmployeeService {
   // Get all employees for dropdown/selection (without pagination)
   static async getAll(): Promise<Employee[]> {
     const { data } = await axiosInstance.get<Employee[]>(`${this.url}/all`);
+    return data;
+  }
+
+  // Get employee shift summary with total hours
+  static async getShiftSummary(
+    id: string,
+    params: EmployeeShiftSummaryParams
+  ): Promise<EmployeeShiftSummaryResponse> {
+    const { data } = await axiosInstance.get<EmployeeShiftSummaryResponse>(
+      `${this.url}/${id}/shift-summary`,
+      { params }
+    );
     return data;
   }
 }

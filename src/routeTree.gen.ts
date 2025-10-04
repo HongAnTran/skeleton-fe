@@ -30,6 +30,7 @@ import { Route as EEmployeeLayoutDashboardLayoutTasksRouteImport } from './route
 import { Route as EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/shift-slots'
 import { Route as EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/change-shift-requests'
 import { Route as UUserLayoutDashboardLayoutEmployeesIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/index'
+import { Route as UUserLayoutDashboardLayoutEmployeesIdRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/$id'
 
 const URouteImport = createFileRoute('/u')()
 const ERouteImport = createFileRoute('/e')()
@@ -149,6 +150,12 @@ const UUserLayoutDashboardLayoutEmployeesIndexRoute =
     path: '/employees/',
     getParentRoute: () => UUserLayoutDashboardLayoutRoute,
   } as any)
+const UUserLayoutDashboardLayoutEmployeesIdRoute =
+  UUserLayoutDashboardLayoutEmployeesIdRouteImport.update({
+    id: '/employees/$id',
+    path: '/employees/$id',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/u/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
   '/e/': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u/': typeof UUserLayoutDashboardLayoutIndexRoute
+  '/u/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -184,6 +192,7 @@ export interface FileRoutesByTo {
   '/u/shift-slot-types': typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
   '/u/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
   '/u/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
+  '/u/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
 }
 export interface FileRoutesById {
@@ -208,6 +217,7 @@ export interface FileRoutesById {
   '/u/_userLayout/_dashboardLayout/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
   '/e/_employeeLayout/_dashboardLayout/': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u/_userLayout/_dashboardLayout/': typeof UUserLayoutDashboardLayoutIndexRoute
+  '/u/_userLayout/_dashboardLayout/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   '/u/_userLayout/_dashboardLayout/employees/': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
 }
 export interface FileRouteTypes {
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/u/tasks'
     | '/e/'
     | '/u/'
+    | '/u/employees/$id'
     | '/u/employees'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
     | '/u/shift-slot-types'
     | '/u/shift-slots'
     | '/u/tasks'
+    | '/u/employees/$id'
     | '/u/employees'
   id:
     | '__root__'
@@ -269,6 +281,7 @@ export interface FileRouteTypes {
     | '/u/_userLayout/_dashboardLayout/tasks'
     | '/e/_employeeLayout/_dashboardLayout/'
     | '/u/_userLayout/_dashboardLayout/'
+    | '/u/_userLayout/_dashboardLayout/employees/$id'
     | '/u/_userLayout/_dashboardLayout/employees/'
   fileRoutesById: FileRoutesById
 }
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRouteImport
       parentRoute: typeof UUserLayoutDashboardLayoutRoute
     }
+    '/u/_userLayout/_dashboardLayout/employees/$id': {
+      id: '/u/_userLayout/_dashboardLayout/employees/$id'
+      path: '/employees/$id'
+      fullPath: '/u/employees/$id'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutEmployeesIdRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
   }
 }
 
@@ -487,6 +507,7 @@ interface UUserLayoutDashboardLayoutRouteChildren {
   UUserLayoutDashboardLayoutShiftSlotsRoute: typeof UUserLayoutDashboardLayoutShiftSlotsRoute
   UUserLayoutDashboardLayoutTasksRoute: typeof UUserLayoutDashboardLayoutTasksRoute
   UUserLayoutDashboardLayoutIndexRoute: typeof UUserLayoutDashboardLayoutIndexRoute
+  UUserLayoutDashboardLayoutEmployeesIdRoute: typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   UUserLayoutDashboardLayoutEmployeesIndexRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
 }
 
@@ -504,6 +525,8 @@ const UUserLayoutDashboardLayoutRouteChildren: UUserLayoutDashboardLayoutRouteCh
       UUserLayoutDashboardLayoutShiftSlotsRoute,
     UUserLayoutDashboardLayoutTasksRoute: UUserLayoutDashboardLayoutTasksRoute,
     UUserLayoutDashboardLayoutIndexRoute: UUserLayoutDashboardLayoutIndexRoute,
+    UUserLayoutDashboardLayoutEmployeesIdRoute:
+      UUserLayoutDashboardLayoutEmployeesIdRoute,
     UUserLayoutDashboardLayoutEmployeesIndexRoute:
       UUserLayoutDashboardLayoutEmployeesIndexRoute,
   }

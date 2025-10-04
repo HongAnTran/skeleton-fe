@@ -13,8 +13,15 @@ import {
   Row,
   Col,
   Statistic,
+  Avatar,
+  Divider,
 } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
   useShiftSlots,
@@ -26,6 +33,7 @@ import {
 import { useBranches } from "../queries/branch.queries";
 import { useShiftSlotTypes } from "../queries/shiftSlotType.queries";
 import { ShiftSlotForm } from "./ShiftSlotForm";
+import { AdminShiftSignupActions } from "./AdminShiftSignupActions";
 import type { ShiftSlot, ShiftSlotList } from "../types/shiftSlot";
 import type { ColumnsType } from "antd/es/table";
 
@@ -165,13 +173,35 @@ export function ShiftSlotTable() {
       title: "Sức chứa",
       dataIndex: "capacity",
       key: "capacity",
-      render: (capacity: number) => (
-        <Statistic
-          value={capacity}
-          suffix="người"
-          valueStyle={{ fontSize: "14px" }}
-        />
-      ),
+      render: (capacity: number, record) => {
+        const activeSignups = (record.signups || []).filter(
+          (signup) => signup.status !== "CANCELLED"
+        );
+        const currentCount = activeSignups.length;
+        const isFull = currentCount >= capacity;
+
+        return (
+          <div>
+            <Statistic
+              value={currentCount}
+              suffix={`/${capacity} người`}
+              valueStyle={{
+                fontSize: "14px",
+                color: isFull
+                  ? "#ff4d4f"
+                  : currentCount > capacity * 0.8
+                    ? "#faad14"
+                    : "#52c41a",
+              }}
+            />
+            {isFull && (
+              <Typography.Text type="danger" style={{ fontSize: "12px" }}>
+                Đã đầy
+              </Typography.Text>
+            )}
+          </div>
+        );
+      },
       sorter: true,
     },
     {
@@ -186,6 +216,85 @@ export function ShiftSlotTable() {
       width: 150,
     },
     {
+      title: "Người đăng ký",
+      key: "signups",
+      render: (_, record) => {
+        const signups = record.signups || [];
+        const activeSignups = signups.filter(
+          (signup) => signup.status !== "CANCELLED"
+        );
+
+        if (activeSignups.length === 0) {
+          return (
+            <div>
+              <Typography.Text type="secondary">
+                Chưa có ai đăng ký
+              </Typography.Text>
+              <Divider style={{ margin: "8px 0" }} />
+              <AdminShiftSignupActions
+                shiftId={record.id}
+                signups={[]}
+                showCreateButton={true}
+                showCancelButtons={false}
+              />
+            </div>
+          );
+        }
+
+        return (
+          <div>
+            <Space direction="vertical" size="small" className="w-full">
+              {activeSignups.slice(0, 3).map((signup) => (
+                <div
+                  key={signup.id}
+                  className="flex items-center justify-between"
+                >
+                  <Space size="small">
+                    <Avatar size="small" icon={<UserOutlined />} />
+                    <Typography.Text>{signup.employee.name}</Typography.Text>
+                    <Tag
+                      color={
+                        signup.status === "COMPLETED"
+                          ? "green"
+                          : signup.status === "PENDING"
+                            ? "orange"
+                            : "red"
+                      }
+                    >
+                      {signup.status === "COMPLETED"
+                        ? "Hoàn thành"
+                        : signup.status === "PENDING"
+                          ? "Đang đợi"
+                          : "Đã hủy"}
+                    </Tag>
+                  </Space>
+                  <AdminShiftSignupActions
+                    shiftId={record.id}
+                    signups={[signup]}
+                    showCreateButton={false}
+                    showCancelButtons={true}
+                  />
+                </div>
+              ))}
+              {activeSignups.length > 3 && (
+                <Typography.Text type="secondary">
+                  +{activeSignups.length - 3} người khác
+                </Typography.Text>
+              )}
+            </Space>
+            <Divider style={{ margin: "8px 0" }} />
+            <AdminShiftSignupActions
+              shiftId={record.id}
+              signups={[]}
+              showCreateButton={true}
+              showCancelButtons={false}
+            />
+          </div>
+        );
+      },
+      width: 300,
+    },
+    {
       title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
@@ -195,7 +304,7 @@ export function ShiftSlotTable() {
     {
       title: "Thao tác",
       key: "actions",
-      width: 120,
+      width: 100,
       render: (_, record) => (
         <Space>
           <Button

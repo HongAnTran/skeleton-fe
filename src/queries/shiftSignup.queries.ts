@@ -3,6 +3,7 @@ import { message } from "antd";
 import { ShiftSignupService } from "../services/shiftSignup.service";
 import type {
   CreateShiftSignupDto,
+  CreateShiftSignupByAdminDto,
   CancelShiftSignupDto,
   ShiftSignupListParams,
 } from "../types/shiftSignup";
@@ -25,6 +26,23 @@ export const useShiftSignups = (
   return useQuery({
     queryKey: SHIFT_SIGNUP_KEYS.list(params),
     queryFn: () => ShiftSignupService.getList(params),
+    staleTime: 5 * 60 * 1000,
+    ...options,
+  });
+};
+
+export const useShiftSignupsByEmployee = (
+  params: Pick<
+    ShiftSignupListParams,
+    "page" | "limit" | "startDate" | "endDate"
+  > & {
+    employeeId: string;
+  },
+  options?: ReactQueryOptions
+) => {
+  return useQuery({
+    queryKey: SHIFT_SIGNUP_KEYS.list(params),
+    queryFn: () => ShiftSignupService.getListByEmployee(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
@@ -116,6 +134,61 @@ export const useDeleteShiftSignup = () => {
     },
     onError: (error: any) => {
       message.error(error?.message || "Lỗi khi xóa đăng ký ca làm việc");
+    },
+  });
+};
+
+// Admin mutations
+export const useCancelShiftSignupByAdmin = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, cancelReason }: { id: string; cancelReason: string }) =>
+      ShiftSignupService.cancelByAdmin(id, cancelReason),
+    onSuccess: (updatedShiftSignup, { id }) => {
+      // Update all relevant caches
+      queryClient.invalidateQueries({ queryKey: SHIFT_SIGNUP_KEYS.lists() });
+
+      // Also invalidate shift slots to update signup counts
+      queryClient.invalidateQueries({ queryKey: ["shift-slots"] });
+
+      // Update specific shift signup cache
+      queryClient.setQueryData(
+        SHIFT_SIGNUP_KEYS.detail(id),
+        updatedShiftSignup
+      );
+
+      message.success("Đã hủy đăng ký ca làm việc cho nhân viên!");
+    },
+    onError: (error: any) => {
+      message.error(error?.message || "Lỗi khi hủy đăng ký ca làm việc");
+    },
+  });
+};
+
+export const useCreateShiftSignupByAdmin = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateShiftSignupByAdminDto) =>
+      ShiftSignupService.createByAdmin(data),
+    onSuccess: (newShiftSignup) => {
+      // Invalidate all shift signup lists
+      queryClient.invalidateQueries({ queryKey: SHIFT_SIGNUP_KEYS.lists() });
+
+      // Also invalidate shift slots to update signup counts
+      queryClient.invalidateQueries({ queryKey: ["shift-slots"] });
+
+      // Add the new shift signup to cache
+      queryClient.setQueryData(
+        SHIFT_SIGNUP_KEYS.detail(newShiftSignup.id),
+        newShiftSignup
+      );
+
+      message.success("Đã tạo đăng ký ca làm việc cho nhân viên!");
+    },
+    onError: (error: any) => {
+      message.error(error?.message || "Lỗi khi tạo đăng ký ca làm việc");
     },
   });
 };

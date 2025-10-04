@@ -82,26 +82,15 @@ export function BranchForm({
         label="Tên chi nhánh"
         name="name"
         rules={[
-          { required: true, message: "Please input the branch name!" },
-          { min: 2, message: "Branch name must be at least 2 characters!" },
+          { required: true, message: "Vui lòng nhập tên chi nhánh!" },
+          { min: 2, message: "Tên chi nhánh phải có ít nhất 2 ký tự!" },
         ]}
       >
-        <Input placeholder="Enter branch name" />
-      </Form.Item>
-
-      <Form.Item
-        label="Địa chỉ"
-        name="address"
-        rules={[{ min: 5, message: "Address must be at least 5 characters!" }]}
-      >
-        <Input.TextArea
-          placeholder="Enter branch address (optional)"
-          rows={3}
-        />
+        <Input placeholder="Nhập tên chi nhánh" />
       </Form.Item>
 
       <Form.Item label="Trạng thái" name="active" valuePropName="checked">
-        <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
+        <Switch checkedChildren="Bật" unCheckedChildren="Tắt" />
       </Form.Item>
 
       <Form.Item className="mb-0">

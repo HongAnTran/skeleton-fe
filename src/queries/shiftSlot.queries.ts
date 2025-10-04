@@ -18,7 +18,7 @@ export const SHIFT_SLOT_KEYS = {
   calendar: () => [...SHIFT_SLOT_KEYS.all, "calendar"] as const,
   dateRange: (startDate: string, endDate: string) =>
     [...SHIFT_SLOT_KEYS.calendar(), startDate, endDate] as const,
-  listByEmployee: (params: ShiftSlotListParams) =>
+  listByEmployee: (params?: ShiftSlotListParams) =>
     [...SHIFT_SLOT_KEYS.lists(), "employee", params] as const,
 };
 
@@ -36,7 +36,7 @@ export const useShiftSlots = (
 };
 
 export const useShiftSlotsByEmployee = (
-  params: ShiftSlotListParams,
+  params?: ShiftSlotListParams,
   options?: ReactQueryOptions
 ) => {
   return useQuery({

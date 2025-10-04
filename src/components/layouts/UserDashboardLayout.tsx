@@ -15,7 +15,6 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UnorderedListOutlined,
   HomeOutlined,
   TeamOutlined,
   ScheduleOutlined,
@@ -26,7 +25,6 @@ import type { MenuProps } from "antd";
 import { useLocation, useRouter } from "@tanstack/react-router";
 
 const { Header, Sider, Content } = Layout;
-
 interface UserDashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -89,12 +87,12 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       label: "Nhân viên",
       onClick: () => handleMenuClick("/u/employees"),
     },
-    {
-      key: "/u/tasks",
-      icon: <UnorderedListOutlined />,
-      label: "Nhiệm vụ",
-      onClick: () => handleMenuClick("/u/tasks"),
-    },
+    // {
+    //   key: "/u/tasks",
+    //   icon: <UnorderedListOutlined />,
+    //   label: "Nhiệm vụ",
+    //   onClick: () => handleMenuClick("/u/tasks"),
+    // },
     {
       key: "/u/branchs",
       icon: <HomeOutlined />,
@@ -124,14 +122,14 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
   };
 
   const userMenuItems: MenuProps["items"] = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: "Tài khoản",
-    },
-    {
-      type: "divider",
-    },
+    // {
+    //   key: "1",
+    //   icon: <UserOutlined />,
+    //   label: "Tài khoản",
+    // },
+    // {
+    //   type: "divider",
+    // },
     {
       key: "3",
       icon: <LogoutOutlined />,
@@ -145,11 +143,11 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       <div className="p-4">
         <div className="flex items-center justify-center">
           {!isMobile && collapsed ? (
-            <Avatar size="large" icon={<UserOutlined />} />
+            <img src="/logo.webp" alt="logo" className="w-10 h-10" />
           ) : (
-            <div className="text-center">
-              <Avatar size="large" icon={<UserOutlined />} className="mb-2" />
-              <div className="text-sm font-semibold">ADMIN</div>
+            <div className="flex items-center gap-2">
+              <img src="/logo.webp" alt="logo" className="w-10 h-10" />
+              <div className="text-sm font-semibold">Trang Quản Trị</div>
             </div>
           )}
         </div>
@@ -185,7 +183,7 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       <Drawer
         title={
           <div className="text-center">
-            <Avatar size="large" icon={<UserOutlined />} className="mb-2" />
+            <img src="/logo.webp" alt="logo" className="w-10 h-10" />
             <div className="text-sm font-semibold">ADMIN</div>
           </div>
         }

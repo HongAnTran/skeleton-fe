@@ -11,13 +11,13 @@ import {
   Tag,
 } from "antd";
 import {
-  UserOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   TeamOutlined,
   TableOutlined,
   EnvironmentOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
 import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
 import type { MenuProps } from "antd";
@@ -75,12 +75,12 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
       label: "Ca làm việc",
       onClick: () => handleMenuClick("/e/shift-slots"),
     },
-    // {
-    //   key: "/e/change-shift-requests",
-    //   icon: <SwapOutlined />,
-    //   label: "Yêu cầu đổi ca",
-    //   onClick: () => handleMenuClick("/e/change-shift-requests"),
-    // },
+    {
+      key: "/e/change-shift-requests",
+      icon: <SwapOutlined />,
+      label: "Yêu cầu đổi ca",
+      onClick: () => handleMenuClick("/e/change-shift-requests"),
+    },
     // {
     //   key: "/e/tasks",
     //   icon: <UnorderedListOutlined />,
@@ -98,14 +98,14 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
   };
 
   const employeeMenuItems: MenuProps["items"] = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: "Tài khoản",
-    },
-    {
-      type: "divider",
-    },
+    // {
+    //   key: "1",
+    //   icon: <UserOutlined />,
+    //   label: "Tài khoản",
+    // },
+    // {
+    //   type: "divider",
+    // },
     {
       key: "3",
       icon: <LogoutOutlined />,
@@ -119,20 +119,11 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
       <div className="p-4">
         <div className="flex items-center justify-center">
           {!isMobile && collapsed ? (
-            <Avatar
-              size="large"
-              icon={<TeamOutlined />}
-              style={{ backgroundColor: "#1890ff" }}
-            />
+            <img src="/logo.webp" alt="logo" className="w-10 h-10" />
           ) : (
-            <div className="text-center">
-              <Avatar
-                size="large"
-                icon={<TeamOutlined />}
-                style={{ backgroundColor: "#1890ff" }}
-                className="mb-2"
-              />
-              <div className="text-sm font-semibold">Hi Táo Thơm</div>
+            <div className="flex items-center gap-2">
+              <img src="/logo.webp" alt="logo" className="w-10 h-10" />
+              <div className="text-sm font-semibold">Nhân viên</div>
             </div>
           )}
         </div>
@@ -168,13 +159,8 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
       <Drawer
         title={
           <div className="text-center">
-            <Avatar
-              size="large"
-              icon={<TeamOutlined />}
-              style={{ backgroundColor: "#1890ff" }}
-              className="mb-2"
-            />
-            <div className="text-sm font-semibold">Hi Táo Thơm</div>
+            <img src="/logo.webp" alt="logo" className="w-10 h-10" />
+            <div className="text-sm font-semibold">Nhân viên</div>
           </div>
         }
         placement="left"
@@ -227,11 +213,15 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
 
           <Space>
             <Tag color="green" icon={<EnvironmentOutlined />}>
-               {employee?.branch?.name}
+              {employee?.branch?.name}
+            </Tag>
+            <Tag color="blue" icon={<TeamOutlined />}>
+              {employee?.department?.name}
             </Tag>
             <span className={isMobile ? "hidden sm:inline" : ""}>
               Chào, {employee?.name || "Employee"}!
             </span>
+
             <Dropdown
               menu={{ items: employeeMenuItems }}
               placement="bottomRight"

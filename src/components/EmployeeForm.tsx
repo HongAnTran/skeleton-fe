@@ -60,7 +60,6 @@ export function EmployeeForm({
       if (isEditing && employee) {
         const updateData: UpdateEmployeeDto = {
           name: values.name,
-          email: values.email,
           phone: values.phone,
           branchId: values.branchId || undefined,
           departmentId: values.departmentId || undefined,
@@ -76,6 +75,7 @@ export function EmployeeForm({
       } else {
         const createData: CreateEmployeeDto = {
           name: values.name,
+          username: values.username,
           email: values.email,
           password: values.password,
           phone: values.phone || undefined,
@@ -164,7 +164,18 @@ export function EmployeeForm({
       </Row>
 
       <Row gutter={16}>
-        <Col span={24}>
+        <Col span={12}>
+          <Form.Item
+            label="Tên đăng nhập"
+            name="username"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên đăng nhập!" },
+            ]}
+          >
+            <Input placeholder="Nhập tên đăng nhập" autoComplete="off" />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
           <Form.Item
             label="Mật khẩu"
             name="password"

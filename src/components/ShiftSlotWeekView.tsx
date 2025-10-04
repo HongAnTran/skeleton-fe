@@ -9,6 +9,7 @@ import type { Dayjs } from "dayjs";
 dayjs.extend(weekday);
 dayjs.Ls.en.weekStart = 1; // 1 = Monday
 import type { ShiftSlot } from "../types/shiftSlot";
+import { ShiftSignupStatus } from "../types/shiftSignup";
 
 const { Title, Text } = Typography;
 
@@ -106,7 +107,8 @@ export default function ShiftSlotWeekView({
                   ) : (
                     shifts.map((shift) => {
                       const signups = shift.signups.filter(
-                        (signup) => !signup.isCanceled
+                        (signup) =>
+                          signup.status !== ShiftSignupStatus.CANCELLED
                       );
                       return (
                         <div key={shift.id} className="text-xs">
@@ -122,17 +124,16 @@ export default function ShiftSlotWeekView({
                                   {shift.type?.name} ({signups.length} /{" "}
                                   {shift.capacity})
                                 </Text>
-                                <ul className="text-xs ml-8 list-decimal">
-                                  {shift.signups.map((signup) => (
+                                <ul className="text-xs ml-8  list-decimal">
+                                  {signups.map((signup, index) => (
                                     <li
                                       key={signup.id}
-                                      className="flex items-center justify-between gap-2"
+                                      className="flex items-center justify-between gap-2 mb-1"
                                     >
-                                      {signup.employee?.name}
-
-                                      {signup.isCanceled ? (
-                                        <Tag color="red">Đã hủy</Tag>
-                                      ) : null}
+                                      {index + 1}.
+                                      <Tag color="blue">
+                                        {signup.employee?.name}
+                                      </Tag>
                                     </li>
                                   ))}
                                 </ul>
