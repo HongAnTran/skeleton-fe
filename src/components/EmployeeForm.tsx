@@ -135,18 +135,21 @@ export function EmployeeForm({
       </Row>
 
       <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "Vui lòng nhập email!" },
-              { type: "email", message: "Email không hợp lệ!" },
-            ]}
-          >
-            <Input placeholder="employee@example.com" autoComplete="off" />
-          </Form.Item>
-        </Col>
+        {isEditing ? null : (
+          <Col span={12}>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
+              ]}
+            >
+              <Input placeholder="employee@example.com" autoComplete="off" />
+            </Form.Item>
+          </Col>
+        )}
+
         <Col span={12}>
           <Form.Item
             label="Số điện thoại"
@@ -164,44 +167,48 @@ export function EmployeeForm({
       </Row>
 
       <Row gutter={16}>
+        {isEditing ? null : (
+          <Col span={12}>
+            <Form.Item
+              label="Tên đăng nhập"
+              name="username"
+              rules={[
+                { required: true, message: "Vui lòng nhập tên đăng nhập!" },
+              ]}
+            >
+              <Input placeholder="Nhập tên đăng nhập" autoComplete="off" />
+            </Form.Item>
+          </Col>
+        )}
         <Col span={12}>
-          <Form.Item
-            label="Tên đăng nhập"
-            name="username"
-            rules={[
-              { required: true, message: "Vui lòng nhập tên đăng nhập!" },
-            ]}
-          >
-            <Input placeholder="Nhập tên đăng nhập" autoComplete="off" />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            label="Mật khẩu"
-            name="password"
-            rules={
-              isEditing
-                ? [{ min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" }]
-                : [
-                    { required: true, message: "Vui lòng nhập mật khẩu!" },
-                    { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
-                  ]
-            }
-            extra={
-              isEditing ? (
-                <Text type="secondary">
-                  Để trống nếu không muốn thay đổi mật khẩu
-                </Text>
-              ) : undefined
-            }
-          >
-            <Input.Password
-              autoComplete="off"
-              placeholder={
-                isEditing ? "Nhập mật khẩu mới (tùy chọn)" : "Nhập mật khẩu"
+          {isEditing ? null : (
+            <Form.Item
+              label="Mật khẩu"
+              name="password"
+              rules={
+                isEditing
+                  ? [{ min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" }]
+                  : [
+                      { required: true, message: "Vui lòng nhập mật khẩu!" },
+                      { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
+                    ]
               }
-            />
-          </Form.Item>
+              extra={
+                isEditing ? (
+                  <Text type="secondary">
+                    Để trống nếu không muốn thay đổi mật khẩu
+                  </Text>
+                ) : undefined
+              }
+            >
+              <Input.Password
+                autoComplete="off"
+                placeholder={
+                  isEditing ? "Nhập mật khẩu mới (tùy chọn)" : "Nhập mật khẩu"
+                }
+              />
+            </Form.Item>
+          )}
         </Col>
       </Row>
 

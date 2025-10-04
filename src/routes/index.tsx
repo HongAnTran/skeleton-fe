@@ -23,15 +23,12 @@ function Index() {
         </div>
 
         {/* Login Options */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2  gap-8 max-w-4xl mx-auto">
           {/* User Login Card */}
-          <Card
-            className="shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-0"
-            bodyStyle={{ padding: "2rem" }}
-          >
+          <Card className="shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-0">
             <div className="text-center">
               <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-full mb-4">
+                <div className="inline-flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full mb-4">
                   <UserOutlined className="text-4xl text-blue-600" />
                 </div>
                 <Title level={3} className="text-gray-900 mb-3">
@@ -62,7 +59,7 @@ function Index() {
           >
             <div className="text-center">
               <div className="mb-6">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
+                <div className="inline-flex items-center justify-center w-10 h-10 bg-green-100 rounded-full mb-4">
                   <TeamOutlined className="text-4xl text-green-600" />
                 </div>
                 <Title level={3} className="text-gray-900 mb-3">
