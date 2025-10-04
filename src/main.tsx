@@ -3,6 +3,15 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import "./global.css";
 import "@ant-design/v5-patch-for-react-19";
+
+import { registerSW } from "virtual:pwa-register";
+
+registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    if (confirm("Có phiên bản mới. Tải lại để cập nhật?")) location.reload();
+  },
+});
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
