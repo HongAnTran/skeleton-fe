@@ -214,7 +214,7 @@ export function EmployeeShiftSlotCalendar() {
     return shifts.sort((a, b) => {
       const startDate = new Date(a.type.startDate);
       const endDate = new Date(b.type.endDate);
-      return endDate.getTime() - startDate.getTime();
+      return startDate.getTime() - endDate.getTime();
     });
   };
 

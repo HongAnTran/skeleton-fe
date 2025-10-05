@@ -100,7 +100,7 @@ export default function ShiftSlotWeekView({
                       (signup) => signup.status !== ShiftSignupStatus.CANCELLED
                     );
                     const type = shift.type;
-                    const isAvailable = signups.length < shift.capacity; // Default max signups
+                    const isAvailable = signups.length < shift.capacity;
 
                     return (
                       <button

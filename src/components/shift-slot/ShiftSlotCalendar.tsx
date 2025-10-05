@@ -114,10 +114,11 @@ export function ShiftSlotCalendar() {
       shiftSlots?.data?.filter((slot) =>
         dayjs(slot.date).isSame(date, "day")
       ) || [];
+
     return shifts.sort((a, b) => {
       const startDate = new Date(a.type.startDate);
       const endDate = new Date(b.type.endDate);
-      return endDate.getTime() - startDate.getTime();
+      return startDate.getTime() - endDate.getTime();
     });
   };
 
