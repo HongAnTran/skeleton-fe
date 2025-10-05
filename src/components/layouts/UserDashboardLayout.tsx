@@ -173,6 +173,11 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
           style={{
             background: colorBgContainer,
             boxShadow: "2px 0 8px 0 rgba(0,0,0,0.15)",
+            position: "fixed",
+            height: "100vh",
+            left: 0,
+            top: 0,
+            zIndex: 1000,
           }}
         >
           {renderSidebarContent()}
@@ -214,6 +219,9 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            position: "sticky",
+            top: 0,
+            zIndex: 999,
           }}
         >
           <Button
@@ -252,10 +260,12 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
         <Content
           style={{
             margin: isMobile ? "16px 8px" : "24px 16px",
+            marginLeft: isMobile ? "16px" : collapsed ? "80px" : "200px",
             padding: isMobile ? 16 : 24,
             minHeight: 280,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
+            transition: "margin-left 0.2s",
           }}
         >
           {children}
