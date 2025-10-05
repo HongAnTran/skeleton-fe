@@ -207,9 +207,9 @@ export function EmployeeShiftSlotCalendar() {
 
   const getShiftSlotsForDate = (date: Dayjs) => {
     return (
-      filteredShiftSlots?.filter((slot) =>
-        dayjs(slot.date).isSame(date, "day")
-      ) || []
+      filteredShiftSlots
+        ?.filter((slot) => dayjs(slot.date).isSame(date, "day"))
+        .sort((a, b) => a.startDate.getTime() - b.startDate.getTime()) || []
     );
   };
 
