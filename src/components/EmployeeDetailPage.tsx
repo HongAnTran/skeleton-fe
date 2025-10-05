@@ -58,27 +58,6 @@ export const EmployeeDetailPage = ({ employeeId }: EmployeeDetailPageProps) => {
 
   const employee = shiftSummary?.employee;
 
-  // Calculate status statistics
-  const statusStats = shiftSummary?.shifts.reduce(
-    (acc, shift) => {
-      switch (shift.status) {
-        case "COMPLETED":
-          acc.completed++;
-          break;
-        case "PENDING":
-          acc.pending++;
-          break;
-        case "CANCELLED":
-          acc.cancelled++;
-          break;
-        default:
-          acc.other++;
-      }
-      return acc;
-    },
-    { completed: 0, pending: 0, cancelled: 0, other: 0 }
-  ) || { completed: 0, pending: 0, cancelled: 0, other: 0 };
-
   const handleDateRangeChange = (
     dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null
   ) => {
@@ -261,19 +240,21 @@ export const EmployeeDetailPage = ({ employeeId }: EmployeeDetailPageProps) => {
                   <Col xs={24} sm={6}>
                     <Card>
                       <Statistic
-                        title="Tổng số ca"
-                        value={shiftSummary.shiftCount}
+                        title="Tổng số ca hoàn thành"
+                        value={shiftSummary.shiftCountCompleted}
                         prefix={<CalendarOutlined />}
+                        valueStyle={{ color: "green" }}
                       />
                     </Card>
                   </Col>
                   <Col xs={24} sm={6}>
                     <Card>
                       <Statistic
-                        title="Ca đã hoàn thành"
-                        value={statusStats.completed}
-                        valueStyle={{ color: "#52c41a" }}
-                        prefix={<CalendarOutlined />}
+                        title="Tổng số giờ hoàn thành"
+                        value={shiftSummary.totalHoursCompleted}
+                        suffix="giờ"
+                        prefix={<ClockCircleOutlined />}
+                        valueStyle={{ color: "green" }}
                       />
                     </Card>
                   </Col>
@@ -281,8 +262,8 @@ export const EmployeeDetailPage = ({ employeeId }: EmployeeDetailPageProps) => {
                     <Card>
                       <Statistic
                         title="Ca đang đợi"
-                        value={statusStats.pending}
-                        valueStyle={{ color: "#faad14" }}
+                        value={shiftSummary.shiftCountPending}
+                        valueStyle={{ color: "orange" }}
                         prefix={<CalendarOutlined />}
                       />
                     </Card>
@@ -291,44 +272,13 @@ export const EmployeeDetailPage = ({ employeeId }: EmployeeDetailPageProps) => {
                     <Card>
                       <Statistic
                         title="Ca đã hủy"
-                        value={statusStats.cancelled}
-                        valueStyle={{ color: "#ff4d4f" }}
+                        value={shiftSummary.shiftCountCancelled}
+                        valueStyle={{ color: "red" }}
                         prefix={<CalendarOutlined />}
                       />
                     </Card>
                   </Col>
                 </Row>
-
-                {/* Status Statistics */}
-                <Row gutter={[16, 16]} style={{ marginBottom: "24px" }}>
-                  <Col xs={24} sm={6}>
-                    <Card>
-                      <Statistic
-                        title="Tổng số giờ"
-                        value={shiftSummary.totalHours}
-                        suffix="giờ"
-                        prefix={<ClockCircleOutlined />}
-                      />
-                    </Card>
-                  </Col>
-                  <Col xs={24} sm={6}>
-                    <Card>
-                      <Statistic
-                        title="Trung bình/ngày"
-                        value={
-                          shiftSummary.shiftCount > 0
-                            ? (
-                                shiftSummary.totalHours /
-                                shiftSummary.shiftCount
-                              ).toFixed(1)
-                            : 0
-                        }
-                        suffix="giờ/ca"
-                      />
-                    </Card>
-                  </Col>
-                </Row>
-
                 <Divider />
 
                 {/* Shifts Table */}

@@ -85,9 +85,11 @@ export interface ShiftSignupSummary {
 
 export interface EmployeeShiftSummaryResponse {
   employee: Employee;
-  totalHours: number;
-  shiftCount: number;
   shifts: ShiftSignupSummary[];
+  shiftCountPending: number;
+  totalHoursCompleted: number;
+  shiftCountCompleted: number;
+  shiftCountCancelled: number;
 }
 
 export interface EmployeeShiftSummaryParams {
