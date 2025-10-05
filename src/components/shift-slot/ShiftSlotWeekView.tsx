@@ -105,10 +105,9 @@ export default function ShiftSlotWeekView({
                     return (
                       <button
                         key={shift.id}
-                        disabled={!isAvailable}
                         className={`w-full cursor-pointer text-left p-3 rounded-lg border transition-all ${
                           isAvailable
-                            ? "border-gray-300 bg-secondary hover:border-primary/50 hover:bg-secondary/80 hover:border-blue-300"
+                            ? "border-gray-300 hover:border-primary/50 hover:bg-secondary/80 hover:border-blue-300"
                             : "border-gray-300 bg-muted/30 opacity-50 cursor-not-allowed"
                         }`}
                         onClick={() => onShiftSelect(shift)}
