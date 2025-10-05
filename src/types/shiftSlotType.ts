@@ -4,6 +4,7 @@ export interface ShiftSlotType {
   name: string;
   startDate: Date;
   endDate: Date;
+  isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

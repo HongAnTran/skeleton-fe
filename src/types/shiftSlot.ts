@@ -18,7 +18,10 @@ export interface ShiftSlot {
   // Relations
   department?: Pick<Department, "id" | "name">;
   branch?: Pick<Branch, "id" | "name">;
-  type?: Pick<ShiftSlotType, "id" | "name" | "startDate" | "endDate">;
+  type: Pick<
+    ShiftSlotType,
+    "id" | "name" | "startDate" | "endDate" | "isDeleted"
+  >;
   signups: ShiftSignup[];
 }
 
@@ -38,7 +41,10 @@ export interface ShiftSlotList {
   // Relations
   department?: Pick<Department, "id" | "name">;
   branch?: Pick<Branch, "id" | "name">;
-  type?: Pick<ShiftSlotType, "id" | "name" | "startDate" | "endDate">;
+  type: Pick<
+    ShiftSlotType,
+    "id" | "name" | "startDate" | "endDate" | "isDeleted"
+  >;
 
   signups: ShiftSignup[];
 }

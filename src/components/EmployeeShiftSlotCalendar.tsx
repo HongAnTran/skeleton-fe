@@ -206,10 +206,13 @@ export function EmployeeShiftSlotCalendar() {
   }, [employee?.departmentId]);
 
   const getShiftSlotsForDate = (date: Dayjs) => {
-    return (
-      filteredShiftSlots
-        ?.filter((slot) => dayjs(slot.date).isSame(date, "day"))
-        .sort((a, b) => a.startDate.getTime() - b.startDate.getTime()) || []
+    const shifts =
+      filteredShiftSlots?.filter((slot) =>
+        dayjs(slot.date).isSame(date, "day")
+      ) || [];
+
+    return shifts.sort(
+      (a, b) => a.type?.startDate.getTime() - b.type?.startDate.getTime()
     );
   };
 
