@@ -6,6 +6,7 @@ export interface ShiftSlot {
   id: string;
   userId: string;
   branchId: string;
+  departmentId: string;
   startDate: Date;
   endDate: Date;
   capacity: number;
@@ -25,6 +26,7 @@ export interface ShiftSlotList {
   id: string;
   userId: string;
   branchId: string;
+  departmentId: string;
   startDate: Date;
   endDate: Date;
   capacity: number;
@@ -42,16 +44,17 @@ export interface ShiftSlotList {
 }
 
 export interface CreateShiftSlotDto {
-  departmentId: string;
+  departmentIds: string[];
   branchId: string; // UUID của chi nhánh
   capacity: number; // Số lượng người tối đa (min: 1)
   note?: string; // Ghi chú (optional)
   date: string; // Ngày làm việc ISO format
-  typeId: string; // UUID của Shift Slot Type
+  typeIds: string[]; // UUID của Shift Slot Type
   endDate?: string; // Ngày kết thúc ISO format
 }
 
 export interface UpdateShiftSlotDto {
+  departmentId: string;
   branchId?: string;
   capacity?: number;
   note?: string;

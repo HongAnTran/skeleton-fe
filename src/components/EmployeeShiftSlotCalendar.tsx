@@ -37,7 +37,7 @@ import {
   useCreateShiftSignup,
 } from "../queries/shiftSignup.queries";
 import type { ShiftSlot } from "../types/shiftSlot";
-import ShiftSlotWeekViewEmployee from "./ShiftSlotWeekViewEmployee";
+import ShiftSlotWeekViewEmployee from "./shift-slot/ShiftSlotWeekViewEmployee";
 import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
 import type { ShiftSignup } from "../types/shiftSignup";
 import { ShiftSignupCancelModal } from "./ShiftSignupCancelModal";

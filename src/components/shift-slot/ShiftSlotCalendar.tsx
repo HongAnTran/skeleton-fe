@@ -32,14 +32,14 @@ import {
   useUpdateShiftSlot,
   useDeleteShiftSlot,
   useShiftSlots,
-} from "../queries/shiftSlot.queries";
-import { useBranches } from "../queries/branch.queries";
+} from "../../queries/shiftSlot.queries";
+import { useBranches } from "../../queries/branch.queries";
 import { ShiftSlotForm } from "./ShiftSlotForm";
 import { ShiftSlotDetailItem } from "./ShiftSlotDetailItem";
 import ShiftSlotWeekView from "./ShiftSlotWeekView";
-import type { ShiftSlot } from "../types/shiftSlot";
-import { useShiftSlotTypes } from "../queries/shiftSlotType.queries";
-import { useDepartments } from "../queries/department.queries";
+import type { ShiftSlot } from "../../types/shiftSlot";
+import { useShiftSlotTypes } from "../../queries/shiftSlotType.queries";
+import { useDepartments } from "../../queries/department.queries";
 
 const { Title, Text } = Typography;
 

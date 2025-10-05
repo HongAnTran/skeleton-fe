@@ -5,7 +5,7 @@ import type {
   ShiftSlotType,
   CreateShiftSlotTypeDto,
   UpdateShiftSlotTypeDto,
-} from "../types/shiftSlotType";
+} from "../../types/shiftSlotType";
 
 interface ShiftSlotTypeFormProps {
   shiftSlotType?: ShiftSlotType | null;

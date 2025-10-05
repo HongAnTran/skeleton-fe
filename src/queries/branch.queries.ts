@@ -5,8 +5,10 @@ import type {
   CreateBranchRequest,
   UpdateBranchRequest,
   BranchListParams,
+  Branch,
 } from "../types/branch";
 import type { ReactQueryOptions } from "../types/reactQuery";
+import type { PaginatedResult } from "../types/api";
 
 export const BRANCH_KEYS = {
   all: ["branches"] as const,
@@ -19,14 +21,20 @@ export const BRANCH_KEYS = {
 // Get branches with pagination
 export const useBranches = (
   params: BranchListParams,
-  options?: ReactQueryOptions
+  options?: ReactQueryOptions<PaginatedResult<Branch>>
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: BRANCH_KEYS.list(params),
     queryFn: () => BranchService.getList(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 // Get single branch

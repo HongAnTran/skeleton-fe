@@ -17,10 +17,10 @@ import type {
   ShiftSlot,
   CreateShiftSlotDto,
   UpdateShiftSlotDto,
-} from "../types/shiftSlot";
-import { useBranches } from "../queries/branch.queries";
-import { useShiftSlotTypes } from "../queries/shiftSlotType.queries";
-import { useDepartments } from "../queries/department.queries";
+} from "../../types/shiftSlot";
+import { useBranches } from "../../queries/branch.queries";
+import { useShiftSlotTypes } from "../../queries/shiftSlotType.queries";
+import { useDepartments } from "../../queries/department.queries";
 
 interface ShiftSlotFormProps {
   shiftSlot?: ShiftSlot | null;
@@ -52,10 +52,19 @@ export function ShiftSlotForm({
       : "Thêm";
   const finalSubmitText = submitText || `${defaultSubmitText} ca làm việc`;
 
-  const { data: branchesData, isLoading: branchesLoading } = useBranches({
-    page: 1,
-    limit: 1000,
-  });
+  const { data: branchesData, isLoading: branchesLoading } = useBranches(
+    {
+      page: 1,
+      limit: 1000,
+    },
+    {
+      onSuccess: (data) => {
+        form.setFieldsValue({
+          branchId: data.data[0].id,
+        });
+      },
+    }
+  );
   const { data: departmentsData, isLoading: departmentsLoading } =
     useDepartments({
       page: 1,
@@ -75,38 +84,36 @@ export function ShiftSlotForm({
       if (isEditing && shiftSlot) {
         const updateData: UpdateShiftSlotDto = {
           branchId: values.branchId,
+          departmentId: values.departmentIds,
           capacity: values.capacity,
           note: values.note || undefined,
           date,
-          typeId: values.typeId,
+          typeId: values.typeIds,
         };
         await onSubmit(updateData);
       } else if (createMultiple && values.endDate && onSubmitMany) {
         const endDate = values.endDate.format("YYYY-MM-DD");
         const createManyData: CreateShiftSlotDto = {
-          departmentId: values.departmentId,
+          departmentIds: values.departmentIds,
           branchId: values.branchId,
           capacity: values.capacity,
           note: values.note || undefined,
           date,
           endDate,
-          typeId: values.typeId,
+          typeIds: values.typeIds,
         };
         await onSubmitMany(createManyData);
       } else {
-        // Create single shift slot
-        console.log(date);
         const createData: CreateShiftSlotDto = {
-          departmentId: values.departmentId,
+          departmentIds: values.departmentIds,
           branchId: values.branchId,
           capacity: values.capacity,
           note: values.note || undefined,
           date,
-          typeId: values.typeId,
+          typeIds: values.typeIds,
         };
         await onSubmit(createData);
       }
-      form.resetFields();
       setCreateMultiple(false);
     } catch (error) {
       // Error handling is done by parent component
@@ -124,10 +131,11 @@ export function ShiftSlotForm({
       setCreateMultiple(false); // Disable bulk create when editing
       form.setFieldsValue({
         branchId: shiftSlot.branchId,
+        departmentIds: shiftSlot.departmentId,
         capacity: shiftSlot.capacity,
         note: shiftSlot.note,
         date: dayjs(shiftSlot.date),
-        typeId: shiftSlot.type?.id,
+        typeIds: shiftSlot.type?.id,
       });
     } else {
       form.resetFields();
@@ -170,7 +178,7 @@ export function ShiftSlotForm({
         <Col span={12}>
           <Form.Item
             label="Phòng ban"
-            name="departmentId"
+            name="departmentIds"
             rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
           >
             <Select
@@ -178,6 +186,7 @@ export function ShiftSlotForm({
               loading={departmentsLoading}
               showSearch
               optionFilterProp="children"
+              mode={!isEditing ? "multiple" : undefined}
             >
               {departmentsData?.data?.map((department) => (
                 <Select.Option key={department.id} value={department.id}>
@@ -190,10 +199,11 @@ export function ShiftSlotForm({
         <Col span={12}>
           <Form.Item
             label="Loại ca"
-            name="typeId"
+            name="typeIds"
             rules={[{ required: true, message: "Vui lòng chọn loại ca!" }]}
           >
             <Select
+              mode={!isEditing ? "multiple" : undefined}
               placeholder="Chọn loại ca"
               loading={shiftSlotTypesLoading}
               showSearch

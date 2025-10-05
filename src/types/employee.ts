@@ -19,6 +19,7 @@ export interface Employee {
   account: {
     id: string;
     email: string;
+    username: string;
   }; // Thông tin account
   shiftSignups?: any[]; // Danh sách ca làm việc
   tasks?: any[]; // Danh sách task
@@ -41,6 +42,7 @@ export interface UpdateEmployeeDto {
   departmentId?: string; // Optional
   name?: string; // Optional
   password?: string; // Optional
+  email?: string; // Optional
   phone?: string; // Optional
   active?: boolean; // Optional
   provider?: string; // Optional

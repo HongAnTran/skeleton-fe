@@ -1,10 +1,10 @@
 export * from "./layouts";
 export { DepartmentForm } from "./DepartmentForm";
 export { BranchForm } from "./BranchForm";
-export { ShiftSlotTypeForm } from "./ShiftSlotTypeForm";
-export { ShiftSlotForm } from "./ShiftSlotForm";
-export { ShiftSlotTable } from "./ShiftSlotTable";
-export { ShiftSlotCalendar } from "./ShiftSlotCalendar";
+export { ShiftSlotTypeForm } from "./shift-slot/ShiftSlotTypeForm";
+export { ShiftSlotForm } from "./shift-slot/ShiftSlotForm";
+export { ShiftSlotTable } from "./shift-slot/ShiftSlotTable";
+export { ShiftSlotCalendar } from "./shift-slot/ShiftSlotCalendar";
 export { EmployeeShiftSlotCalendar } from "./EmployeeShiftSlotCalendar";
 export { EmployeeShiftSignupTable } from "./EmployeeShiftSignupTable";
 export { ShiftSignupCancelModal } from "./ShiftSignupCancelModal";

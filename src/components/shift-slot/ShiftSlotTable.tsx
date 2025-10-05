@@ -29,13 +29,14 @@ import {
   useCreateShiftSlot,
   useCreateManyShiftSlots,
   useUpdateShiftSlot,
-} from "../queries/shiftSlot.queries";
-import { useBranches } from "../queries/branch.queries";
-import { useShiftSlotTypes } from "../queries/shiftSlotType.queries";
+} from "../../queries/shiftSlot.queries";
+import { useBranches } from "../../queries/branch.queries";
+import { useShiftSlotTypes } from "../../queries/shiftSlotType.queries";
 import { ShiftSlotForm } from "./ShiftSlotForm";
-import { AdminShiftSignupActions } from "./AdminShiftSignupActions";
-import type { ShiftSlot, ShiftSlotList } from "../types/shiftSlot";
+import { AdminShiftSignupActions } from "../AdminShiftSignupActions";
+import type { ShiftSlot, ShiftSlotList } from "../../types/shiftSlot";
 import type { ColumnsType } from "antd/es/table";
+import { useDepartments } from "../../queries/department.queries";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -45,6 +46,7 @@ export function ShiftSlotTable() {
   const [pageSize, setPageSize] = useState(10);
   const [branchId, setBranchId] = useState<string>();
   const [typeId, setTypeId] = useState<string>();
+  const [departmentId, setDepartmentId] = useState<string>();
   const [dateRange, setDateRange] = useState<[string, string]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingShiftSlot, setEditingShiftSlot] = useState<ShiftSlot | null>(
@@ -58,9 +60,15 @@ export function ShiftSlotTable() {
     typeId,
     startDate: dateRange?.[0],
     endDate: dateRange?.[1],
+    departmentId,
   });
 
   const { data: branchesData } = useBranches({
+    page: 1,
+    limit: 1000,
+  });
+
+  const { data: departmentsData } = useDepartments({
     page: 1,
     limit: 1000,
   });
@@ -350,7 +358,7 @@ export function ShiftSlotTable() {
       {/* Filters */}
       <Card size="small" className="mb-4">
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={5}>
             <Select
               placeholder="Chọn chi nhánh"
               value={branchId}
@@ -365,7 +373,22 @@ export function ShiftSlotTable() {
               ))}
             </Select>
           </Col>
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={5}>
+            <Select
+              placeholder="Chọn phòng ban"
+              value={departmentId}
+              onChange={setDepartmentId}
+              allowClear
+              className="w-full"
+            >
+              {departmentsData?.data?.map((department) => (
+                <Select.Option key={department.id} value={department.id}>
+                  {department.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+          <Col xs={24} sm={12} md={3}>
             <Select
               placeholder="Chọn loại ca"
               value={typeId}
@@ -380,7 +403,7 @@ export function ShiftSlotTable() {
               ))}
             </Select>
           </Col>
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={6}>
             <RangePicker
               placeholder={["Từ ngày", "Đến ngày"]}
               format="DD/MM/YYYY"

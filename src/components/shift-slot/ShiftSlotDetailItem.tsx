@@ -16,9 +16,9 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import type { ShiftSlot } from "../types/shiftSlot";
-import { ShiftSignupStatus } from "../types/shiftSignup";
-import { AdminShiftSignupActions } from "./AdminShiftSignupActions";
+import type { ShiftSlot } from "../../types/shiftSlot";
+import { ShiftSignupStatus } from "../../types/shiftSignup";
+import { AdminShiftSignupActions } from "../AdminShiftSignupActions";
 
 const { Text } = Typography;
 
