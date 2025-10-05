@@ -110,13 +110,12 @@ export function ShiftSlotCalendar() {
   }, [branchesData?.data]);
 
   const getShiftSlotsForDate = (date: Dayjs) => {
-    //and sort by startDate
-    return (
-      shiftSlots?.data
-        ?.filter((slot) => dayjs(slot.date).isSame(date, "day"))
-        .sort(
-          (a, b) => a.type.startDate.getTime() - b.type.startDate.getTime()
-        ) || []
+    const shifts =
+      shiftSlots?.data?.filter((slot) =>
+        dayjs(slot.date).isSame(date, "day")
+      ) || [];
+    return shifts.sort(
+      (a, b) => a.type.startDate.getTime() - b.type.startDate.getTime()
     );
   };
 
