@@ -15,6 +15,7 @@ export class AuthUserService {
 
     if (data) {
       tokenStorage.setTokens(data.access_token, data.refresh_token);
+      tokenStorage.setType("user");
     }
     return data;
   }

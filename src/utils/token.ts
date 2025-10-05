@@ -1,6 +1,7 @@
 // Token management utilities
 const TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
+const TYPE_KEY = "type";
 
 export const tokenStorage = {
   getAccessToken(): string | null {
@@ -50,6 +51,7 @@ export const tokenStorage = {
     try {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(TYPE_KEY);
     } catch (error) {
       console.error("Error clearing tokens:", error);
     }
@@ -58,6 +60,23 @@ export const tokenStorage = {
   // Check if user is authenticated
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
+  },
+
+  setType(type: "user" | "employee"): void {
+    try {
+      localStorage.setItem(TYPE_KEY, type);
+    } catch (error) {
+      console.error("Error setting type:", error);
+    }
+  },
+
+  getType(): "user" | "employee" | null {
+    try {
+      return localStorage.getItem(TYPE_KEY) as "user" | "employee" | null;
+    } catch (error) {
+      console.error("Error getting type:", error);
+      return null;
+    }
   },
 
   isTokenExpired(token: string): boolean {

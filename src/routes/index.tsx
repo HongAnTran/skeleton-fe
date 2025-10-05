@@ -1,10 +1,24 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Card, Typography, Button } from "antd";
 import { UserOutlined, TeamOutlined, LoginOutlined } from "@ant-design/icons";
+import { tokenStorage } from "../utils/token";
 
 const { Title, Text } = Typography;
 
 export const Route = createFileRoute("/")({
+  beforeLoad: () => {
+    if (tokenStorage.isAuthenticated()) {
+      if (tokenStorage.getType() === "user") {
+        throw redirect({
+          to: "/u",
+        });
+      } else if (tokenStorage.getType() === "employee") {
+        throw redirect({
+          to: "/e",
+        });
+      }
+    }
+  },
   component: Index,
 });
 

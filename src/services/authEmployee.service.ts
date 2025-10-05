@@ -15,6 +15,7 @@ export class AuthEmployeeService {
 
     if (data) {
       tokenStorage.setTokens(data.access_token, data.refresh_token);
+      tokenStorage.setType("employee");
     }
     return data;
   }
