@@ -20,14 +20,14 @@ const { Title, Text } = Typography;
 
 interface WeekViewProps {
   selectedDate: Dayjs;
-  onDateSelect: (date: Dayjs) => void;
+  onShiftSelect: (shift: ShiftSlot) => void;
   onWeekChange: (weekStart: Dayjs) => void;
   getShiftSlotsForDate: (date: Dayjs) => ShiftSlot[];
 }
 
 export default function ShiftSlotWeekView({
   selectedDate,
-  onDateSelect,
+  onShiftSelect,
   onWeekChange,
   getShiftSlotsForDate,
 }: WeekViewProps) {
@@ -79,7 +79,6 @@ export default function ShiftSlotWeekView({
                 ${isToday(day) ? "bg-blue-50" : ""}
                 hover:shadow-md hover:border-blue-300
               `}
-              onClick={() => onDateSelect(day)}
             >
               <div className="mb-4 pb-3 border-b border-gray-200">
                 <div className="text-sm text-muted-foreground">{dayOfWeek}</div>
@@ -112,6 +111,7 @@ export default function ShiftSlotWeekView({
                             ? "border-gray-300 bg-secondary hover:border-primary/50 hover:bg-secondary/80 hover:border-blue-300"
                             : "border-gray-300 bg-muted/30 opacity-50 cursor-not-allowed"
                         }`}
+                        onClick={() => onShiftSelect(shift)}
                       >
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <Tag

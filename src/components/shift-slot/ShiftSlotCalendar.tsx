@@ -53,6 +53,7 @@ export function ShiftSlotCalendar() {
   const [branchFilter, setBranchFilter] = useState<string>();
   const [departmentFilter, setDepartmentFilter] = useState<string>();
   const [typeFilter, setTypeFilter] = useState<string>();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingShiftSlot, setEditingShiftSlot] = useState<ShiftSlot | null>(
     null
@@ -233,6 +234,12 @@ export function ShiftSlotCalendar() {
     }
   };
 
+  const handleShiftSelect = (shift: ShiftSlot) => {
+    setSelectedDate(dayjs(shift.date));
+    setSelectedDayShifts([shift]);
+    setIsDetailModalOpen(true);
+  };
+
   return (
     <div>
       <Flex align="center" wrap gap={8} style={{ marginBottom: 16 }}>
@@ -329,7 +336,7 @@ export function ShiftSlotCalendar() {
       {viewMode === "week" ? (
         <ShiftSlotWeekView
           selectedDate={selectedDate}
-          onDateSelect={handleDateSelect}
+          onShiftSelect={handleShiftSelect}
           onWeekChange={handleWeekChange}
           getShiftSlotsForDate={getShiftSlotsForDate}
         />
