@@ -132,9 +132,7 @@ export default function ShiftSlotWeekViewEmployee({
                               </span>
                             </div>
                           ) : (
-                            <span className="text-xs text-muted-foreground">
-                              Đã đầy
-                            </span>
+                            <span className="text-xs text-red-500">Đã đầy</span>
                           )}
                         </div>
 

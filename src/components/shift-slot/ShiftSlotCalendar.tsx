@@ -116,9 +116,9 @@ export function ShiftSlotCalendar() {
       ) || [];
 
     return shifts.sort((a, b) => {
-      const startDate = new Date(a.type.startDate);
-      const endDate = new Date(b.type.endDate);
-      return startDate.getTime() - endDate.getTime();
+      const startA = new Date(a.type.startDate);
+      const startB = new Date(b.type.startDate);
+      return startA.getTime() - startB.getTime();
     });
   };
 
