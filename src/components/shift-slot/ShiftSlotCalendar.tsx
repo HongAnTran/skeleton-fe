@@ -114,7 +114,9 @@ export function ShiftSlotCalendar() {
     return (
       shiftSlots?.data
         ?.filter((slot) => dayjs(slot.date).isSame(date, "day"))
-        .sort((a, b) => a.startDate.getTime() - b.startDate.getTime()) || []
+        .sort(
+          (a, b) => a.type.startDate.getTime() - b.type.startDate.getTime()
+        ) || []
     );
   };
 

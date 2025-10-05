@@ -7,8 +7,6 @@ export interface ShiftSlot {
   userId: string;
   branchId: string;
   departmentId: string;
-  startDate: Date;
-  endDate: Date;
   capacity: number;
   note?: string;
   date: Date;
@@ -30,8 +28,6 @@ export interface ShiftSlotList {
   userId: string;
   branchId: string;
   departmentId: string;
-  startDate: Date;
-  endDate: Date;
   capacity: number;
   note?: string;
   date: Date;
