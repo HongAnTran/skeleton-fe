@@ -81,14 +81,23 @@ export default function ShiftSlotWeekViewEmployee({
               key={day.format("YYYY-MM-DD")}
               className={`
                 p-4 cursor-pointer transition-all duration-200 h-full min-h-[200px]
-                ${isToday(day) ? "bg-blue-50" : ""}
                 hover:shadow-md hover:border-blue-300
               `}
               onClick={() => onDateSelect(day)}
             >
               <div className="mb-4 pb-3 border-b border-gray-200">
-                <div className="text-sm text-muted-foreground">{dayOfWeek}</div>
-                <div className="text-2xl font-semibold text-foreground">
+                <div
+                  className={`text-sm text-muted-foreground ${
+                    isToday(day) ? "text-green-500 font-bold" : ""
+                  }`}
+                >
+                  {dayOfWeek}
+                </div>
+                <div
+                  className={`text-2xl font-semibold text-foreground ${
+                    isToday(day) ? "text-green-500 font-bold" : ""
+                  }`}
+                >
                   {day.format("DD")}
                 </div>
               </div>
@@ -141,7 +150,9 @@ export default function ShiftSlotWeekViewEmployee({
                           <span className="font-mono">
                             {type?.startDate &&
                               type?.endDate &&
-                              `${dayjs(type.startDate).format("HH:mm")} - ${dayjs(type.endDate).format("HH:mm")}`}
+                              `${dayjs(type.startDate).format(
+                                "HH:mm"
+                              )} - ${dayjs(type.endDate).format("HH:mm")}`}
                           </span>
                         </div>
 
