@@ -27,24 +27,36 @@ export const useShiftSlots = (
   params: ShiftSlotListParams,
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: SHIFT_SLOT_KEYS.list(params),
     queryFn: () => ShiftSlotService.getList(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 export const useShiftSlotsByEmployee = (
   params?: ShiftSlotListParams,
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: SHIFT_SLOT_KEYS.listByEmployee(params),
     queryFn: () => ShiftSlotService.getListByEmployee(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 // Get single shift slot by ID
@@ -76,9 +88,6 @@ export const useCreateShiftSlot = () => {
 
       message.success("Ca làm việc đã được tạo thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi tạo ca làm việc");
-    },
   });
 };
 
@@ -94,9 +103,6 @@ export const useCreateManyShiftSlots = () => {
       queryClient.invalidateQueries({ queryKey: SHIFT_SLOT_KEYS.calendar() });
 
       message.success(`${count} ca làm việc đã được tạo thành công!`);
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi tạo nhiều ca làm việc");
     },
   });
 };
@@ -118,9 +124,6 @@ export const useUpdateShiftSlot = () => {
 
       message.success("Ca làm việc đã được cập nhật thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi cập nhật ca làm việc");
-    },
   });
 };
 
@@ -139,9 +142,6 @@ export const useDeleteShiftSlot = () => {
       });
 
       message.success("Ca làm việc đã được xóa thành công!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi xóa ca làm việc");
     },
   });
 };

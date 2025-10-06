@@ -8,8 +8,8 @@ import {
   ClockCircleOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import type { ShiftSwapRequest } from "../types/shiftSwap";
-import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
+import type { ShiftSwapRequest } from "../../types/shiftSwap";
+import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
 
 const { Text, Title } = Typography;
 

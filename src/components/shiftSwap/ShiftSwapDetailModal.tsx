@@ -20,7 +20,7 @@ import {
   SendOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import type { ShiftSwapRequest } from "../types/shiftSwap";
+import type { ShiftSwapRequest } from "../../types/shiftSwap";
 
 const { Text, Title, Paragraph } = Typography;
 

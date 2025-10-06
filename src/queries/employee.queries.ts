@@ -26,12 +26,18 @@ export const useEmployees = (
   params: EmployeeListParams,
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: EMPLOYEE_KEYS.list(params),
     queryFn: () => EmployeeService.getList(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 // Get single employee by ID
@@ -78,9 +84,6 @@ export const useCreateEmployee = () => {
 
       message.success("Nhân viên đã được tạo thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi tạo nhân viên");
-    },
   });
 };
 
@@ -101,9 +104,6 @@ export const useUpdateEmployee = () => {
 
       message.success("Nhân viên đã được cập nhật thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi cập nhật nhân viên");
-    },
   });
 };
 
@@ -120,9 +120,6 @@ export const useDeleteEmployee = () => {
       queryClient.removeQueries({ queryKey: EMPLOYEE_KEYS.detail(deletedId) });
 
       message.success("Nhân viên đã được xóa thành công!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi xóa nhân viên");
     },
   });
 };

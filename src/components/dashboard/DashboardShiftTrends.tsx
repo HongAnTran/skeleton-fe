@@ -1,4 +1,4 @@
-import type { ShiftTrend } from "../types/dashboard";
+import type { ShiftTrend } from "../../types/dashboard";
 
 interface DashboardShiftTrendsProps {
   trends: ShiftTrend[];

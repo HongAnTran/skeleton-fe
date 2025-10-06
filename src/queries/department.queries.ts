@@ -22,12 +22,18 @@ export const useDepartments = (
   params: DepartmentListParams,
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: DEPARTMENT_KEYS.list(params),
     queryFn: () => DepartmentService.getList(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 // Get single department
@@ -51,9 +57,6 @@ export const useCreateDepartment = () => {
       queryClient.invalidateQueries({ queryKey: DEPARTMENT_KEYS.lists() });
       message.success("Phòng ban đã được tạo thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi tạo phòng ban");
-    },
   });
 };
 
@@ -68,9 +71,6 @@ export const useUpdateDepartment = () => {
       queryClient.invalidateQueries({ queryKey: DEPARTMENT_KEYS.all });
       message.success("Phòng ban đã được cập nhật thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi cập nhật phòng ban");
-    },
   });
 };
 
@@ -83,9 +83,6 @@ export const useDeleteDepartment = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: DEPARTMENT_KEYS.lists() });
       message.success("Phòng ban đã được xóa thành công!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi xóa phòng ban");
     },
   });
 };

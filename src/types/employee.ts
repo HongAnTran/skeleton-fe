@@ -21,8 +21,6 @@ export interface Employee {
     email: string;
     username: string;
   }; // Thông tin account
-  shiftSignups?: any[]; // Danh sách ca làm việc
-  tasks?: any[]; // Danh sách task
 }
 
 export interface CreateEmployeeDto {

@@ -22,12 +22,18 @@ export const useShiftSlotTypes = (
   params: ShiftSlotTypeListParams,
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: SHIFT_SLOT_TYPE_KEYS.list(params),
     queryFn: () => ShiftSlotTypeService.getList(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 // Get single shift slot type by ID
@@ -59,9 +65,6 @@ export const useCreateShiftSlotType = () => {
 
       message.success("Loại ca làm việc đã được tạo thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi tạo loại ca làm việc");
-    },
   });
 };
 
@@ -84,9 +87,6 @@ export const useUpdateShiftSlotType = () => {
 
       message.success("Loại ca làm việc đã được cập nhật thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi cập nhật loại ca làm việc");
-    },
   });
 };
 
@@ -105,9 +105,6 @@ export const useDeleteShiftSlotType = () => {
       });
 
       message.success("Loại ca làm việc đã được xóa thành công!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi xóa loại ca làm việc");
     },
   });
 };

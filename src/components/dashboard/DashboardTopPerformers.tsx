@@ -1,4 +1,4 @@
-import type { TopPerformer } from "../types/dashboard";
+import type { TopPerformer } from "../../types/dashboard";
 
 interface DashboardTopPerformersProps {
   performers: TopPerformer[];
@@ -10,9 +10,9 @@ export function DashboardTopPerformers({
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Nhân Viên Xuất Sắc
+        Nhân Viên Năng Suất
       </h3>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[300px] overflow-y-auto">
         {performers.length === 0 ? (
           <p className="text-gray-500 text-center py-4">
             Không có dữ liệu hiệu suất

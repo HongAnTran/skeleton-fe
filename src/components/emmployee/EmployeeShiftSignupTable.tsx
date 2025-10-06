@@ -19,11 +19,11 @@ import dayjs from "dayjs";
 import {
   useShiftSignups,
   useCancelShiftSignup,
-} from "../queries/shiftSignup.queries";
-import { ShiftSignupStatus, type ShiftSignup } from "../types/shiftSignup";
+} from "../../queries/shiftSignup.queries";
+import { ShiftSignupStatus, type ShiftSignup } from "../../types/shiftSignup";
 import type { ColumnsType } from "antd/es/table";
-import { ShiftSignupCancelModal } from "./ShiftSignupCancelModal";
-import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
+import { ShiftSignupCancelModal } from "../ShiftSignupCancelModal";
+import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -56,29 +56,13 @@ export function EmployeeShiftSignupTable() {
   const handleConfirmCancel = async () => {
     if (!selectedSignup || !cancelReason.trim()) return;
 
-    try {
-      await cancelShiftSignupMutation.mutateAsync({
-        id: selectedSignup.id,
-        data: { cancelReason: cancelReason.trim() },
-      });
-      setIsCancelModalOpen(false);
-      setSelectedSignup(null);
-      setCancelReason("");
-    } catch (error) {
-      // Error is handled by the mutation
-    }
-  };
-
-  const handleDateRangeChange = (dates: any) => {
-    if (dates) {
-      setDateRange([
-        dates[0].format("YYYY-MM-DD"),
-        dates[1].format("YYYY-MM-DD"),
-      ]);
-    } else {
-      setDateRange(undefined);
-    }
-    setCurrentPage(1);
+    await cancelShiftSignupMutation.mutateAsync({
+      id: selectedSignup.id,
+      data: { cancelReason: cancelReason.trim() },
+    });
+    setIsCancelModalOpen(false);
+    setSelectedSignup(null);
+    setCancelReason("");
   };
 
   const handleClearFilters = () => {
@@ -113,7 +97,9 @@ export function EmployeeShiftSignupTable() {
             <ClockCircleOutlined className="text-gray-500" />
             <Text type="secondary" className="text-sm">
               {record.slot?.type?.startDate
-                ? `${dayjs(record.slot.type.startDate).format("HH:mm")} - ${dayjs(record.slot.type.endDate).format("HH:mm")}`
+                ? `${dayjs(record.slot.type.startDate).format(
+                    "HH:mm"
+                  )} - ${dayjs(record.slot.type.endDate).format("HH:mm")}`
                 : "N/A"}
             </Text>
           </div>
@@ -228,7 +214,17 @@ export function EmployeeShiftSignupTable() {
             <RangePicker
               placeholder={["Từ ngày", "Đến ngày"]}
               format="DD/MM/YYYY"
-              onChange={handleDateRangeChange}
+              onChange={(dates) => {
+                if (dates) {
+                  setDateRange([
+                    dates?.[0]?.format("YYYY-MM-DD") || "",
+                    dates?.[1]?.format("YYYY-MM-DD") || "",
+                  ]);
+                } else {
+                  setDateRange(undefined);
+                }
+                setCurrentPage(1);
+              }}
               className="w-full"
             />
           </Col>

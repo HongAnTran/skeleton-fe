@@ -1,4 +1,4 @@
-import type { DepartmentPerformance } from "../types/dashboard";
+import type { DepartmentPerformance } from "../../types/dashboard";
 
 interface DashboardDepartmentPerformanceProps {
   departments: DepartmentPerformance[];
@@ -39,9 +39,6 @@ export function DashboardDepartmentPerformance({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   TB Giờ/Nhân Viên
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tỷ Lệ Sử Dụng
-                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -68,27 +65,6 @@ export function DashboardDepartmentPerformance({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {dept.averageHoursPerEmployee.toFixed(1)}h
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-1 bg-gray-200 rounded-full h-2 mr-2">
-                        <div
-                          className={`h-2 rounded-full ${
-                            dept.utilizationRate >= 90
-                              ? "bg-green-500"
-                              : dept.utilizationRate >= 75
-                                ? "bg-yellow-500"
-                                : "bg-red-500"
-                          }`}
-                          style={{
-                            width: `${Math.min(dept.utilizationRate, 100)}%`,
-                          }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-gray-900">
-                        {dept.utilizationRate.toFixed(1)}%
-                      </span>
-                    </div>
                   </td>
                 </tr>
               ))}

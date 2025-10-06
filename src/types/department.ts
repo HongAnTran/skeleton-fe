@@ -4,7 +4,6 @@ export interface Department {
   name: string; // Tên department (VD: "Human Resources")
   createdAt: Date; // Ngày tạo
   updatedAt: Date; // Ngày cập nhật
-  user?: any; // Thông tin user (optional)
 }
 
 export interface CreateDepartmentRequest {

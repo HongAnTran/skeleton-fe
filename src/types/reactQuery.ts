@@ -1,4 +1,4 @@
-export interface ReactQueryOptions<T = any> {
+export interface ReactQueryOptions<T = unknown> {
   enabled?: boolean;
   staleTime?: number;
   retry?: boolean;

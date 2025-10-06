@@ -18,10 +18,10 @@ import {
   useCreateShiftSwapRequest,
   useRespondShiftSwapRequest,
   useCancelShiftSwapRequest,
-} from "../queries/shiftSwap.queries";
-import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
+} from "../../queries/shiftSwap.queries";
+import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
 import { ShiftSwapCard } from "./ShiftSwapCard";
-import { CreateShiftSwapModal } from "./CreateShiftSwapModal";
+import { CreateShiftSwapModal } from "../CreateShiftSwapModal";
 import { ShiftSwapResponseModal } from "./ShiftSwapResponseModal";
 import { ShiftSwapDetailModal } from "./ShiftSwapDetailModal";
 import type {
@@ -29,7 +29,7 @@ import type {
   ShiftSwapStatus,
   CreateShiftSwapRequestDto,
   RespondShiftSwapRequestDto,
-} from "../types/shiftSwap";
+} from "../../types/shiftSwap";
 
 const { Title } = Typography;
 
