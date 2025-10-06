@@ -61,6 +61,9 @@ export interface ShiftSignupSummary {
   totalHours: number;
   createdAt: Date;
   updatedAt: Date;
+  cancelReason: string;
+  canceledBy: string;
+  canceledAt: string;
   slot: {
     id: string;
     date: Date;
