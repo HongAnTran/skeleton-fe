@@ -40,6 +40,7 @@ import ShiftSlotWeekView from "./ShiftSlotWeekView";
 import type { ShiftSlot } from "../../types/shiftSlot";
 import { useShiftSlotTypes } from "../../queries/shiftSlotType.queries";
 import { useDepartments } from "../../queries/department.queries";
+import { useEmployees } from "../../queries/employee.queries";
 
 const { Title, Text } = Typography;
 
@@ -52,6 +53,7 @@ export function ShiftSlotCalendar() {
   const [selectedMonth, setSelectedMonth] = useState(dayjs());
   const [branchFilter, setBranchFilter] = useState<string>();
   const [departmentFilter, setDepartmentFilter] = useState<string>();
+  const [employeeFilter, setEmployeeFilter] = useState<string>();
   const [typeFilter, setTypeFilter] = useState<string>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,15 +73,21 @@ export function ShiftSlotCalendar() {
       ? selectedWeek.endOf("week")
       : selectedMonth.endOf("month");
 
-  const { data: shiftSlots } = useShiftSlots({
-    startDate: startDate.toISOString(),
-    endDate: endDate.toISOString(),
-    page: 1,
-    limit: 1000,
-    branchId: branchFilter,
-    typeId: typeFilter,
-    departmentId: departmentFilter,
-  });
+  const { data: shiftSlots } = useShiftSlots(
+    {
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      page: 1,
+      limit: 1000,
+      branchId: branchFilter,
+      typeId: typeFilter,
+      departmentId: departmentFilter,
+      employeeId: employeeFilter,
+    },
+    {
+      enabled: !!branchFilter,
+    }
+  );
 
   const { data: branchesData } = useBranches({
     page: 1,
@@ -92,6 +100,11 @@ export function ShiftSlotCalendar() {
   });
 
   const { data: departmentsData } = useDepartments({
+    page: 1,
+    limit: 100,
+  });
+
+  const { data: employeesData } = useEmployees({
     page: 1,
     limit: 100,
   });
@@ -271,9 +284,11 @@ export function ShiftSlotCalendar() {
 
       <Card size="small" style={{ marginBottom: 16 }}>
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={5}>
             <Flex className="w-full" align="center" gap={8}>
-              <Typography.Text strong>Chi nhánh</Typography.Text>
+              <Typography.Text strong className=" hidden md:block">
+                Chi nhánh
+              </Typography.Text>
               <Select
                 placeholder="Lọc theo chi nhánh"
                 value={branchFilter}
@@ -288,9 +303,9 @@ export function ShiftSlotCalendar() {
               </Select>
             </Flex>
           </Col>
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={5}>
             <Flex className="w-full" align="center" gap={8}>
-              <Typography.Text strong className=" shrink-0">
+              <Typography.Text strong className=" shrink-0 hidden md:block">
                 Phòng ban
               </Typography.Text>
               <Select
@@ -308,22 +323,47 @@ export function ShiftSlotCalendar() {
               </Select>
             </Flex>
           </Col>
-          <Col xs={24} sm={12} md={6}>
-            <Select
-              placeholder="Lọc theo loại ca"
-              value={typeFilter}
-              onChange={setTypeFilter}
-              allowClear
-              className="w-full"
-            >
-              {shiftSlotTypesData?.data?.map((type) => (
-                <Select.Option key={type.id} value={type.id}>
-                  {type.name}
-                </Select.Option>
-              ))}
-            </Select>
+          <Col xs={24} sm={12} md={5}>
+            <Flex className="w-full" align="center" gap={8}>
+              <Typography.Text strong className=" shrink-0 hidden md:block">
+                Loại ca
+              </Typography.Text>
+              <Select
+                placeholder="Lọc theo loại ca"
+                value={typeFilter}
+                onChange={setTypeFilter}
+                allowClear
+                className="w-full"
+              >
+                {shiftSlotTypesData?.data?.map((type) => (
+                  <Select.Option key={type.id} value={type.id}>
+                    {type.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Flex>
           </Col>
-          <Col xs={24} sm={12} md={6}>
+          <Col xs={24} sm={12} md={5}>
+            <Flex className="w-full" align="center" gap={8}>
+              <Typography.Text strong className=" shrink-0 hidden md:block">
+                Nhân viên
+              </Typography.Text>
+              <Select
+                placeholder="Lọc theo nhân viên"
+                value={employeeFilter}
+                onChange={setEmployeeFilter}
+                className="w-full"
+                allowClear
+              >
+                {employeesData?.data?.map((employee) => (
+                  <Select.Option key={employee.id} value={employee.id}>
+                    {employee.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Flex>
+          </Col>
+          <Col xs={24} sm={12} md={4}>
             <Button
               onClick={() => {
                 setBranchFilter(undefined);

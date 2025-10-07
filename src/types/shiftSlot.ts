@@ -72,4 +72,5 @@ export interface ShiftSlotListParams {
   endDate?: string; // Filter đến ngày
   typeId?: string; // Filter theo loại ca
   departmentId?: string; // Filter theo phòng ban
+  employeeId?: string; // Filter theo nhân viên
 }
