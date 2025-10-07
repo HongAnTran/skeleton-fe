@@ -110,7 +110,6 @@ export default function ShiftSlotWeekView({
                     );
                     const type = shift.type;
                     const isAvailable = signups.length < shift.capacity;
-
                     return (
                       <button
                         key={shift.id}
@@ -164,15 +163,27 @@ export default function ShiftSlotWeekView({
                               Đã đăng ký ({signups.length}):
                             </div>
                             <div className="flex flex-wrap gap-1">
-                              {signups.map((signup) => (
-                                <Tag
-                                  key={signup.id}
-                                  color="gold"
-                                  className="text-xs"
-                                >
-                                  {signup.employee?.name}
-                                </Tag>
-                              ))}
+                              {shift.signups.map((signup) => {
+                                const status = signup.status;
+                                
+                                return (
+                                  <Tag
+                                    key={signup.id}
+                                    color={
+                                      status === ShiftSignupStatus.CANCELLED
+                                        ? "red"
+                                        : status === ShiftSignupStatus.COMPLETED
+                                        ? "green"
+                                        : "orange"
+                                    }
+                                    className="text-xs"
+                                  >
+                                    
+                                    {signup.employee?.name}
+                                    {status === ShiftSignupStatus.CANCELLED && ' (Đã hủy)'}
+                                  </Tag>
+                                );
+                              })}
                             </div>
                           </div>
                         )}

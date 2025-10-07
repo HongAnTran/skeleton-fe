@@ -84,8 +84,8 @@ export function ShiftSlotDetailItem({
                 signupPercentage >= 100
                   ? "red"
                   : signupPercentage >= 80
-                    ? "orange"
-                    : "green"
+                  ? "orange"
+                  : "green"
               }
             >
               {signups.length}/{shift.capacity} người
@@ -103,13 +103,14 @@ export function ShiftSlotDetailItem({
                       return (
                         <Card key={signup.id} size="small" className="w-full">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center  gap-6">
                               <Avatar size="small" className="bg-blue-500">
                                 {signup.employee.name.charAt(0).toUpperCase()}
                               </Avatar>
                               <div>
                                 <Text strong>{signup.employee.name}</Text>
                                 <div className="text-xs text-gray-500">
+                                  Đăng kí lúc :{" "}
                                   {dayjs(signup.createdAt).format(
                                     "DD/MM HH:mm"
                                   )}

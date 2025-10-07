@@ -169,18 +169,32 @@ export default function ShiftSlotWeekViewEmployee({
                               Đã đăng ký ({signups.length}):
                             </div>
                             <div className="flex flex-wrap gap-1">
-                              {signups.map((signup) => (
-                                <div>
-                                  <Tag key={signup.id} className="text-xs">
-                                    {signup.employee?.name}
-                                  </Tag>
-                                  {signup.employee.id === employee?.id && (
-                                    <Tag color="green" className="text-xs">
-                                      Bạn
+                              {signups.map((signup) => {
+                                const status = signup.status;
+                                return (
+                                  <div>
+                                    <Tag
+                                      key={signup.id}
+                                      className="text-xs"
+                                      color={
+                                        status === ShiftSignupStatus.CANCELLED
+                                          ? "red"
+                                          : status ===
+                                            ShiftSignupStatus.COMPLETED
+                                          ? "green"
+                                          : "orange"
+                                      }
+                                    >
+                                      {signup.employee?.name}
                                     </Tag>
-                                  )}
-                                </div>
-                              ))}
+                                    {signup.employee.id === employee?.id && (
+                                      <Tag color="green" className="text-xs">
+                                        Bạn
+                                      </Tag>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         )}
