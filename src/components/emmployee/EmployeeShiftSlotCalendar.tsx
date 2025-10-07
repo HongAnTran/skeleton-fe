@@ -30,18 +30,18 @@ import type { Dayjs } from "dayjs";
 dayjs.extend(weekday);
 dayjs.Ls.en.weekStart = 1; // 1 = Monday
 
-import { useShiftSlotsByEmployee } from "../queries/shiftSlot.queries";
-import { useShiftSlotTypes } from "../queries/shiftSlotType.queries";
+import { useShiftSlotsByEmployee } from "../../queries/shiftSlot.queries";
+import { useShiftSlotTypes } from "../../queries/shiftSlotType.queries";
 import {
   useCancelShiftSignup,
   useCreateShiftSignup,
-} from "../queries/shiftSignup.queries";
-import type { ShiftSlot } from "../types/shiftSlot";
-import ShiftSlotWeekViewEmployee from "./shift-slot/ShiftSlotWeekViewEmployee";
-import { useEmployeeAuth } from "../contexts/AuthEmployeeContext";
-import type { ShiftSignup } from "../types/shiftSignup";
-import { ShiftSignupCancelModal } from "./ShiftSignupCancelModal";
-import { useDepartments } from "../queries/department.queries";
+} from "../../queries/shiftSignup.queries";
+import type { ShiftSlot } from "../../types/shiftSlot";
+import ShiftSlotWeekViewEmployee from "../shift-slot/ShiftSlotWeekViewEmployee";
+import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
+import type { ShiftSignup } from "../../types/shiftSignup";
+import { ShiftSignupCancelModal } from "../ShiftSignupCancelModal";
+import { useDepartments } from "../../queries/department.queries";
 
 const { Title, Text } = Typography;
 
@@ -88,7 +88,9 @@ function EmployeeShiftSlotDetailItem({
                   <div
                     className="h-2 bg-blue-500 rounded-full transition-all duration-300"
                     style={{
-                      width: `${(shift.signups.length / shift.capacity) * 100}%`,
+                      width: `${
+                        (shift.signups.length / shift.capacity) * 100
+                      }%`,
                     }}
                   />
                 </div>
@@ -194,11 +196,6 @@ export function EmployeeShiftSlotCalendar() {
 
   const createShiftSignupMutation = useCreateShiftSignup();
 
-  const filteredShiftSlots = shiftSlots?.filter((slot) => {
-    if (typeFilter && slot.type?.id !== typeFilter) return false;
-    return true;
-  });
-
   useEffect(() => {
     if (employee?.departmentId) {
       setDepartmentFilter(employee.departmentId);
@@ -238,17 +235,13 @@ export function EmployeeShiftSlotCalendar() {
   const handleConfirmSignup = async () => {
     if (!selectedShiftForSignup) return;
 
-    try {
-      await createShiftSignupMutation.mutateAsync({
-        slotId: selectedShiftForSignup.id,
-      });
-      setIsSignupModalOpen(false);
-      setSelectedShiftForSignup(null);
-      setIsDetailModalOpen(false);
-      refetch();
-    } catch (error) {
-      // Error is handled by the mutation
-    }
+    await createShiftSignupMutation.mutateAsync({
+      slotId: selectedShiftForSignup.id,
+    });
+    setIsSignupModalOpen(false);
+    setSelectedShiftForSignup(null);
+    setIsDetailModalOpen(false);
+    refetch();
   };
 
   const handleCancelSignup = (shiftSlotSignup: ShiftSignup) => {
@@ -283,8 +276,8 @@ export function EmployeeShiftSlotCalendar() {
                 shift.signups.length >= shift.capacity
                   ? "success"
                   : shift.signups.length > 0
-                    ? "processing"
-                    : "default"
+                  ? "processing"
+                  : "default"
               }
               text={
                 <Text ellipsis className="text-xs">
@@ -298,7 +291,13 @@ export function EmployeeShiftSlotCalendar() {
     );
   };
 
-  const headerRender = ({ value, onChange }: any) => {
+  const headerRender = ({
+    value,
+    onChange,
+  }: {
+    value: Dayjs;
+    onChange: (date: Dayjs) => void;
+  }) => {
     return (
       <div className="flex items-center justify-between p-2">
         <Button

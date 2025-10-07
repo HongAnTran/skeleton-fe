@@ -1,4 +1,4 @@
-import type { DashboardStats } from "../types/dashboard";
+import type { DashboardStats } from "../../types/dashboard";
 
 interface DashboardStatsCardsProps {
   stats: DashboardStats;

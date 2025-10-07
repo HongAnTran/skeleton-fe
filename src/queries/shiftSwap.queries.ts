@@ -22,12 +22,18 @@ export const useShiftSwapRequests = (
   params: ShiftSwapListParams,
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: SHIFT_SWAP_KEYS.list(params),
     queryFn: () => ShiftSwapService.getList(params),
     staleTime: 2 * 60 * 1000, // 2 minutes
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 // Lấy chi tiết yêu cầu đổi ca
@@ -64,9 +70,6 @@ export const useCreateShiftSwapRequest = () => {
 
       message.success("Yêu cầu đổi ca đã được gửi thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi gửi yêu cầu đổi ca");
-    },
   });
 };
 
@@ -94,9 +97,6 @@ export const useRespondShiftSwapRequest = () => {
       const action = data.status === "ACCEPTED" ? "chấp nhận" : "từ chối";
       message.success(`Đã ${action} yêu cầu đổi ca thành công!`);
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi phản hồi yêu cầu đổi ca");
-    },
   });
 };
 
@@ -116,9 +116,6 @@ export const useCancelShiftSwapRequest = () => {
       queryClient.setQueryData(SHIFT_SWAP_KEYS.detail(id), updatedRequest);
 
       message.success("Đã hủy yêu cầu đổi ca thành công!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi hủy yêu cầu đổi ca");
     },
   });
 };

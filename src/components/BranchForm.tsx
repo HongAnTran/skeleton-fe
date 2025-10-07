@@ -32,26 +32,22 @@ export function BranchForm({
   const finalSubmitText = submitText || `${defaultSubmitText} chi nhánh`;
 
   const handleSubmit = async (values: any) => {
-    try {
-      if (isEditing && branch) {
-        const updateData: UpdateBranchRequest = {
-          name: values.name,
-          address: values.address,
-          active: values.active,
-        };
-        await onSubmit(updateData);
-      } else {
-        const createData: CreateBranchRequest = {
-          name: values.name,
-          address: values.address,
-          active: values.active ?? true,
-        };
-        await onSubmit(createData);
-      }
-      form.resetFields();
-    } catch (error) {
-      // Error handling is done by parent component
+    if (isEditing && branch) {
+      const updateData: UpdateBranchRequest = {
+        name: values.name,
+        address: values.address,
+        active: values.active,
+      };
+      await onSubmit(updateData);
+    } else {
+      const createData: CreateBranchRequest = {
+        name: values.name,
+        address: values.address,
+        active: values.active ?? true,
+      };
+      await onSubmit(createData);
     }
+    form.resetFields();
   };
 
   const handleCancel = () => {

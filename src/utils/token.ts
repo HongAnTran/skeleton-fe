@@ -21,7 +21,6 @@ export const tokenStorage = {
     }
   },
 
-  // Get refresh token from localStorage
   getRefreshToken(): string | null {
     try {
       return localStorage.getItem(REFRESH_TOKEN_KEY);
@@ -31,7 +30,6 @@ export const tokenStorage = {
     }
   },
 
-  // Set refresh token in localStorage
   setRefreshToken(token: string): void {
     try {
       localStorage.setItem(REFRESH_TOKEN_KEY, token);
@@ -40,13 +38,11 @@ export const tokenStorage = {
     }
   },
 
-  // Set both tokens
   setTokens(accessToken: string, refreshToken: string): void {
     this.setAccessToken(accessToken);
     this.setRefreshToken(refreshToken);
   },
 
-  // Clear all tokens
   clearTokens(): void {
     try {
       localStorage.removeItem(TOKEN_KEY);
@@ -57,7 +53,6 @@ export const tokenStorage = {
     }
   },
 
-  // Check if user is authenticated
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
   },

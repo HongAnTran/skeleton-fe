@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import type {
   ShiftSwapRequest,
   RespondShiftSwapRequestDto,
-} from "../types/shiftSwap";
+} from "../../types/shiftSwap";
 
 const { Text } = Typography;
 

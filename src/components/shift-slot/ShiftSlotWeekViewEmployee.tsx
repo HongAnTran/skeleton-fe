@@ -81,14 +81,23 @@ export default function ShiftSlotWeekViewEmployee({
               key={day.format("YYYY-MM-DD")}
               className={`
                 p-4 cursor-pointer transition-all duration-200 h-full min-h-[200px]
-                ${isToday(day) ? "bg-blue-50" : ""}
                 hover:shadow-md hover:border-blue-300
               `}
               onClick={() => onDateSelect(day)}
             >
               <div className="mb-4 pb-3 border-b border-gray-200">
-                <div className="text-sm text-muted-foreground">{dayOfWeek}</div>
-                <div className="text-2xl font-semibold text-foreground">
+                <div
+                  className={`text-sm text-muted-foreground ${
+                    isToday(day) ? "text-green-500 font-bold" : ""
+                  }`}
+                >
+                  {dayOfWeek}
+                </div>
+                <div
+                  className={`text-2xl font-semibold text-foreground ${
+                    isToday(day) ? "text-green-500 font-bold" : ""
+                  }`}
+                >
                   {day.format("DD")}
                 </div>
               </div>
@@ -141,7 +150,9 @@ export default function ShiftSlotWeekViewEmployee({
                           <span className="font-mono">
                             {type?.startDate &&
                               type?.endDate &&
-                              `${dayjs(type.startDate).format("HH:mm")} - ${dayjs(type.endDate).format("HH:mm")}`}
+                              `${dayjs(type.startDate).format(
+                                "HH:mm"
+                              )} - ${dayjs(type.endDate).format("HH:mm")}`}
                           </span>
                         </div>
 
@@ -158,18 +169,32 @@ export default function ShiftSlotWeekViewEmployee({
                               Đã đăng ký ({signups.length}):
                             </div>
                             <div className="flex flex-wrap gap-1">
-                              {signups.map((signup) => (
-                                <div>
-                                  <Tag key={signup.id} className="text-xs">
-                                    {signup.employee?.name}
-                                  </Tag>
-                                  {signup.employee.id === employee?.id && (
-                                    <Tag color="green" className="text-xs">
-                                      Bạn
+                              {signups.map((signup) => {
+                                const status = signup.status;
+                                return (
+                                  <div>
+                                    <Tag
+                                      key={signup.id}
+                                      className="text-xs"
+                                      color={
+                                        status === ShiftSignupStatus.CANCELLED
+                                          ? "red"
+                                          : status ===
+                                            ShiftSignupStatus.COMPLETED
+                                          ? "green"
+                                          : "orange"
+                                      }
+                                    >
+                                      {signup.employee?.name}
                                     </Tag>
-                                  )}
-                                </div>
-                              ))}
+                                    {signup.employee.id === employee?.id && (
+                                      <Tag color="green" className="text-xs">
+                                        Bạn
+                                      </Tag>
+                                    )}
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         )}

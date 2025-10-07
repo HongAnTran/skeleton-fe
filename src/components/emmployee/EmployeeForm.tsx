@@ -14,9 +14,9 @@ import type {
   Employee,
   CreateEmployeeDto,
   UpdateEmployeeDto,
-} from "../types/employee";
-import { useBranches } from "../queries/branch.queries";
-import { useDepartments } from "../queries/department.queries";
+} from "../../types/employee";
+import { useBranches } from "../../queries/branch.queries";
+import { useDepartments } from "../../queries/department.queries";
 
 const { Text } = Typography;
 
@@ -56,39 +56,34 @@ export function EmployeeForm({
     });
 
   const handleSubmit = async (values: any) => {
-    try {
-      if (isEditing && employee) {
-        const updateData: UpdateEmployeeDto = {
-          name: values.name,
-          phone: values.phone,
-          branchId: values.branchId || undefined,
-          departmentId: values.departmentId || undefined,
-          active: values.active,
-          email: values.email,
-        };
+    if (isEditing && employee) {
+      const updateData: UpdateEmployeeDto = {
+        name: values.name,
+        phone: values.phone,
+        branchId: values.branchId || undefined,
+        departmentId: values.departmentId || undefined,
+        active: values.active,
+        email: values.email,
+      };
 
-        // Only include password if it's provided
-        if (values.password && values.password.trim()) {
-          updateData.password = values.password;
-        }
-
-        await onSubmit(updateData);
-      } else {
-        const createData: CreateEmployeeDto = {
-          name: values.name,
-          username: values.username,
-          email: values.email,
-          password: values.password,
-          phone: values.phone || undefined,
-          branchId: values.branchId || undefined,
-          departmentId: values.departmentId || undefined,
-          active: values.active ?? true,
-        };
-        await onSubmit(createData);
+      // Only include password if it's provided
+      if (values.password && values.password.trim()) {
+        updateData.password = values.password;
       }
-      form.resetFields();
-    } catch (error) {
-      // Error handling is done by parent component
+
+      await onSubmit(updateData);
+    } else {
+      const createData: CreateEmployeeDto = {
+        name: values.name,
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        phone: values.phone || undefined,
+        branchId: values.branchId || undefined,
+        departmentId: values.departmentId || undefined,
+        active: values.active ?? true,
+      };
+      await onSubmit(createData);
     }
   };
 
@@ -102,7 +97,7 @@ export function EmployeeForm({
       form.setFieldsValue({
         username: employee.account?.username || "",
         name: employee.name,
-        email: employee.account?.email || "", // Assuming email comes from user relation
+        email: employee.account?.email || "",
         phone: employee.phone,
         branchId: employee.branchId,
         departmentId: employee.departmentId,

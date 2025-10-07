@@ -24,8 +24,8 @@ import {
 } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import dayjs from "dayjs";
-import { useEmployeeShiftSummary } from "../queries/employee.queries";
-import type { ShiftSignupSummary } from "../types/employee";
+import { useEmployeeShiftSummary } from "../../queries/employee.queries";
+import type { ShiftSignupSummary } from "../../types/employee";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -84,20 +84,10 @@ export const EmployeeDetailPage = ({ employeeId }: EmployeeDetailPageProps) => {
       key: "shiftType",
     },
     {
-      title: "Chi nhánh",
-      dataIndex: ["slot", "branch", "name"],
-      key: "branch",
-    },
-    {
-      title: "Phòng ban",
-      dataIndex: ["slot", "department", "name"],
-      key: "department",
-    },
-    {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
-      render: (status: string) => {
+      render: (status: string, record: ShiftSignupSummary) => {
         const statusConfig = {
           PENDING: { color: "orange", text: "Chờ xác nhận" },
           COMPLETED: { color: "green", text: "Hoàn thành" },
@@ -107,7 +97,11 @@ export const EmployeeDetailPage = ({ employeeId }: EmployeeDetailPageProps) => {
           color: "default",
           text: status,
         };
-        return <Tag color={config.color}>{config.text}</Tag>;
+        return (
+          <Tag color={config.color}>
+            {config.text} {status === "CANCELLED" && `(${record.cancelReason})`}
+          </Tag>
+        );
       },
     },
     {

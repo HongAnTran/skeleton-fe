@@ -31,7 +31,7 @@ export const useBranches = (
     ...options,
   });
 
-  if (query.data) {
+  if (query.isSuccess && query.data) {
     onSuccess?.(query.data);
   }
   return query;
@@ -57,9 +57,6 @@ export const useCreateBranch = () => {
       queryClient.invalidateQueries({ queryKey: BRANCH_KEYS.lists() });
       message.success("Chi nhánh đã được tạo thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi tạo chi nhánh");
-    },
   });
 };
 
@@ -74,9 +71,6 @@ export const useUpdateBranch = () => {
       queryClient.invalidateQueries({ queryKey: BRANCH_KEYS.all });
       message.success("Chi nhánh đã được cập nhật thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi cập nhật chi nhánh");
-    },
   });
 };
 
@@ -89,9 +83,6 @@ export const useDeleteBranch = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BRANCH_KEYS.lists() });
       message.success("Chi nhánh đã được xóa thành công!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi xóa chi nhánh");
     },
   });
 };

@@ -21,8 +21,6 @@ export interface Employee {
     email: string;
     username: string;
   }; // Thông tin account
-  shiftSignups?: any[]; // Danh sách ca làm việc
-  tasks?: any[]; // Danh sách task
 }
 
 export interface CreateEmployeeDto {
@@ -63,6 +61,9 @@ export interface ShiftSignupSummary {
   totalHours: number;
   createdAt: Date;
   updatedAt: Date;
+  cancelReason: string;
+  canceledBy: string;
+  canceledAt: string;
   slot: {
     id: string;
     date: Date;

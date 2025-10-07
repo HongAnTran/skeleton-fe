@@ -37,7 +37,7 @@ import {
 } from "../../../../../queries/employee.queries";
 import { useBranches } from "../../../../../queries/branch.queries";
 import { useDepartments } from "../../../../../queries/department.queries";
-import { EmployeeForm } from "../../../../../components/EmployeeForm";
+import { EmployeeForm } from "../../../../../components/emmployee/EmployeeForm";
 import type {
   Employee,
   CreateEmployeeDto,

@@ -76,13 +76,22 @@ export default function ShiftSlotWeekView({
               key={day.format("YYYY-MM-DD")}
               className={`
                 p-4 cursor-pointer transition-all duration-200 h-full min-h-[200px]
-                ${isToday(day) ? "bg-blue-50" : ""}
                 hover:shadow-md hover:border-blue-300
               `}
             >
               <div className="mb-4 pb-3 border-b border-gray-200">
-                <div className="text-sm text-muted-foreground">{dayOfWeek}</div>
-                <div className="text-2xl font-semibold text-foreground">
+                <div
+                  className={`text-sm text-muted-foreground ${
+                    isToday(day) ? "text-green-500 font-bold" : ""
+                  }`}
+                >
+                  {dayOfWeek}
+                </div>
+                <div
+                  className={`text-2xl font-semibold text-foreground ${
+                    isToday(day) ? "text-green-500 font-bold" : ""
+                  }`}
+                >
                   {day.format("DD")}
                 </div>
               </div>
@@ -101,7 +110,6 @@ export default function ShiftSlotWeekView({
                     );
                     const type = shift.type;
                     const isAvailable = signups.length < shift.capacity;
-
                     return (
                       <button
                         key={shift.id}
@@ -136,7 +144,9 @@ export default function ShiftSlotWeekView({
                           <span className="font-mono">
                             {type?.startDate &&
                               type?.endDate &&
-                              `${dayjs(type.startDate).format("HH:mm")} - ${dayjs(type.endDate).format("HH:mm")}`}
+                              `${dayjs(type.startDate).format(
+                                "HH:mm"
+                              )} - ${dayjs(type.endDate).format("HH:mm")}`}
                           </span>
                         </div>
 
@@ -153,15 +163,27 @@ export default function ShiftSlotWeekView({
                               Đã đăng ký ({signups.length}):
                             </div>
                             <div className="flex flex-wrap gap-1">
-                              {signups.map((signup) => (
-                                <Tag
-                                  key={signup.id}
-                                  color="gold"
-                                  className="text-xs"
-                                >
-                                  {signup.employee?.name}
-                                </Tag>
-                              ))}
+                              {shift.signups.map((signup) => {
+                                const status = signup.status;
+                                
+                                return (
+                                  <Tag
+                                    key={signup.id}
+                                    color={
+                                      status === ShiftSignupStatus.CANCELLED
+                                        ? "red"
+                                        : status === ShiftSignupStatus.COMPLETED
+                                        ? "green"
+                                        : "orange"
+                                    }
+                                    className="text-xs"
+                                  >
+                                    
+                                    {signup.employee?.name}
+                                    {status === ShiftSignupStatus.CANCELLED && ' (Đã hủy)'}
+                                  </Tag>
+                                );
+                              })}
                             </div>
                           </div>
                         )}

@@ -23,12 +23,18 @@ export const useShiftSignups = (
   params: ShiftSignupListParams,
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: SHIFT_SIGNUP_KEYS.list(params),
     queryFn: () => ShiftSignupService.getList(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 export const useShiftSignupsByEmployee = (
@@ -40,12 +46,18 @@ export const useShiftSignupsByEmployee = (
   },
   options?: ReactQueryOptions
 ) => {
-  return useQuery({
+  const onSuccess = options?.onSuccess;
+  const query = useQuery({
     queryKey: SHIFT_SIGNUP_KEYS.list(params),
     queryFn: () => ShiftSignupService.getListByEmployee(params),
     staleTime: 5 * 60 * 1000,
     ...options,
   });
+
+  if (query.isSuccess && query.data) {
+    onSuccess?.(query.data);
+  }
+  return query;
 };
 
 // Get single shift signup by ID
@@ -79,9 +91,6 @@ export const useCreateShiftSignup = () => {
 
       message.success("Đăng ký ca làm việc thành công!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi đăng ký ca làm việc");
-    },
   });
 };
 
@@ -107,9 +116,6 @@ export const useCancelShiftSignup = () => {
 
       message.success("Đã hủy đăng ký ca làm việc!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi hủy đăng ký ca làm việc");
-    },
   });
 };
 
@@ -131,9 +137,6 @@ export const useDeleteShiftSignup = () => {
       });
 
       message.success("Xóa đăng ký ca làm việc thành công!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi xóa đăng ký ca làm việc");
     },
   });
 };
@@ -160,9 +163,6 @@ export const useCancelShiftSignupByAdmin = () => {
 
       message.success("Đã hủy đăng ký ca làm việc cho nhân viên!");
     },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi hủy đăng ký ca làm việc");
-    },
   });
 };
 
@@ -186,9 +186,6 @@ export const useCreateShiftSignupByAdmin = () => {
       );
 
       message.success("Đã tạo đăng ký ca làm việc cho nhân viên!");
-    },
-    onError: (error: any) => {
-      message.error(error?.message || "Lỗi khi tạo đăng ký ca làm việc");
     },
   });
 };
