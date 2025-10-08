@@ -56,11 +56,8 @@ export interface CreateShiftSlotDto {
 }
 
 export interface UpdateShiftSlotDto {
-  departmentId: string;
-  branchId?: string;
   capacity?: number;
   note?: string;
-  date?: string;
   typeId?: string;
 }
 

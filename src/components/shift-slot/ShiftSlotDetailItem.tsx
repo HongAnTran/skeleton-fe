@@ -5,7 +5,6 @@ import {
   Space,
   Button,
   Card,
-  Divider,
   Avatar,
   Empty,
 } from "antd";
@@ -165,10 +164,9 @@ export function ShiftSlotDetailItem({
             </div>
             {shift.note && (
               <>
-                <Divider className="my-2" />
                 <div>
                   <Text strong>Ghi chú: </Text>
-                  <Text italic type="secondary">
+                  <Text >
                     {shift.note}
                   </Text>
                 </div>

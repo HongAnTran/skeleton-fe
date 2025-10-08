@@ -99,7 +99,7 @@ function EmployeeShiftSlotDetailItem({
 
             {shift.note && (
               <div className="mb-2">
-                <Text type="secondary">Ghi chú: {shift.note}</Text>
+                <Text >Ghi chú: {shift.note}</Text>
               </div>
             )}
 

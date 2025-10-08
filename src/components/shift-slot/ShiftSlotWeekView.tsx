@@ -187,6 +187,17 @@ export default function ShiftSlotWeekView({
                             </div>
                           </div>
                         )}
+
+                        {shift.note && (
+                        <div className="mt-2 pt-2 border-t border-border">
+                          <div className=" flex items-center gap-1">  
+                            <b>Ghi chú:</b>
+                            <span className="text-muted-foreground">
+                              {shift.note || "-"}
+                            </span>
+                            </div>
+                          </div>
+                        )}
                       </button>
                     );
                   })

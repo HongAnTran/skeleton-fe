@@ -83,11 +83,8 @@ export function ShiftSlotForm({
 
       if (isEditing && shiftSlot) {
         const updateData: UpdateShiftSlotDto = {
-          branchId: values.branchId,
-          departmentId: values.departmentIds,
           capacity: values.capacity,
           note: values.note || undefined,
-          date,
           typeId: values.typeIds,
         };
         await onSubmit(updateData);
@@ -162,6 +159,7 @@ export function ShiftSlotForm({
             rules={[{ required: true, message: "Vui lòng chọn chi nhánh!" }]}
           >
             <Select
+              disabled={isEditing}
               placeholder="Chọn chi nhánh"
               loading={branchesLoading}
               showSearch
@@ -182,6 +180,7 @@ export function ShiftSlotForm({
             rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
           >
             <Select
+              disabled={isEditing}
               placeholder="Chọn phòng ban"
               loading={departmentsLoading}
               showSearch
@@ -198,6 +197,7 @@ export function ShiftSlotForm({
         </Col>
         <Col span={12}>
           <Form.Item
+
             label="Loại ca"
             name="typeIds"
             rules={[{ required: true, message: "Vui lòng chọn loại ca!" }]}
@@ -250,10 +250,12 @@ export function ShiftSlotForm({
               { required: true, message: "Vui lòng chọn ngày làm việc!" },
             ]}
           >
+
             <DatePicker
               placeholder="Chọn ngày"
               format="DD/MM/YYYY"
               className="w-full"
+              disabled={isEditing}
               disabledDate={(current) =>
                 current && current < dayjs().startOf("day")
               }
@@ -287,6 +289,7 @@ export function ShiftSlotForm({
                 placeholder="Chọn ngày kết thúc"
                 format="DD/MM/YYYY"
                 className="w-full"
+                disabled={isEditing}
                 disabledDate={(current) => {
                   const startDate = form.getFieldValue("date");
                   return (
