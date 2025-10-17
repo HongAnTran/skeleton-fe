@@ -351,6 +351,13 @@ function RouteComponent() {
       filteredValue: selectedDepartment ? [selectedDepartment] : null,
     },
     {
+      title: "Vai trò",
+      dataIndex: "role",
+      key: "role",
+      width: 150,
+      render: (role: string) => role || <Text type="secondary">Chưa phân công</Text>,
+    },
+    {
       title: "Trạng thái",
       dataIndex: "active",
       key: "active",

@@ -185,7 +185,7 @@ export default function ShiftSlotWeekViewEmployee({
                                           : "orange"
                                       }
                                     >
-                                      {signup.employee?.name}
+                                      {signup.employee?.name} {signup.employee?.role && <b>({signup.employee?.role}) </b>}
                                     </Tag>
                                     {signup.employee.id === employee?.id && (
                                       <Tag color="green" className="text-xs">

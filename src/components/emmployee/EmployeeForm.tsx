@@ -64,6 +64,7 @@ export function EmployeeForm({
         departmentId: values.departmentId || undefined,
         active: values.active,
         email: values.email,
+        role: values.role,
       };
 
       // Only include password if it's provided
@@ -82,6 +83,7 @@ export function EmployeeForm({
         branchId: values.branchId || undefined,
         departmentId: values.departmentId || undefined,
         active: values.active ?? true,
+        role: values.role,
       };
       await onSubmit(createData);
     }
@@ -102,6 +104,7 @@ export function EmployeeForm({
         branchId: employee.branchId,
         departmentId: employee.departmentId,
         active: employee.active,
+        role: employee.role,
       });
     } else {
       form.resetFields();
@@ -201,6 +204,11 @@ export function EmployeeForm({
       <Divider>Thông tin bổ sung</Divider>
 
       <Row gutter={16}>
+        <Col span={12}>  
+          <Form.Item label="Vai trò" name="role">
+        <Input placeholder="Nhập vai trò" autoComplete="off" />
+          </Form.Item>
+        </Col>
         <Col span={12}>
           <Form.Item label="Chi nhánh" name="branchId">
             <Select

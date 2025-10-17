@@ -13,6 +13,7 @@ export interface Employee {
   currentLevel: number; // Cấp độ hiện tại
   createdAt: Date; // Ngày tạo
   updatedAt: Date; // Ngày cập nhật
+  role: string | null; // Vai trò
 
   branch?: Pick<Branch, "id" | "name">; // Thông tin branch
   department?: Pick<Department, "id" | "name">; // Thông tin department
@@ -33,6 +34,7 @@ export interface CreateEmployeeDto {
   phone?: string; // Optional: Số điện thoại (VD: "+1234567890")
   active?: boolean; // Optional: Trạng thái hoạt động (default: true)
   provider?: string; // Optional: Provider (VD: "local")
+  role?: string; // Optional: Role (VD: "employee")
 }
 
 export interface UpdateEmployeeDto {
@@ -44,6 +46,7 @@ export interface UpdateEmployeeDto {
   phone?: string; // Optional
   active?: boolean; // Optional
   provider?: string; // Optional
+  role?: string; // Optional
 }
 
 export interface EmployeeListParams {

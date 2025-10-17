@@ -12,7 +12,7 @@ export interface ShiftSignup {
   status: ShiftSignupStatus;
   createdAt: Date;
   updatedAt: Date;
-  employee: Pick<Employee, "id" | "name" | "phone">;
+  employee: Pick<Employee, "id" | "name" | "phone" | "role">;
   slot: ShiftSlot;
 }
 

@@ -179,7 +179,7 @@ export default function ShiftSlotWeekView({
                                     className="text-xs"
                                   >
                                     
-                                    {signup.employee?.name}
+                                    {signup.employee?.name} {signup.employee?.role && <b>({signup.employee?.role})</b>}
                                     {status === ShiftSignupStatus.CANCELLED && ' (Đã hủy)'}
                                   </Tag>
                                 );
