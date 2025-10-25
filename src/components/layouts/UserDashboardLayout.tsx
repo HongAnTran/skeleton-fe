@@ -19,6 +19,7 @@ import {
   TeamOutlined,
   ScheduleOutlined,
   TableOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 import { useUserAuth } from "../../contexts/AuthUserContext";
 import type { MenuProps } from "antd";
@@ -87,12 +88,12 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       label: "Nhân viên",
       onClick: () => handleMenuClick("/u/employees"),
     },
-    // {
-    //   key: "/u/tasks",
-    //   icon: <UnorderedListOutlined />,
-    //   label: "Nhiệm vụ",
-    //   onClick: () => handleMenuClick("/u/tasks"),
-    // },
+    {
+      key: "/u/tasks",
+      icon: <UnorderedListOutlined />,
+      label: "Nhiệm vụ",
+      onClick: () => handleMenuClick("/u/tasks"),
+    },
     {
       key: "/u/branchs",
       icon: <HomeOutlined />,
