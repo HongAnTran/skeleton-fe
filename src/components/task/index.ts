@@ -1,12 +1,13 @@
-// Task Management Components
+// Manager Components
 export { TaskTemplateForm } from "./TaskTemplateForm";
 export { TaskTemplateTable } from "./TaskTemplateTable";
-export { TaskScheduleForm } from "./TaskScheduleForm";
-export { TaskScheduleTable } from "./TaskScheduleTable";
 export { TaskCycleForm } from "./TaskCycleForm";
 export { TaskCycleTable } from "./TaskCycleTable";
-export { TaskInstanceForm } from "./TaskInstanceForm";
-export { TaskInstanceTable } from "./TaskInstanceTable";
-export { TaskProgressModal } from "./TaskProgressModal";
+export { TaskAssignmentForm } from "./TaskAssignmentForm";
 export { TaskApprovalModal } from "./TaskApprovalModal";
-export { TaskDashboard } from "./TaskDashboard";
+export { PendingApprovalList } from "./PendingApprovalList";
+
+// Employee Components
+export { EmployeeTaskList } from "./EmployeeTaskList";
+export { EmployeeTaskCard } from "./EmployeeTaskCard";
+export { TaskCompleteModal } from "./TaskCompleteModal";

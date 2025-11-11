@@ -1,321 +1,163 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import {
-  TaskTemplateService,
-  TaskScheduleService,
-  TaskCycleService,
-  TaskInstanceService,
-} from "../services/task.service";
+import { TaskService } from "../services/task.service";
+import { TaskCycleService } from "../services/taskCycle.service";
+import { TaskAssignmentService } from "../services/taskAssignment.service";
 import type {
-  CreateTaskTemplateDto,
-  UpdateTaskTemplateDto,
-  CreateTaskScheduleDto,
-  UpdateTaskScheduleDto,
+  CreateTaskDto,
+  UpdateTaskDto,
+  QueryTaskDto,
   CreateTaskCycleDto,
   UpdateTaskCycleDto,
-  CreateTaskInstanceDto,
-  UpdateTaskInstanceDto,
-  UpdateTaskProgressDto,
-  CompleteTaskInstanceDto,
-  ApproveTaskInstanceDto,
-  RejectTaskInstanceDto,
-  TaskTemplateListParams,
-  TaskScheduleListParams,
-  TaskCycleListParams,
-  TaskInstanceListParams,
+  QueryTaskCycleDto,
+  CreateTaskAssignmentDto,
+  AssignEmployeesToCycleDto,
+  QueryAssignmentDto,
+  RejectAssignmentDto,
+  CreateTaskCycleAllDto,
+  TaskStatusV2,
 } from "../types/task";
 import type { ReactQueryOptions } from "../types/reactQuery";
 
-// Task Template Query Keys
-export const TASK_TEMPLATE_KEYS = {
-  all: ["task-templates"] as const,
-  lists: () => [...TASK_TEMPLATE_KEYS.all, "list"] as const,
-  list: (params?: TaskTemplateListParams) =>
-    [...TASK_TEMPLATE_KEYS.lists(), params] as const,
-  details: () => [...TASK_TEMPLATE_KEYS.all, "detail"] as const,
-  detail: (id: string) => [...TASK_TEMPLATE_KEYS.details(), id] as const,
-  statistics: (id: string) =>
-    [...TASK_TEMPLATE_KEYS.detail(id), "statistics"] as const,
+// ==================== QUERY KEYS ====================
+
+export const TASK_KEYS = {
+  all: ["tasks"] as const,
+  lists: () => [...TASK_KEYS.all, "list"] as const,
+  list: (params?: QueryTaskDto) => [...TASK_KEYS.lists(), params] as const,
+  details: () => [...TASK_KEYS.all, "detail"] as const,
+  detail: (id: string) => [...TASK_KEYS.details(), id] as const,
 };
 
-// Task Schedule Query Keys
-export const TASK_SCHEDULE_KEYS = {
-  all: ["task-schedules"] as const,
-  lists: () => [...TASK_SCHEDULE_KEYS.all, "list"] as const,
-  list: (params?: TaskScheduleListParams) =>
-    [...TASK_SCHEDULE_KEYS.lists(), params] as const,
-  details: () => [...TASK_SCHEDULE_KEYS.all, "detail"] as const,
-  detail: (id: string) => [...TASK_SCHEDULE_KEYS.details(), id] as const,
-};
-
-// Task Cycle Query Keys
 export const TASK_CYCLE_KEYS = {
   all: ["task-cycles"] as const,
   lists: () => [...TASK_CYCLE_KEYS.all, "list"] as const,
-  list: (params?: TaskCycleListParams) =>
+  list: (params?: QueryTaskCycleDto) =>
     [...TASK_CYCLE_KEYS.lists(), params] as const,
   details: () => [...TASK_CYCLE_KEYS.all, "detail"] as const,
   detail: (id: string) => [...TASK_CYCLE_KEYS.details(), id] as const,
-  statistics: (id: string) =>
-    [...TASK_CYCLE_KEYS.detail(id), "statistics"] as const,
 };
 
-// Task Instance Query Keys
-export const TASK_INSTANCE_KEYS = {
-  all: ["task-instances"] as const,
-  lists: () => [...TASK_INSTANCE_KEYS.all, "list"] as const,
-  list: (params?: TaskInstanceListParams) =>
-    [...TASK_INSTANCE_KEYS.lists(), params] as const,
-  details: () => [...TASK_INSTANCE_KEYS.all, "detail"] as const,
-  detail: (id: string) => [...TASK_INSTANCE_KEYS.details(), id] as const,
-  statistics: (params?: TaskInstanceListParams) =>
-    [...TASK_INSTANCE_KEYS.all, "statistics", params] as const,
+export const TASK_ASSIGNMENT_KEYS = {
+  all: ["task-assignments"] as const,
+  lists: () => [...TASK_ASSIGNMENT_KEYS.all, "list"] as const,
+  list: (params?: QueryAssignmentDto) =>
+    [...TASK_ASSIGNMENT_KEYS.lists(), params] as const,
+  details: () => [...TASK_ASSIGNMENT_KEYS.all, "detail"] as const,
+  detail: (id: string) => [...TASK_ASSIGNMENT_KEYS.details(), id] as const,
+  employee: (status?: TaskStatusV2) =>
+    [...TASK_ASSIGNMENT_KEYS.all, "employee", status] as const,
+  pendingApprovals: (departmentId?: string) =>
+    [...TASK_ASSIGNMENT_KEYS.all, "pending-approvals", departmentId] as const,
 };
 
-// ==================== TASK TEMPLATE HOOKS ====================
+// ==================== TASK QUERIES ====================
 
-// Get task templates
-export const useTaskTemplates = (
-  params?: TaskTemplateListParams,
+/**
+ * Get all tasks with optional filters
+ */
+export const useTasks = (
+  params?: QueryTaskDto,
   options?: ReactQueryOptions
 ) => {
-  const onSuccess = options?.onSuccess;
-  const query = useQuery({
-    queryKey: TASK_TEMPLATE_KEYS.list(params),
-    queryFn: () => TaskTemplateService.getList(params),
+  return useQuery({
+    queryKey: TASK_KEYS.list(params),
+    queryFn: () => TaskService.getAll(params),
     staleTime: 5 * 60 * 1000, // 5 minutes
     ...options,
   });
-
-  if (query.isSuccess && query.data) {
-    onSuccess?.(query.data);
-  }
-  return query;
 };
 
-// Get single task template
-export const useTaskTemplate = (id: string, options?: ReactQueryOptions) => {
+/**
+ * Get single task by ID with relations
+ */
+export const useTask = (id: string, options?: ReactQueryOptions) => {
   return useQuery({
-    queryKey: TASK_TEMPLATE_KEYS.detail(id),
-    queryFn: () => TaskTemplateService.getById(id),
+    queryKey: TASK_KEYS.detail(id),
+    queryFn: () => TaskService.getById(id),
     enabled: !!id,
     ...options,
   });
 };
 
-// Get task template statistics
-export const useTaskTemplateStatistics = (
-  id: string,
-  options?: ReactQueryOptions
-) => {
-  return useQuery({
-    queryKey: TASK_TEMPLATE_KEYS.statistics(id),
-    queryFn: () => TaskTemplateService.getStatistics(id),
-    enabled: !!id,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    ...options,
-  });
-};
-
-// Create task template
-export const useCreateTaskTemplate = () => {
+/**
+ * Create task mutation
+ */
+export const useCreateTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateTaskTemplateDto) =>
-      TaskTemplateService.create(data),
-    onSuccess: (newTemplate) => {
-      queryClient.invalidateQueries({ queryKey: TASK_TEMPLATE_KEYS.lists() });
-      queryClient.setQueryData(
-        TASK_TEMPLATE_KEYS.detail(newTemplate.id),
-        newTemplate
-      );
-      message.success("Mẫu nhiệm vụ đã được tạo thành công!");
+    mutationFn: (data: CreateTaskDto) => TaskService.create(data),
+    onSuccess: (newTask) => {
+      queryClient.invalidateQueries({ queryKey: TASK_KEYS.lists() });
+      queryClient.setQueryData(TASK_KEYS.detail(newTask.id), newTask);
+      message.success("Task đã được tạo thành công!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi tạo task!");
     },
   });
 };
 
-// Update task template
-export const useUpdateTaskTemplate = () => {
+/**
+ * Update task mutation
+ */
+export const useUpdateTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTaskTemplateDto }) =>
-      TaskTemplateService.update(id, data),
-    onSuccess: (updatedTemplate, { id }) => {
-      queryClient.invalidateQueries({ queryKey: TASK_TEMPLATE_KEYS.lists() });
-      queryClient.setQueryData(TASK_TEMPLATE_KEYS.detail(id), updatedTemplate);
-      message.success("Mẫu nhiệm vụ đã được cập nhật thành công!");
+    mutationFn: ({ id, data }: { id: string; data: UpdateTaskDto }) =>
+      TaskService.update(id, data),
+    onSuccess: (updatedTask, { id }) => {
+      queryClient.invalidateQueries({ queryKey: TASK_KEYS.lists() });
+      queryClient.setQueryData(TASK_KEYS.detail(id), updatedTask);
+      message.success("Task đã được cập nhật!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi cập nhật task!");
     },
   });
 };
 
-// Toggle task template active status
-export const useToggleTaskTemplateActive = () => {
+/**
+ * Delete task mutation
+ */
+export const useDeleteTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => TaskTemplateService.toggleActive(id),
-    onSuccess: (updatedTemplate, id) => {
-      queryClient.invalidateQueries({ queryKey: TASK_TEMPLATE_KEYS.lists() });
-      queryClient.setQueryData(TASK_TEMPLATE_KEYS.detail(id), updatedTemplate);
-      message.success("Trạng thái mẫu nhiệm vụ đã được cập nhật!");
-    },
-  });
-};
-
-// Delete task template
-export const useDeleteTaskTemplate = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => TaskTemplateService.delete(id),
+    mutationFn: (id: string) => TaskService.delete(id),
     onSuccess: (_, deletedId) => {
-      queryClient.invalidateQueries({ queryKey: TASK_TEMPLATE_KEYS.lists() });
-      queryClient.removeQueries({
-        queryKey: TASK_TEMPLATE_KEYS.detail(deletedId),
-      });
-      message.success("Mẫu nhiệm vụ đã được xóa thành công!");
+      queryClient.invalidateQueries({ queryKey: TASK_KEYS.lists() });
+      queryClient.removeQueries({ queryKey: TASK_KEYS.detail(deletedId) });
+      message.success("Task đã được xóa!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi xóa task!");
     },
   });
 };
 
-// ==================== TASK SCHEDULE HOOKS ====================
+// ==================== TASK CYCLE QUERIES ====================
 
-// Get task schedules
-export const useTaskSchedules = (
-  params?: TaskScheduleListParams,
-  options?: ReactQueryOptions
-) => {
-  const onSuccess = options?.onSuccess;
-  const query = useQuery({
-    queryKey: TASK_SCHEDULE_KEYS.list(params),
-    queryFn: () => TaskScheduleService.getList(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    ...options,
-  });
-
-  if (query.isSuccess && query.data) {
-    onSuccess?.(query.data);
-  }
-  return query;
-};
-
-// Get single task schedule
-export const useTaskSchedule = (id: string, options?: ReactQueryOptions) => {
-  return useQuery({
-    queryKey: TASK_SCHEDULE_KEYS.detail(id),
-    queryFn: () => TaskScheduleService.getById(id),
-    enabled: !!id,
-    ...options,
-  });
-};
-
-// Create task schedule
-export const useCreateTaskSchedule = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: CreateTaskScheduleDto) =>
-      TaskScheduleService.create(data),
-    onSuccess: (newSchedule) => {
-      queryClient.invalidateQueries({ queryKey: TASK_SCHEDULE_KEYS.lists() });
-      queryClient.setQueryData(
-        TASK_SCHEDULE_KEYS.detail(newSchedule.id),
-        newSchedule
-      );
-      message.success("Lịch trình nhiệm vụ đã được tạo thành công!");
-    },
-  });
-};
-
-// Update task schedule
-export const useUpdateTaskSchedule = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTaskScheduleDto }) =>
-      TaskScheduleService.update(id, data),
-    onSuccess: (updatedSchedule, { id }) => {
-      queryClient.invalidateQueries({ queryKey: TASK_SCHEDULE_KEYS.lists() });
-      queryClient.setQueryData(TASK_SCHEDULE_KEYS.detail(id), updatedSchedule);
-      message.success("Lịch trình nhiệm vụ đã được cập nhật thành công!");
-    },
-  });
-};
-
-// Generate cycles for specific schedule
-export const useGenerateTaskScheduleCycles = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, upToDate }: { id: string; upToDate?: string }) =>
-      TaskScheduleService.generateCycles(id, upToDate),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
-      message.success(`Đã tạo ${result.length} chu kỳ mới!`);
-    },
-  });
-};
-
-// Generate cycles for all schedules
-export const useGenerateAllTaskScheduleCycles = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (upToDate?: string) =>
-      TaskScheduleService.generateAllCycles(upToDate),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
-      const totalCycles = result.reduce(
-        (sum, item) => sum + item.cyclesCreated,
-        0
-      );
-      message.success(
-        `Đã tạo ${totalCycles} chu kỳ mới cho tất cả lịch trình!`
-      );
-    },
-  });
-};
-
-// Delete task schedule
-export const useDeleteTaskSchedule = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => TaskScheduleService.delete(id),
-    onSuccess: (_, deletedId) => {
-      queryClient.invalidateQueries({ queryKey: TASK_SCHEDULE_KEYS.lists() });
-      queryClient.removeQueries({
-        queryKey: TASK_SCHEDULE_KEYS.detail(deletedId),
-      });
-      message.success("Lịch trình nhiệm vụ đã được xóa thành công!");
-    },
-  });
-};
-
-// ==================== TASK CYCLE HOOKS ====================
-
-// Get task cycles
+/**
+ * Get all cycles with optional filters
+ */
 export const useTaskCycles = (
-  params?: TaskCycleListParams,
+  params?: QueryTaskCycleDto,
   options?: ReactQueryOptions
 ) => {
-  const onSuccess = options?.onSuccess;
-  const query = useQuery({
+  return useQuery({
     queryKey: TASK_CYCLE_KEYS.list(params),
-    queryFn: () => TaskCycleService.getList(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    queryFn: () => TaskCycleService.getAll(params),
+    staleTime: 5 * 60 * 1000,
     ...options,
   });
-
-  if (query.isSuccess && query.data) {
-    onSuccess?.(query.data);
-  }
-  return query;
 };
 
-// Get single task cycle
+/**
+ * Get single cycle by ID
+ */
 export const useTaskCycle = (id: string, options?: ReactQueryOptions) => {
   return useQuery({
     queryKey: TASK_CYCLE_KEYS.detail(id),
@@ -325,21 +167,9 @@ export const useTaskCycle = (id: string, options?: ReactQueryOptions) => {
   });
 };
 
-// Get task cycle statistics
-export const useTaskCycleStatistics = (
-  id: string,
-  options?: ReactQueryOptions
-) => {
-  return useQuery({
-    queryKey: TASK_CYCLE_KEYS.statistics(id),
-    queryFn: () => TaskCycleService.getStatistics(id),
-    enabled: !!id,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    ...options,
-  });
-};
-
-// Create task cycle
+/**
+ * Create cycle mutation
+ */
 export const useCreateTaskCycle = () => {
   const queryClient = useQueryClient();
 
@@ -347,13 +177,38 @@ export const useCreateTaskCycle = () => {
     mutationFn: (data: CreateTaskCycleDto) => TaskCycleService.create(data),
     onSuccess: (newCycle) => {
       queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: TASK_KEYS.lists() });
       queryClient.setQueryData(TASK_CYCLE_KEYS.detail(newCycle.id), newCycle);
-      message.success("Chu kỳ nhiệm vụ đã được tạo thành công!");
+      message.success("Chu kỳ đã được tạo thành công!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi tạo chu kỳ!");
     },
   });
 };
 
-// Update task cycle
+export const useCreateTaskCycleAll = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateTaskCycleAllDto) =>
+      TaskCycleService.createAll(data),
+    onSuccess: (newCycle) => {
+      queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: TASK_KEYS.lists() });
+      message.success(
+        `Chu kỳ đã được tạo thành công! ${newCycle.length} chu kỳ`
+      );
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi tạo chu kỳ!");
+    },
+  });
+};
+
+/**
+ * Update cycle mutation
+ */
 export const useUpdateTaskCycle = () => {
   const queryClient = useQueryClient();
 
@@ -363,39 +218,17 @@ export const useUpdateTaskCycle = () => {
     onSuccess: (updatedCycle, { id }) => {
       queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
       queryClient.setQueryData(TASK_CYCLE_KEYS.detail(id), updatedCycle);
-      message.success("Chu kỳ nhiệm vụ đã được cập nhật thành công!");
+      message.success("Chu kỳ đã được cập nhật!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi cập nhật chu kỳ!");
     },
   });
 };
 
-// Generate instances for cycle
-export const useGenerateTaskCycleInstances = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => TaskCycleService.generateInstances(id),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      message.success(`Đã tạo ${result.instancesCreated} nhiệm vụ mới!`);
-    },
-  });
-};
-
-// Update task cycle status
-export const useUpdateTaskCycleStatus = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => TaskCycleService.updateStatus(id),
-    onSuccess: (updatedCycle, id) => {
-      queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
-      queryClient.setQueryData(TASK_CYCLE_KEYS.detail(id), updatedCycle);
-      message.success("Trạng thái chu kỳ đã được cập nhật!");
-    },
-  });
-};
-
-// Delete task cycle
+/**
+ * Delete cycle mutation
+ */
 export const useDeleteTaskCycle = () => {
   const queryClient = useQueryClient();
 
@@ -403,176 +236,211 @@ export const useDeleteTaskCycle = () => {
     mutationFn: (id: string) => TaskCycleService.delete(id),
     onSuccess: (_, deletedId) => {
       queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: TASK_KEYS.lists() });
       queryClient.removeQueries({
         queryKey: TASK_CYCLE_KEYS.detail(deletedId),
       });
-      message.success("Chu kỳ nhiệm vụ đã được xóa thành công!");
+      message.success("Chu kỳ đã được xóa!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi xóa chu kỳ!");
     },
   });
 };
 
-// ==================== TASK INSTANCE HOOKS ====================
+// ==================== TASK ASSIGNMENT QUERIES ====================
 
-// Get task instances
-export const useTaskInstances = (
-  params?: TaskInstanceListParams,
+/**
+ * Get all assignments with optional filters
+ */
+export const useTaskAssignments = (
+  params?: QueryAssignmentDto,
   options?: ReactQueryOptions
 ) => {
-  const onSuccess = options?.onSuccess;
-  const query = useQuery({
-    queryKey: TASK_INSTANCE_KEYS.list(params),
-    queryFn: () => TaskInstanceService.getList(params),
+  return useQuery({
+    queryKey: TASK_ASSIGNMENT_KEYS.list(params),
+    queryFn: () => TaskAssignmentService.getAll(params),
     staleTime: 2 * 60 * 1000, // 2 minutes
     ...options,
   });
-
-  if (query.isSuccess && query.data) {
-    onSuccess?.(query.data);
-  }
-  return query;
 };
 
-// Get single task instance
-export const useTaskInstance = (id: string, options?: ReactQueryOptions) => {
+/**
+ * Get single assignment by ID
+ */
+export const useTaskAssignment = (id: string, options?: ReactQueryOptions) => {
   return useQuery({
-    queryKey: TASK_INSTANCE_KEYS.detail(id),
-    queryFn: () => TaskInstanceService.getById(id),
+    queryKey: TASK_ASSIGNMENT_KEYS.detail(id),
+    queryFn: () => TaskAssignmentService.getById(id),
     enabled: !!id,
     ...options,
   });
 };
 
-// Get task instance statistics
-export const useTaskInstanceStatistics = (
-  params?: TaskInstanceListParams,
+/**
+ * Get employee's assignments
+ */
+export const useEmployeeAssignments = (
+  status?: TaskStatusV2,
   options?: ReactQueryOptions
 ) => {
   return useQuery({
-    queryKey: TASK_INSTANCE_KEYS.statistics(params),
-    queryFn: () => TaskInstanceService.getStatistics(params),
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    queryKey: TASK_ASSIGNMENT_KEYS.employee(status),
+    queryFn: () => TaskAssignmentService.getEmployeeAssignments({ status }),
+    staleTime: 1 * 60 * 1000, // 1 minute
     ...options,
   });
 };
 
-// Create task instance
-export const useCreateTaskInstance = () => {
+/**
+ * Get pending approvals for manager
+ */
+export const usePendingApprovals = (
+  departmentId?: string,
+  options?: ReactQueryOptions
+) => {
+  return useQuery({
+    queryKey: TASK_ASSIGNMENT_KEYS.pendingApprovals(departmentId),
+    queryFn: () => TaskAssignmentService.getPendingApprovals({ departmentId }),
+    staleTime: 1 * 60 * 1000, // 1 minute
+    ...options,
+  });
+};
+
+/**
+ * Create assignment mutation
+ */
+export const useCreateTaskAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateTaskInstanceDto) =>
-      TaskInstanceService.create(data),
-    onSuccess: (newInstance) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      queryClient.setQueryData(
-        TASK_INSTANCE_KEYS.detail(newInstance.id),
-        newInstance
-      );
-      message.success("Nhiệm vụ đã được tạo thành công!");
+    mutationFn: (data: CreateTaskAssignmentDto) =>
+      TaskAssignmentService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TASK_ASSIGNMENT_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
+      message.success("Đã gán task thành công!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi gán task!");
     },
   });
 };
 
-// Update task instance
-export const useUpdateTaskInstance = () => {
+/**
+ * Bulk assign to cycle mutation
+ */
+export const useAssignToCycle = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTaskInstanceDto }) =>
-      TaskInstanceService.update(id, data),
-    onSuccess: (updatedInstance, { id }) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      queryClient.setQueryData(TASK_INSTANCE_KEYS.detail(id), updatedInstance);
-      message.success("Nhiệm vụ đã được cập nhật thành công!");
+    mutationFn: (data: AssignEmployeesToCycleDto) =>
+      TaskAssignmentService.assignToCycle(data),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: TASK_ASSIGNMENT_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
+      message.success(`Đã gán ${result.assignedCount} nhân viên thành công!`);
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi gán nhân viên!");
     },
   });
 };
 
-// Update task progress
-export const useUpdateTaskProgress = () => {
+/**
+ * Delete assignment mutation
+ */
+export const useDeleteTaskAssignment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTaskProgressDto }) =>
-      TaskInstanceService.updateProgress(id, data),
-    onSuccess: (updatedInstance, { id }) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      queryClient.setQueryData(TASK_INSTANCE_KEYS.detail(id), updatedInstance);
-      message.success("Tiến độ nhiệm vụ đã được cập nhật!");
+    mutationFn: (id: string) => TaskAssignmentService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TASK_ASSIGNMENT_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: TASK_CYCLE_KEYS.lists() });
+      message.success("Đã xóa assignment!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi xóa assignment!");
     },
   });
 };
 
-// Complete task
+// ==================== EMPLOYEE ACTIONS ====================
+
+/**
+ * Employee complete task mutation
+ */
 export const useCompleteTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CompleteTaskInstanceDto }) =>
-      TaskInstanceService.complete(id, data),
-    onSuccess: (updatedInstance, { id }) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      queryClient.setQueryData(TASK_INSTANCE_KEYS.detail(id), updatedInstance);
-      message.success("Nhiệm vụ đã được hoàn thành!");
+    mutationFn: (id: string) => TaskAssignmentService.complete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TASK_ASSIGNMENT_KEYS.lists() });
+      message.success("Đã đánh dấu hoàn thành! Chờ manager phê duyệt.");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi hoàn thành task!");
     },
   });
 };
 
-// Approve task
+// ==================== MANAGER ACTIONS ====================
+
+/**
+ * Manager approve task mutation
+ */
 export const useApproveTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ApproveTaskInstanceDto }) =>
-      TaskInstanceService.approve(id, data),
-    onSuccess: (updatedInstance, { id }) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      queryClient.setQueryData(TASK_INSTANCE_KEYS.detail(id), updatedInstance);
-      message.success("Nhiệm vụ đã được phê duyệt!");
+    mutationFn: (id: string) => TaskAssignmentService.approve(id),
+    onSuccess: (updatedAssignment) => {
+      queryClient.invalidateQueries({ queryKey: TASK_ASSIGNMENT_KEYS.lists() });
+      queryClient.invalidateQueries({
+        queryKey: TASK_ASSIGNMENT_KEYS.pendingApprovals(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TASK_ASSIGNMENT_KEYS.employee(updatedAssignment.status),
+      });
+      queryClient.setQueryData(
+        TASK_ASSIGNMENT_KEYS.detail(updatedAssignment.id),
+        updatedAssignment
+      );
+      message.success("Đã phê duyệt task!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi phê duyệt task!");
     },
   });
 };
 
-// Reject task
+/**
+ * Manager reject task mutation
+ */
 export const useRejectTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: RejectTaskInstanceDto }) =>
-      TaskInstanceService.reject(id, data),
-    onSuccess: (updatedInstance, { id }) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      queryClient.setQueryData(TASK_INSTANCE_KEYS.detail(id), updatedInstance);
-      message.success("Nhiệm vụ đã bị từ chối!");
-    },
-  });
-};
-
-// Mark task instances as expired
-export const useMarkTaskInstancesExpired = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (cycleId: string) => TaskInstanceService.markExpired(cycleId),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      message.success(`Đã đánh dấu ${result.expiredCount} nhiệm vụ hết hạn!`);
-    },
-  });
-};
-
-// Delete task instance
-export const useDeleteTaskInstance = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => TaskInstanceService.delete(id),
-    onSuccess: (_, deletedId) => {
-      queryClient.invalidateQueries({ queryKey: TASK_INSTANCE_KEYS.lists() });
-      queryClient.removeQueries({
-        queryKey: TASK_INSTANCE_KEYS.detail(deletedId),
+    mutationFn: ({ id, data }: { id: string; data: RejectAssignmentDto }) =>
+      TaskAssignmentService.reject(id, data),
+    onSuccess: (updatedAssignment) => {
+      queryClient.invalidateQueries({ queryKey: TASK_ASSIGNMENT_KEYS.lists() });
+      queryClient.invalidateQueries({
+        queryKey: TASK_ASSIGNMENT_KEYS.pendingApprovals(),
       });
-      message.success("Nhiệm vụ đã được xóa thành công!");
+      queryClient.invalidateQueries({
+        queryKey: TASK_ASSIGNMENT_KEYS.employee(updatedAssignment.status),
+      });
+      queryClient.setQueryData(
+        TASK_ASSIGNMENT_KEYS.detail(updatedAssignment.id),
+        updatedAssignment
+      );
+      message.success("Đã từ chối task!");
+    },
+    onError: () => {
+      message.error("Có lỗi xảy ra khi từ chối task!");
     },
   });
 };

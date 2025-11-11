@@ -1,156 +1,147 @@
-import React, { useState } from "react";
-import { Table, Button, Space, Tag, Popconfirm, Modal, message } from "antd";
+import { Table, Tag, Space, Button, Popconfirm, Tooltip, Progress } from "antd";
 import {
-  EditOutlined,
   DeleteOutlined,
-  PlusOutlined,
-  PlayCircleOutlined,
+  UserAddOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
-import {
-  useTaskCycles,
-  useDeleteTaskCycle,
-  useGenerateTaskCycleInstances,
-} from "../../queries/task.queries";
-import { TaskCycleForm } from "./TaskCycleForm";
-import type { TaskCycle, TaskStatus } from "../../types/task";
 import dayjs from "dayjs";
+import type { ColumnsType } from "antd/es/table";
+import type { TaskCycle } from "../../types/task";
 
 interface TaskCycleTableProps {
-  scheduleId?: string;
-  status?: TaskStatus;
-  onViewDetails?: (cycle: TaskCycle) => void;
+  cycles: TaskCycle[];
+  loading?: boolean;
+  onDelete: (cycleId: string) => void;
 }
 
-export const TaskCycleTable: React.FC<TaskCycleTableProps> = ({
-  scheduleId,
-  status,
-  onViewDetails,
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCycle, setEditingCycle] = useState<TaskCycle | undefined>();
+export function TaskCycleTable({
+  cycles,
+  loading = false,
+  onDelete,
+}: TaskCycleTableProps) {
+  const getStatus = (cycle: TaskCycle) => {
+    const now = dayjs();
+    const start = dayjs(cycle.periodStart);
+    const end = dayjs(cycle.periodEnd);
 
-  const { data: cycles, isLoading } = useTaskCycles({ scheduleId, status });
-  const deleteMutation = useDeleteTaskCycle();
-  const generateInstancesMutation = useGenerateTaskCycleInstances();
-
-  const handleCreate = () => {
-    setEditingCycle(undefined);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (cycle: TaskCycle) => {
-    setEditingCycle(cycle);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteMutation.mutateAsync(id);
-    } catch (error) {
-      message.error("Không thể xóa chu kỳ này");
+    if (now.isBefore(start)) {
+      return { text: "Sắp diễn ra", color: "blue" };
+    } else if (now.isAfter(end)) {
+      return { text: "Đã kết thúc", color: "default" };
+    } else {
+      return { text: "Đang diễn ra", color: "green" };
     }
   };
 
-  const handleGenerateInstances = async (id: string) => {
-    try {
-      await generateInstancesMutation.mutateAsync(id);
-    } catch (error) {
-      message.error("Không thể tạo nhiệm vụ");
-    }
+  const getDaysLeft = (cycle: TaskCycle) => {
+    const now = dayjs();
+    const end = dayjs(cycle.periodEnd);
+    const diff = end.diff(now, "day");
+    return diff;
   };
 
-  const getStatusLabel = (status: TaskStatus) => {
-    const labels = {
-      [TaskStatus.PENDING]: "Chờ thực hiện",
-      [TaskStatus.IN_PROGRESS]: "Đang thực hiện",
-      [TaskStatus.COMPLETED]: "Đã hoàn thành",
-      [TaskStatus.APPROVED]: "Đã phê duyệt",
-      [TaskStatus.REJECTED]: "Bị từ chối",
-      [TaskStatus.EXPIRED]: "Hết hạn",
-    };
-    return labels[status];
+  const getProgress = (cycle: TaskCycle) => {
+    if (!cycle.assignments || cycle.assignments.length === 0) return 0;
+
+    const completed = cycle.assignments.filter(
+      (a) => a.status === "APPROVED"
+    ).length;
+    return Math.round((completed / cycle.assignments.length) * 100);
   };
 
-  const getStatusColor = (status: TaskStatus) => {
-    const colors = {
-      [TaskStatus.PENDING]: "default",
-      [TaskStatus.IN_PROGRESS]: "processing",
-      [TaskStatus.COMPLETED]: "success",
-      [TaskStatus.APPROVED]: "success",
-      [TaskStatus.REJECTED]: "error",
-      [TaskStatus.EXPIRED]: "warning",
-    };
-    return colors[status];
-  };
-
-  const columns = [
+  const columns: ColumnsType<TaskCycle> = [
     {
-      title: "Mẫu nhiệm vụ",
-      dataIndex: "schedule",
-      key: "template",
-      render: (schedule: any) => schedule?.template?.title || "-",
-    },
-    {
-      title: "Thời gian bắt đầu",
-      dataIndex: "periodStart",
-      key: "periodStart",
-      render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Thời gian kết thúc",
-      dataIndex: "periodEnd",
-      key: "periodEnd",
-      render: (date: string) => dayjs(date).format("DD/MM/YYYY"),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (status: TaskStatus) => (
-        <Tag color={getStatusColor(status)}>{getStatusLabel(status)}</Tag>
+      title: "Task",
+      key: "task",
+      width: "25%",
+      render: (_, record) => (
+        <div>
+          <div className="font-medium">{record.task?.title}</div>
+          <div className="text-gray-500 text-sm">
+            {record.task?.department?.name}
+          </div>
+        </div>
       ),
     },
     {
-      title: "Số nhiệm vụ",
-      dataIndex: "_count",
-      key: "instances",
-      render: (count: any) => count?.instances || 0,
+      title: "Chu kỳ",
+      key: "period",
+      width: "20%",
+      render: (_, record) => (
+        <div>
+          <div className="flex items-center gap-1 text-sm">
+            <CalendarOutlined />
+            <span>{dayjs(record.periodStart).format("DD/MM/YYYY")}</span>
+            <span>→</span>
+            <span>{dayjs(record.periodEnd).format("DD/MM/YYYY")}</span>
+          </div>
+          <div className="text-gray-500 text-xs mt-1">
+            {getDaysLeft(record) > 0
+              ? `Còn ${getDaysLeft(record)} ngày`
+              : "Đã hết hạn"}
+          </div>
+        </div>
+      ),
     },
     {
-      title: "Hành động",
+      title: "Trạng thái",
+      key: "status",
+      width: "12%",
+      render: (_, record) => {
+        const status = getStatus(record);
+        return <Tag color={status.color}>{status.text}</Tag>;
+      },
+    },
+    {
+      title: "Nhân viên",
+      key: "employees",
+      width: "10%",
+      align: "center",
+      render: (_, record) => (
+        <Tag color="purple">{record.assignments?.length || 0}</Tag>
+      ),
+    },
+    {
+      title: "Tiến độ",
+      key: "progress",
+      width: "18%",
+      render: (_, record) => {
+        const progress = getProgress(record);
+        const completed =
+          record.assignments?.filter((a) => a.status === "APPROVED").length ||
+          0;
+        const total = record.assignments?.length || 0;
+
+        return (
+          <div>
+            <Progress
+              percent={progress}
+              size="small"
+              status={progress === 100 ? "success" : "active"}
+            />
+            <div className="text-xs text-gray-500 mt-1">
+              {completed}/{total} hoàn thành
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      title: "Thao tác",
       key: "actions",
-      render: (_: any, record: TaskCycle) => (
-        <Space>
-          <Button
-            type="link"
-            icon={<PlayCircleOutlined />}
-            onClick={() => handleGenerateInstances(record.id)}
-            loading={generateInstancesMutation.isPending}
-          >
-            Tạo nhiệm vụ
-          </Button>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
-            Sửa
-          </Button>
+      width: "15%",
+      render: (_, record) => (
+        <Space size="small">
           <Popconfirm
-            title="Xóa chu kỳ"
-            description="Bạn có chắc chắn muốn xóa chu kỳ này?"
-            onConfirm={() => handleDelete(record.id)}
+            title="Xóa chu kỳ?"
+            description="Bạn có chắc muốn xóa chu kỳ này?"
+            onConfirm={() => onDelete(record.id)}
             okText="Xóa"
             cancelText="Hủy"
           >
-            <Button
-              type="link"
-              danger
-              icon={<DeleteOutlined />}
-              loading={deleteMutation.isPending}
-            >
-              Xóa
-            </Button>
+            <Tooltip title="Xóa">
+              <Button danger size="small" icon={<DeleteOutlined />} />
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
@@ -158,43 +149,15 @@ export const TaskCycleTable: React.FC<TaskCycleTableProps> = ({
   ];
 
   return (
-    <>
-      <div style={{ marginBottom: 16 }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Tạo chu kỳ
-        </Button>
-      </div>
-
-      <Table
-        columns={columns}
-        dataSource={cycles}
-        loading={isLoading}
-        rowKey="id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} của ${total} chu kỳ`,
-        }}
-      />
-
-      <Modal
-        title={editingCycle ? "Chỉnh sửa chu kỳ" : "Tạo chu kỳ mới"}
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        footer={null}
-        width={600}
-      >
-        <TaskCycleForm
-          cycle={editingCycle}
-          onSuccess={() => {
-            setIsModalOpen(false);
-            setEditingCycle(undefined);
-          }}
-          onCancel={() => setIsModalOpen(false)}
-        />
-      </Modal>
-    </>
+    <Table
+      columns={columns}
+      dataSource={cycles}
+      rowKey="id"
+      loading={loading}
+      pagination={{
+        pageSize: 10,
+        showTotal: (total) => `Tổng ${total} chu kỳ`,
+      }}
+    />
   );
-};
+}

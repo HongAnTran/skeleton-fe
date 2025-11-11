@@ -1,130 +1,127 @@
-import React, { useEffect } from "react";
-import { Form, Select, DatePicker, Button, Space } from "antd";
-import {
-  useCreateTaskCycle,
-  useUpdateTaskCycle,
-} from "../../queries/task.queries";
-import { useTaskSchedules } from "../../queries/task.queries";
-import type {
-  TaskCycle,
-  CreateTaskCycleDto,
-  UpdateTaskCycleDto,
-} from "../../types/task";
+import { useEffect } from "react";
+import { Form, DatePicker, Button, Space, Select } from "antd";
 import dayjs from "dayjs";
+import type {
+  Task,
+  CreateTaskCycleDto,
+  CreateTaskCycleAllDto,
+} from "../../types/task";
+
+const { RangePicker } = DatePicker;
 
 interface TaskCycleFormProps {
-  cycle?: TaskCycle;
-  onSuccess?: () => void;
-  onCancel?: () => void;
+  task?: Task | null;
+  tasks?: Task[];
+  onSubmit: (
+    values: CreateTaskCycleDto | CreateTaskCycleAllDto
+  ) => Promise<void>;
+  onCancel: () => void;
+  loading?: boolean;
+  type?: "single" | "all";
 }
 
-export const TaskCycleForm: React.FC<TaskCycleFormProps> = ({
-  cycle,
-  onSuccess,
+export function TaskCycleForm({
+  task,
+  tasks = [],
+  onSubmit,
   onCancel,
-}) => {
+  loading = false,
+  type = "single",
+}: TaskCycleFormProps) {
   const [form] = Form.useForm();
-  const isEditing = !!cycle;
 
-  const createMutation = useCreateTaskCycle();
-  const updateMutation = useUpdateTaskCycle();
-  const { data: schedules } = useTaskSchedules();
+  const handleSubmit = async (values: any) => {
+    const [periodStart, periodEnd] = values.period;
 
-  const handleSubmit = async (
-    values: CreateTaskCycleDto | UpdateTaskCycleDto
-  ) => {
-    try {
-      if (isEditing) {
-        await updateMutation.mutateAsync({
-          id: cycle!.id,
-          data: values as UpdateTaskCycleDto,
-        });
-      } else {
-        await createMutation.mutateAsync(values as CreateTaskCycleDto);
-      }
-      onSuccess?.();
-    } catch (error) {
-      console.error("Error saving cycle:", error);
+    if (type === "single") {
+      const data: CreateTaskCycleDto = {
+        taskId: values.taskId || task?.id || "",
+        periodStart: periodStart.toISOString(),
+        periodEnd: periodEnd.toISOString(),
+      };
+      await onSubmit(data);
+    } else {
+      const data: CreateTaskCycleAllDto = {
+        periodStart: periodStart.toISOString(),
+        periodEnd: periodEnd.toISOString(),
+      };
+      await onSubmit(data);
     }
+    form.resetFields();
   };
 
-  const scheduleOptions =
-    schedules?.map((schedule) => ({
-      label: `${schedule.template?.title} (${schedule.frequency})`,
-      value: schedule.id,
-    })) || [];
+  const handleCancel = () => {
+    form.resetFields();
+    onCancel();
+  };
 
   useEffect(() => {
-    if (isEditing && cycle) {
+    if (task && type === "single") {
       form.setFieldsValue({
-        scheduleId: cycle.scheduleId,
-        periodStart: cycle.periodStart ? dayjs(cycle.periodStart) : undefined,
-        periodEnd: cycle.periodEnd ? dayjs(cycle.periodEnd) : undefined,
+        taskId: task.id,
       });
     }
-  }, [cycle, form, isEditing]);
+  }, [task, form, type]);
+
+  useEffect(() => {
+    if (type === "all") {
+      form.setFieldsValue({
+        period: [
+          dayjs().startOf("month").add(1, "month").startOf("day"),
+          dayjs().endOf("month").add(1, "month").startOf("day"),
+        ],
+      });
+    }
+  }, [type, form, dayjs]);
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      initialValues={{
-        scheduleId: cycle?.scheduleId || "",
-        periodStart: cycle?.periodStart ? dayjs(cycle.periodStart) : dayjs(),
-        periodEnd: cycle?.periodEnd
-          ? dayjs(cycle.periodEnd)
-          : dayjs().add(1, "month"),
-      }}
-      onFinish={handleSubmit}
-    >
-      <Form.Item
-        name="scheduleId"
-        label="Lịch trình"
-        rules={[{ required: true, message: "Vui lòng chọn lịch trình" }]}
-      >
-        <Select
-          options={scheduleOptions}
-          placeholder="Chọn lịch trình"
-          disabled={isEditing}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="periodStart"
-        label="Thời gian bắt đầu"
-        rules={[{ required: true, message: "Vui lòng chọn thời gian bắt đầu" }]}
-      >
-        <DatePicker
-          style={{ width: "100%" }}
-          placeholder="Chọn thời gian bắt đầu"
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="periodEnd"
-        label="Thời gian kết thúc"
-        rules={[
-          { required: true, message: "Vui lòng chọn thời gian kết thúc" },
-        ]}
-      >
-        <DatePicker
-          style={{ width: "100%" }}
-          placeholder="Chọn thời gian kết thúc"
-        />
-      </Form.Item>
-
-      <Form.Item>
-        <Space>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={createMutation.isPending || updateMutation.isPending}
+    <Form form={form} layout="vertical" onFinish={handleSubmit}>
+      {type === "single" && (
+        <Form.Item
+          label="Task"
+          name="taskId"
+          rules={[{ required: true, message: "Vui lòng chọn task!" }]}
+        >
+          <Select
+            placeholder="Chọn task"
+            disabled={!!task}
+            showSearch
+            optionFilterProp="children"
           >
-            {isEditing ? "Cập nhật" : "Tạo mới"}
+            {(task ? [task] : tasks).map((t) => (
+              <Select.Option key={t.id} value={t.id}>
+                {t.title} - {t.department?.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+      )}
+      <Form.Item
+        label="Chu kỳ thực hiện"
+        name="period"
+        rules={[{ required: true, message: "Vui lòng chọn chu kỳ!" }]}
+      >
+        <RangePicker
+          className="w-full"
+          format="DD/MM/YYYY"
+          placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+          disabledDate={(current) => {
+            // Không cho chọn ngày quá khứ
+            return current && current < dayjs().startOf("day");
+          }}
+        />
+      </Form.Item>
+
+      <Form.Item className="mb-0">
+        <Space className="w-full justify-end">
+          <Button onClick={handleCancel} disabled={loading}>
+            Hủy
           </Button>
-          <Button onClick={onCancel}>Hủy</Button>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Tạo Chu Kỳ
+          </Button>
         </Space>
       </Form.Item>
     </Form>
   );
-};
+}

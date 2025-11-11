@@ -1,144 +1,140 @@
-import React from "react";
-import { Form, Input, Select, Switch, Button, Space } from "antd";
-import {
-  useCreateTaskTemplate,
-  useUpdateTaskTemplate,
-} from "../../queries/task.queries";
-import type {
-  TaskTemplate,
-  CreateTaskTemplateDto,
-  UpdateTaskTemplateDto,
-} from "../../types/task";
-import { TaskScope } from "../../types/task";
-import { LEVEL_OPTIONS_SELECT } from "../../consts";
+import { useEffect } from "react";
+import { Form, Input, Button, Space, Switch, Select, InputNumber } from "antd";
+import { useDepartments } from "../../queries/department.queries";
+import type { Task, CreateTaskDto, UpdateTaskDto } from "../../types/task";
+import { LEVEL_OPTIONS_SELECT } from "../../consts/task";
 
 interface TaskTemplateFormProps {
-  template?: TaskTemplate;
-  onSuccess?: () => void;
-  onCancel?: () => void;
+  task?: Task | null;
+  onSubmit: (values: CreateTaskDto | UpdateTaskDto) => Promise<void>;
+  onCancel: () => void;
+  loading?: boolean;
 }
 
-export const TaskTemplateForm: React.FC<TaskTemplateFormProps> = ({
-  template,
-  onSuccess,
+export function TaskTemplateForm({
+  task,
+  onSubmit,
   onCancel,
-}) => {
+  loading = false,
+}: TaskTemplateFormProps) {
   const [form] = Form.useForm();
-  const isEditing = !!template;
+  const isEditing = !!task;
 
-  const createMutation = useCreateTaskTemplate();
-  const updateMutation = useUpdateTaskTemplate();
+  // Get departments for select
+  const { data: departments } = useDepartments({
+    page: 1,
+    limit: 100,
+  });
 
-  const handleSubmit = async (
-    values: CreateTaskTemplateDto | UpdateTaskTemplateDto
-  ) => {
-    try {
-      if (isEditing) {
-        await updateMutation.mutateAsync({
-          id: template!.id,
-          data: values as UpdateTaskTemplateDto,
-        });
-      } else {
-        await createMutation.mutateAsync(values as CreateTaskTemplateDto);
-      }
-      onSuccess?.();
-    } catch (error) {
-      console.error("Error saving template:", error);
+  const handleSubmit = async (values: any) => {
+    await onSubmit(values);
+    if (!isEditing) {
+      form.resetFields();
     }
   };
 
-  const scopeOptions = [
-    { label: "Cá nhân", value: TaskScope.INDIVIDUAL },
-    { label: "Phòng ban", value: TaskScope.DEPARTMENT },
-  ];
+  const handleCancel = () => {
+    form.resetFields();
+    onCancel();
+  };
 
-  // const aggregationOptions = [
-  //   { label: "Đếm", value: TaskAggregation.COUNT },
-  //   { label: "Tổng", value: TaskAggregation.SUM },
-  //   { label: "Trung bình", value: TaskAggregation.AVERAGE },
-  //   { label: "Tối đa", value: TaskAggregation.MAX },
-  //   { label: "Tối thiểu", value: TaskAggregation.MIN },
-  // ];
+  useEffect(() => {
+    if (task) {
+      form.setFieldsValue({
+        title: task.title,
+        description: task.description,
+        departmentId: task.departmentId,
+        level: task.level,
+        isTaskTeam: task.isTaskTeam,
+      });
+    } else {
+      form.resetFields();
+    }
+  }, [task, form]);
 
   return (
     <Form
       form={form}
       layout="vertical"
-      initialValues={{
-        title: template?.title || "",
-        description: template?.description || "",
-        scope: template?.scope || TaskScope.INDIVIDUAL,
-        // unit: template?.unit || "",
-        // defaultTarget: template?.defaultTarget || 0,
-        // aggregation: template?.aggregation || TaskAggregation.COUNT,
-        isActive: template?.isActive ?? true,
-      }}
       onFinish={handleSubmit}
+      initialValues={{
+        level: 1,
+        required: true,
+        isActive: true,
+        isTaskTeam: false,
+      }}
     >
       <Form.Item
+        label="Tên task"
         name="title"
-        label="Tiêu đề"
-        rules={[{ required: true, message: "Vui lòng nhập tiêu đề" }]}
+        rules={[
+          { required: true, message: "Vui lòng nhập tên task!" },
+          { min: 3, message: "Tên task phải có ít nhất 3 ký tự!" },
+        ]}
       >
-        <Input placeholder="Nhập tiêu đề mẫu nhiệm vụ" />
+        <Input placeholder="VD: Hoàn thành KPI bán hàng tháng 11" />
       </Form.Item>
 
-      <Form.Item name="description" label="Mô tả">
-        <Input.TextArea rows={3} placeholder="Nhập mô tả chi tiết (tùy chọn)" />
-      </Form.Item>
-      <Form.Item
-        name="level"
-        label="Cấp độ"
-        rules={[{ required: true, message: "Vui lòng chọn cấp độ" }]}
-      >
-        <Select options={LEVEL_OPTIONS_SELECT} placeholder="Chọn cấp độ" />
-      </Form.Item>
-      <Form.Item
-        name="scope"
-        label="Dành cho"
-        rules={[{ required: true, message: "Vui lòng chọn" }]}
-      >
-        <Select options={scopeOptions} placeholder="Chọn phạm vi" />
-      </Form.Item>
-
-      {/* 
-      <Form.Item name="unit" label="Đơn vị">
-        <Input placeholder="VD: cái, kg, triệu đồng" />
-      </Form.Item>
-
-      <Form.Item name="defaultTarget" label="Mục tiêu">
-        <InputNumber
-          min={0}
-          style={{ width: "100%" }}
-          placeholder="Nhập mục tiêu"
+      <Form.Item label="Mô tả" name="description">
+        <Input.TextArea
+          rows={4}
+          placeholder="Mô tả chi tiết về task, yêu cầu cần đạt được..."
         />
       </Form.Item>
 
-      <Form.Item name="aggregation" label="Cách tính toán">
+      <Form.Item
+        label="Phòng ban"
+        name="departmentId"
+        rules={[{ required: true, message: "Vui lòng chọn phòng ban!" }]}
+      >
         <Select
-          options={aggregationOptions}
-          placeholder="Chọn cách tính toán"
-        />
-      </Form.Item> */}
+          placeholder="Chọn phòng ban"
+          loading={!departments}
+          showSearch
+          optionFilterProp="children"
+        >
+          {departments?.data.map((dept) => (
+            <Select.Option key={dept.id} value={dept.id}>
+              {dept.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
 
-      {isEditing && (
-        <Form.Item name="isActive" label="Trạng thái" valuePropName="checked">
-          <Switch checkedChildren="Hoạt động" unCheckedChildren="Tạm dừng" />
+      <div className="grid grid-cols-2 gap-4">
+        <Form.Item
+          label="Cấp độ nhiệm vụ"
+          name="level"
+          rules={[{ required: true, message: "Vui lòng chọn mức độ!" }]}
+        >
+          <Select
+            placeholder="Chọn cấp độ nhiệm vụ"
+            options={LEVEL_OPTIONS_SELECT}
+          />
         </Form.Item>
-      )}
+      </div>
 
-      <Form.Item>
-        <Space>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={createMutation.isPending || updateMutation.isPending}
-          >
-            {isEditing ? "Cập nhật" : "Tạo mới"}
+      <div className="grid grid-cols-2 gap-4">
+        <Form.Item
+          label="Task nhóm"
+          name="isTaskTeam"
+          valuePropName="checked"
+          tooltip="Task nhóm: toàn phòng cùng làm một task"
+        >
+          <Switch checkedChildren="Nhóm" unCheckedChildren="Cá nhân" />
+        </Form.Item>
+      </div>
+
+      <Form.Item className="mb-0">
+        <Space className="w-full justify-end">
+          <Button onClick={handleCancel} disabled={loading}>
+            Hủy
           </Button>
-          <Button onClick={onCancel}>Hủy</Button>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            {isEditing ? "Cập nhật Task" : "Tạo Task"}
+          </Button>
         </Space>
       </Form.Item>
     </Form>
   );
-};
+}

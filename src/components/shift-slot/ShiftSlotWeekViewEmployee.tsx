@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Card, Button, Typography, Tag } from "antd";
+import { Card, Button, Typography, Tag, Space } from "antd";
 import {
   ClockCircleOutlined,
   LeftOutlined,
   RightOutlined,
   TeamOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
@@ -16,19 +18,18 @@ dayjs.Ls.en.weekStart = 1; // 1 = Monday
 import type { ShiftSlot } from "../../types/shiftSlot";
 import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
 import { ShiftSignupStatus } from "../../types/shiftSignup";
+import { useCreateManyShiftSignups } from "../../queries/shiftSignup.queries";
 
 const { Title, Text } = Typography;
 
 interface WeekViewProps {
   selectedDate: Dayjs;
-  onDateSelect: (date: Dayjs) => void;
   onWeekChange: (weekStart: Dayjs) => void;
   getShiftSlotsForDate: (date: Dayjs) => ShiftSlot[];
 }
 
 export default function ShiftSlotWeekViewEmployee({
   selectedDate,
-  onDateSelect,
   onWeekChange,
   getShiftSlotsForDate,
 }: WeekViewProps) {
@@ -37,6 +38,10 @@ export default function ShiftSlotWeekViewEmployee({
   const [currentWeekStart, setCurrentWeekStart] = useState(
     selectedDate.startOf("week")
   );
+  const [isSelectingMode, setIsSelectingMode] = useState(false);
+  const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
+
+  const createManyMutation = useCreateManyShiftSignups();
 
   const weekDays = Array.from({ length: 7 }, (_, i) =>
     currentWeekStart.add(i, "day")
@@ -54,20 +59,85 @@ export default function ShiftSlotWeekViewEmployee({
     onWeekChange(nextWeek);
   };
 
+  const handleStartSelecting = () => {
+    setIsSelectingMode(true);
+    setSelectedSlotIds([]);
+  };
+
+  const handleCancelSelecting = () => {
+    setIsSelectingMode(false);
+    setSelectedSlotIds([]);
+  };
+
+  const handleToggleSlot = (slotId: string) => {
+    setSelectedSlotIds((prev) =>
+      prev.includes(slotId)
+        ? prev.filter((id) => id !== slotId)
+        : [...prev, slotId]
+    );
+  };
+
+  const handleConfirmSelection = async () => {
+    if (selectedSlotIds.length === 0) return;
+
+    try {
+      await createManyMutation.mutateAsync({ slotIds: selectedSlotIds });
+      setIsSelectingMode(false);
+      setSelectedSlotIds([]);
+    } catch (error) {
+      console.error("Error creating shift signups:", error);
+    }
+  };
+
   const isToday = (date: Dayjs) => date.isSame(dayjs(), "day");
 
   return (
     <Card className="week-view">
       {/* Header với navigation */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col lg:flex-row items-center justify-between mb-4 gap-4">
         <div className="flex items-center gap-2 justify-center flex-1">
-          <Button icon={<LeftOutlined />} onClick={handlePrevWeek} />
+          <Button
+            icon={<LeftOutlined />}
+            onClick={handlePrevWeek}
+            disabled={isSelectingMode}
+          />
           <Title level={5} className="m-0 lg:min-w-[200px] text-center">
             {currentWeekStart.format("DD/MM")} -{" "}
             {currentWeekStart.add(6, "day").format("DD/MM/YYYY")}
           </Title>
-          <Button icon={<RightOutlined />} onClick={handleNextWeek} />
+          <Button
+            icon={<RightOutlined />}
+            onClick={handleNextWeek}
+            disabled={isSelectingMode}
+          />
         </div>
+
+        <Space>
+          {!isSelectingMode ? (
+            <Button type="primary" onClick={handleStartSelecting}>
+              Bắt đầu đăng ký
+            </Button>
+          ) : (
+            <>
+              <Button
+                danger
+                icon={<CloseOutlined />}
+                onClick={handleCancelSelecting}
+              >
+                Hủy
+              </Button>
+              <Button
+                type="primary"
+                icon={<CheckOutlined />}
+                onClick={handleConfirmSelection}
+                disabled={selectedSlotIds.length === 0}
+                loading={createManyMutation.isPending}
+              >
+                Xác nhận ({selectedSlotIds.length})
+              </Button>
+            </>
+          )}
+        </Space>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -80,10 +150,8 @@ export default function ShiftSlotWeekViewEmployee({
             <Card
               key={day.format("YYYY-MM-DD")}
               className={`
-                p-4 cursor-pointer transition-all duration-200 h-full min-h-[200px]
-                hover:shadow-md hover:border-blue-300
+                p-4 transition-all duration-200 h-full min-h-[200px]
               `}
-              onClick={() => onDateSelect(day)}
             >
               <div className="mb-4 pb-3 border-b border-gray-200">
                 <div
@@ -115,15 +183,38 @@ export default function ShiftSlotWeekViewEmployee({
                       (signup) => signup.status !== ShiftSignupStatus.CANCELLED
                     );
                     const type = shift.type;
-                    const isAvailable = signups.length < shift.capacity; // Default max signups
+                    const isAvailable = signups.length < shift.capacity;
+                    const isSelected = selectedSlotIds.includes(shift.id);
+                    const isEmployeeSignedUp = signups.some(
+                      (signup) => signup.employee.id === employee?.id
+                    );
 
                     return (
                       <button
                         key={shift.id}
-                        className={`w-full cursor-pointer text-left p-3 rounded-lg border transition-all ${
-                          isAvailable
-                            ? "border-gray-300 hover:border-primary/50 hover:bg-secondary/80 hover:border-blue-300"
-                            : "border-gray-300"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (
+                            isSelectingMode &&
+                            isAvailable &&
+                            !isEmployeeSignedUp
+                          ) {
+                            handleToggleSlot(shift.id);
+                          }
+                        }}
+                        disabled={
+                          !isSelectingMode || !isAvailable || isEmployeeSignedUp
+                        }
+                        className={`w-full text-left p-3 rounded-lg border transition-all ${
+                          isSelectingMode
+                            ? isSelected
+                              ? "border-blue-500 bg-blue-50 border-2"
+                              : isAvailable && !isEmployeeSignedUp
+                                ? "border-gray-300  hover:bg-blue-50 "
+                                : "border-gray-300 opacity-50 cursor-not-allowed"
+                            : isAvailable
+                              ? "border-gray-300"
+                              : "border-red-500"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2 mb-2">
@@ -132,17 +223,24 @@ export default function ShiftSlotWeekViewEmployee({
                           >
                             {type?.name || "Ca làm việc"}
                           </Tag>
-                          {isAvailable ? (
-                            <div className="flex items-center gap-1">
-                              <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                              <span className="text-xs text-muted-foreground">
-                                Còn trống (
-                                {`${signups.length}/${shift.capacity}`})
+                          <div className="flex items-center gap-2">
+                            {isSelectingMode && isSelected && (
+                              <CheckOutlined className="text-blue-500 font-bold text-lg" />
+                            )}
+                            {isAvailable ? (
+                              <div className="flex items-center gap-1">
+                                <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                                <span className="text-xs text-muted-foreground">
+                                  Còn trống (
+                                  {`${signups.length}/${shift.capacity}`})
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-red-500">
+                                Đã đầy
                               </span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-red-500">Đã đầy</span>
-                          )}
+                            )}
+                          </div>
                         </div>
 
                         <div className="flex items-center gap-1.5 text-sm text-foreground mb-2">
@@ -180,12 +278,15 @@ export default function ShiftSlotWeekViewEmployee({
                                         status === ShiftSignupStatus.CANCELLED
                                           ? "red"
                                           : status ===
-                                            ShiftSignupStatus.COMPLETED
-                                          ? "green"
-                                          : "orange"
+                                              ShiftSignupStatus.COMPLETED
+                                            ? "green"
+                                            : "orange"
                                       }
                                     >
-                                      {signup.employee?.name} {signup.employee?.role && <b>({signup.employee?.role}) </b>}
+                                      {signup.employee?.name}{" "}
+                                      {signup.employee?.role && (
+                                        <b>({signup.employee?.role}) </b>
+                                      )}
                                     </Tag>
                                     {signup.employee.id === employee?.id && (
                                       <Tag color="green" className="text-xs">
@@ -201,9 +302,11 @@ export default function ShiftSlotWeekViewEmployee({
 
                         {shift.note && (
                           <div className="mt-2 pt-2 border-t border-border">
-                            <div className=" flex items-center gap-1">  
+                            <div className=" flex items-center gap-1">
                               <b>Ghi chú:</b>
-                              <span className="text-muted-foreground">{shift.note || "-"}</span>
+                              <span className="text-muted-foreground">
+                                {shift.note || "-"}
+                              </span>
                             </div>
                           </div>
                         )}

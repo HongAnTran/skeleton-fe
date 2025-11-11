@@ -93,6 +93,19 @@ export const useCreateShiftSignup = () => {
     },
   });
 };
+export const useCreateManyShiftSignups = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { slotIds: string[] }) =>
+      ShiftSignupService.createMany(data),
+    onSuccess: (count) => {
+      queryClient.invalidateQueries({ queryKey: SHIFT_SIGNUP_KEYS.lists() });
+      queryClient.invalidateQueries({ queryKey: ["shift-slots"] });
+      message.success(`Đăng ký ${count} ca làm việc thành công!`);
+    },
+  });
+};
 
 // Cancel shift signup mutation
 export const useCancelShiftSignup = () => {

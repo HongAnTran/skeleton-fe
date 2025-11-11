@@ -1,97 +1,35 @@
-import React, { useState } from "react";
-import { Table, Button, Space, Tag, Popconfirm, Modal, message } from "antd";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
-import {
-  useTaskTemplates,
-  useDeleteTaskTemplate,
-  useToggleTaskTemplateActive,
-} from "../../queries/task.queries";
-import { TaskTemplateForm } from "./TaskTemplateForm";
-import type { TaskTemplate } from "../../types/task";
-import { TaskScope, TaskAggregation } from "../../types/task";
+import { Table, Tag, Space, Button, Popconfirm, Tooltip } from "antd";
+import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import type { ColumnsType } from "antd/es/table";
+import type { Task } from "../../types/task";
+import { getLevelOption } from "../../consts/task";
 
 interface TaskTemplateTableProps {
-  scope?: TaskScope;
-  onViewDetails?: (template: TaskTemplate) => void;
+  tasks: Task[];
+  loading?: boolean;
+  onEdit: (task: Task) => void;
+  onDelete: (taskId: string) => void;
+  onCreateCycle: (task: Task) => void;
 }
 
-export const TaskTemplateTable: React.FC<TaskTemplateTableProps> = ({
-  scope,
-  onViewDetails,
-}) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingTemplate, setEditingTemplate] = useState<
-    TaskTemplate | undefined
-  >();
-  const [selectedTemplate, setSelectedTemplate] = useState<
-    TaskTemplate | undefined
-  >();
-
-  const { data: templates, isLoading } = useTaskTemplates({ scope });
-  const deleteMutation = useDeleteTaskTemplate();
-  const toggleActiveMutation = useToggleTaskTemplateActive();
-
-  const handleCreate = () => {
-    setEditingTemplate(undefined);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (template: TaskTemplate) => {
-    setEditingTemplate(template);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteMutation.mutateAsync(id);
-    } catch (error) {
-      message.error("Không thể xóa mẫu nhiệm vụ này");
-    }
-  };
-
-  const handleToggleActive = async (id: string) => {
-    try {
-      await toggleActiveMutation.mutateAsync(id);
-    } catch (error) {
-      message.error("Không thể cập nhật trạng thái");
-    }
-  };
-
-  const handleViewDetails = (template: TaskTemplate) => {
-    setSelectedTemplate(template);
-    onViewDetails?.(template);
-  };
-
-  const getScopeLabel = (scope: TaskScope) => {
-    return scope === TaskScope.INDIVIDUAL ? "Cá nhân" : "Phòng ban";
-  };
-
-  const getAggregationLabel = (aggregation: TaskAggregation) => {
-    const labels = {
-      [TaskAggregation.COUNT]: "Đếm",
-      [TaskAggregation.SUM]: "Tổng",
-      [TaskAggregation.AVERAGE]: "Trung bình",
-      [TaskAggregation.MAX]: "Tối đa",
-      [TaskAggregation.MIN]: "Tối thiểu",
-    };
-    return labels[aggregation];
-  };
-
-  const columns = [
+export function TaskTemplateTable({
+  tasks,
+  loading = false,
+  onEdit,
+  onDelete,
+  onCreateCycle,
+}: TaskTemplateTableProps) {
+  const columns: ColumnsType<Task> = [
     {
-      title: "Tiêu đề",
+      title: "Tên Task",
       dataIndex: "title",
       key: "title",
-      render: (text: string, record: TaskTemplate) => (
+      width: "25%",
+      render: (text, record) => (
         <div>
-          <div style={{ fontWeight: 500 }}>{text}</div>
+          <div className="font-medium">{text}</div>
           {record.description && (
-            <div style={{ fontSize: "12px", color: "#666" }}>
+            <div className="text-gray-500 text-sm mt-1 line-clamp-2">
               {record.description}
             </div>
           )}
@@ -99,91 +37,101 @@ export const TaskTemplateTable: React.FC<TaskTemplateTableProps> = ({
       ),
     },
     {
-      title: "Phạm vi",
-      dataIndex: "scope",
-      key: "scope",
-      render: (scope: TaskScope) => (
-        <Tag color={scope === TaskScope.INDIVIDUAL ? "blue" : "green"}>
-          {getScopeLabel(scope)}
+      title: "Phòng ban",
+      dataIndex: ["department", "name"],
+      key: "department",
+      width: "15%",
+    },
+    {
+      title: "Loại",
+      dataIndex: "isTaskTeam",
+      key: "isTaskTeam",
+      width: "10%",
+      render: (isTaskTeam: boolean) => (
+        <Tag color={isTaskTeam ? "blue" : "green"}>
+          {isTaskTeam ? "Nhóm" : "Cá nhân"}
         </Tag>
       ),
     },
     {
-      title: "Đơn vị",
-      dataIndex: "unit",
-      key: "unit",
-      render: (unit: string) => unit || "-",
+      title: "Cấp độ nhiệm vụ",
+      dataIndex: "level",
+      key: "level",
+      width: "8%",
+      align: "center",
+      render: (level: number) => (
+        <Tag color={getLevelOption(level)?.color}>
+          {getLevelOption(level)?.label}
+        </Tag>
+      ),
     },
     {
-      title: "Mục tiêu",
-      dataIndex: "defaultTarget",
-      key: "defaultTarget",
-      render: (target: number) => target || "-",
+      title: "Bắt buộc",
+      dataIndex: "required",
+      key: "required",
+      width: "8%",
+      align: "center",
+      render: (required: boolean) =>
+        required ? (
+          <Tag color="red">Bắt buộc</Tag>
+        ) : (
+          <Tag color="default">Tùy chọn</Tag>
+        ),
     },
     {
-      title: "Tính toán",
-      dataIndex: "aggregation",
-      key: "aggregation",
-      render: (aggregation: TaskAggregation) =>
-        getAggregationLabel(aggregation),
+      title: "Chu kỳ",
+      key: "cycles",
+      width: "8%",
+      align: "center",
+      render: (_, record) => (
+        <Tag color="purple">{record.cycles?.length || 0}</Tag>
+      ),
     },
     {
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
+      width: "8%",
       render: (isActive: boolean) => (
-        <Tag color={isActive ? "green" : "red"}>
-          {isActive ? "Hoạt động" : "Tạm dừng"}
+        <Tag color={isActive ? "success" : "default"}>
+          {isActive ? "Hoạt động" : "Tắt"}
         </Tag>
       ),
     },
     {
-      title: "Số lượng",
-      dataIndex: "_count",
-      key: "instances",
-      render: (count: any) => count?.instances || 0,
-    },
-    {
-      title: "Hành động",
+      title: "Thao tác",
       key: "actions",
-      render: (_: any, record: TaskTemplate) => (
-        <Space>
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            onClick={() => handleViewDetails(record)}
-          >
-            Xem
-          </Button>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
-            Sửa
-          </Button>
-          <Button
-            type="link"
-            onClick={() => handleToggleActive(record.id)}
-            loading={toggleActiveMutation.isPending}
-          >
-            {record.isActive ? "Tạm dừng" : "Kích hoạt"}
-          </Button>
+      width: "18%",
+      render: (_, record) => (
+        <Space size="small">
+          {/* <Tooltip title="Tạo chu kỳ mới">
+            <Button
+              type="primary"
+              size="small"
+              icon={<PlusOutlined />}
+              onClick={() => onCreateCycle(record)}
+            >
+              Chu kỳ
+            </Button>
+          </Tooltip> */}
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              type="default"
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => onEdit(record)}
+            />
+          </Tooltip>
           <Popconfirm
-            title="Xóa mẫu nhiệm vụ"
-            description="Bạn có chắc chắn muốn xóa mẫu nhiệm vụ này?"
-            onConfirm={() => handleDelete(record.id)}
+            title="Xóa task?"
+            description="Bạn có chắc muốn xóa task này?"
+            onConfirm={() => onDelete(record.id)}
             okText="Xóa"
             cancelText="Hủy"
           >
-            <Button
-              type="link"
-              danger
-              icon={<DeleteOutlined />}
-              loading={deleteMutation.isPending}
-            >
-              Xóa
-            </Button>
+            <Tooltip title="Xóa">
+              <Button danger size="small" icon={<DeleteOutlined />} />
+            </Tooltip>
           </Popconfirm>
         </Space>
       ),
@@ -191,45 +139,16 @@ export const TaskTemplateTable: React.FC<TaskTemplateTableProps> = ({
   ];
 
   return (
-    <>
-      <div style={{ marginBottom: 16 }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Tạo mẫu nhiệm vụ
-        </Button>
-      </div>
-
-      <Table
-        columns={columns}
-        dataSource={templates}
-        loading={isLoading}
-        rowKey="id"
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} của ${total} mẫu nhiệm vụ`,
-        }}
-      />
-
-      <Modal
-        title={
-          editingTemplate ? "Chỉnh sửa mẫu nhiệm vụ" : "Tạo mẫu nhiệm vụ mới"
-        }
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        footer={null}
-        width={600}
-      >
-        <TaskTemplateForm
-          template={editingTemplate}
-          onSuccess={() => {
-            setIsModalOpen(false);
-            setEditingTemplate(undefined);
-          }}
-          onCancel={() => setIsModalOpen(false)}
-        />
-      </Modal>
-    </>
+    <Table
+      columns={columns}
+      dataSource={tasks}
+      rowKey="id"
+      loading={loading}
+      pagination={{
+        pageSize: 10,
+        showSizeChanger: true,
+        showTotal: (total) => `Tổng ${total} tasks`,
+      }}
+    />
   );
-};
+}

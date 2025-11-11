@@ -99,7 +99,7 @@ function EmployeeShiftSlotDetailItem({
 
             {shift.note && (
               <div className="mb-2">
-                <Text >Ghi chú: {shift.note}</Text>
+                <Text>Ghi chú: {shift.note}</Text>
               </div>
             )}
 
@@ -276,8 +276,8 @@ export function EmployeeShiftSlotCalendar() {
                 shift.signups.length >= shift.capacity
                   ? "success"
                   : shift.signups.length > 0
-                  ? "processing"
-                  : "default"
+                    ? "processing"
+                    : "default"
               }
               text={
                 <Text ellipsis className="text-xs">
@@ -413,7 +413,6 @@ export function EmployeeShiftSlotCalendar() {
       {viewMode === "week" ? (
         <ShiftSlotWeekViewEmployee
           selectedDate={selectedDate}
-          onDateSelect={handleDateSelect}
           onWeekChange={handleWeekChange}
           getShiftSlotsForDate={getShiftSlotsForDate}
         />

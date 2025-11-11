@@ -1,18 +1,11 @@
-export enum TaskScope {
-  INDIVIDUAL = "INDIVIDUAL",
-  DEPARTMENT = "DEPARTMENT",
-}
+import type { Department } from "./department";
+import type { Employee } from "./employee";
+import type { User } from "./user";
 
-export enum TaskFrequency {
-  NONE = "NONE",
-  DAILY = "DAILY",
-  WEEKLY = "WEEKLY",
-  MONTHLY = "MONTHLY",
-  QUARTERLY = "QUARTERLY",
-  YEARLY = "YEARLY",
-}
-
-export enum TaskStatus {
+/**
+ * Task/Assignment status
+ */
+export enum TaskStatusV2 {
   PENDING = "PENDING",
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED",
@@ -21,194 +14,52 @@ export enum TaskStatus {
   EXPIRED = "EXPIRED",
 }
 
-export enum TaskAggregation {
-  COUNT = "COUNT",
-  SUM = "SUM",
-  AVERAGE = "AVERAGE",
-  MAX = "MAX",
-  MIN = "MIN",
-}
-
-// Task Template interfaces
-export interface TaskTemplate {
+export interface Task {
   id: string;
   title: string;
   description?: string;
-  scope: TaskScope;
-  unit?: string;
-  defaultTarget?: number;
-  aggregation: TaskAggregation;
+  required: boolean;
+  level: number;
   isActive: boolean;
+  isTaskTeam: boolean; // false = INDIVIDUAL, true = DEPARTMENT
+  departmentId: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
-  schedules?: TaskSchedule[];
-  instances?: TaskInstance[];
-  _count?: {
-    instances: number;
-  };
-}
-
-export interface CreateTaskTemplateDto {
-  title: string;
-  description?: string;
-  scope: TaskScope;
-  level: number;
-  unit?: string;
-  defaultTarget?: number;
-  aggregation?: TaskAggregation;
-  isActive?: boolean;
-}
-
-export interface UpdateTaskTemplateDto {
-  title?: string;
-  description?: string;
-  scope?: TaskScope;
-  level?: number;
-  unit?: string;
-  defaultTarget?: number;
-  aggregation?: TaskAggregation;
-  isActive?: boolean;
-}
-
-export interface TaskTemplateListParams {
-  scope?: TaskScope;
-  isActive?: boolean;
-}
-
-export interface TaskTemplateStatistics {
-  totalInstances: number;
-  completedInstances: number;
-  approvedInstances: number;
-  completionRate: number;
-}
-
-// Task Schedule interfaces
-export interface TaskSchedule {
-  id: string;
-  templateId: string;
-  frequency: TaskFrequency;
-  interval: number;
-  dayOfMonth?: number;
-  startDate: string;
-  endDate?: string;
-  createdAt: string;
-  updatedAt: string;
-  template?: Pick<TaskTemplate, "id" | "title" | "scope">;
+  // Relations
+  department?: Department;
+  user?: User;
   cycles?: TaskCycle[];
-  _count?: {
-    cycles: number;
-  };
+  assignments?: TaskAssignment[];
 }
 
-export interface CreateTaskScheduleDto {
-  templateId: string;
-  frequency: TaskFrequency;
-  interval: number;
-  dayOfMonth?: number;
-  startDate: string;
-  endDate?: string;
-}
-
-export interface UpdateTaskScheduleDto {
-  frequency?: TaskFrequency;
-  interval?: number;
-  dayOfMonth?: number;
-  startDate?: string;
-  endDate?: string;
-}
-
-export interface TaskScheduleListParams {
-  templateId?: string;
-  frequency?: TaskFrequency;
-}
-
-export interface GenerateCyclesResponse {
-  id: string;
-  scheduleId: string;
-  periodStart: string;
-  periodEnd: string;
-  generatedAt: string;
-  status: TaskStatus;
-}
-
-export interface GenerateAllCyclesResponse {
-  scheduleId: string;
-  cyclesCreated: number;
-}
-
-// Task Cycle interfaces
+/**
+ * Task Cycle (TaskCycleV2)
+ */
 export interface TaskCycle {
   id: string;
-  scheduleId: string;
-  periodStart: string;
-  periodEnd: string;
-  generatedAt: string;
-  status: TaskStatus;
-  schedule?: {
-    id: string;
-    frequency: TaskFrequency;
-    template?: Pick<TaskTemplate, "id" | "title">;
-  };
-  instances?: TaskInstance[];
-  _count?: {
-    instances: number;
-  };
+  taskId: string;
+  periodStart: string; // ISO date string
+  periodEnd: string; // ISO date string
+  createdAt: string;
+  updatedAt: string;
+  // Relations
+  task?: Task;
+  assignments?: TaskAssignment[];
 }
 
-export interface CreateTaskCycleDto {
-  scheduleId: string;
-  periodStart: string;
-  periodEnd: string;
-}
-
-export interface UpdateTaskCycleDto {
-  periodStart?: string;
-  periodEnd?: string;
-  status?: TaskStatus;
-}
-
-export interface TaskCycleListParams {
-  scheduleId?: string;
-  status?: TaskStatus;
-  periodStartFrom?: string;
-  periodStartTo?: string;
-}
-
-export interface TaskCycleStatistics {
-  totalInstances: number;
-  pendingInstances: number;
-  inProgressInstances: number;
-  completedInstances: number;
-  approvedInstances: number;
-  rejectedInstances: number;
-  expiredInstances: number;
-  completionRate: number;
-}
-
-export interface GenerateInstancesResponse {
-  cycleId: string;
-  instancesCreated: number;
-}
-
-// Task Instance interfaces
-export interface TaskInstance {
+/**
+ * Task Assignment (Junction table)
+ */
+export interface TaskAssignment {
   id: string;
-  templateId: string;
   cycleId: string;
-  scope: TaskScope;
-  employeeId?: string;
-  departmentId?: string;
-  level: number;
-  required: boolean;
-  title: string;
-  description?: string;
-  target?: number;
-  unit?: string;
-  quantity: number;
-  status: TaskStatus;
+  employeeId: string;
+  status: TaskStatusV2;
+  // Completion
   completedAt?: string;
   completedBy?: string;
+  // Approval
   approvedAt?: string;
   approvedBy?: string;
   rejectedAt?: string;
@@ -216,105 +67,192 @@ export interface TaskInstance {
   rejectedReason?: string;
   createdAt: string;
   updatedAt: string;
-  template?: Pick<TaskTemplate, "id" | "title">;
-  cycle?: {
-    id: string;
-    periodStart: string;
-    periodEnd: string;
-    schedule?: TaskSchedule;
-  };
-  employee?: {
-    id: string;
-    name: string;
-  };
-  department?: {
-    id: string;
-    name: string;
-  };
-  progressEvents?: TaskProgressEvent[];
-  approvals?: TaskApproval[];
-  _count?: {
-    progressEvents: number;
-    approvals: number;
-  };
+  // Relations
+  cycle?: TaskCycle;
+  employee?: Employee;
 }
 
-export interface TaskProgressEvent {
-  id: string;
-  instanceId: string;
-  delta: number;
-  source?: string;
-  note?: string;
-  occurredAt: string;
-  createdAt: string;
-  createdBy: string;
-}
+// ==================== REQUEST DTOs ====================
 
-export interface TaskApproval {
-  id: string;
-  instanceId: string;
-  level: number;
-  approvedBy: string;
-  approvedAt: string;
-  reason?: string;
-}
-
-export interface CreateTaskInstanceDto {
-  templateId: string;
-  cycleId: string;
-  scope: TaskScope;
-  employeeId?: string;
-  departmentId?: string;
-  level: number;
-  required: boolean;
+/**
+ * Create Task DTO
+ */
+export interface CreateTaskDto {
   title: string;
   description?: string;
-  target?: number;
-  unit?: string;
+  departmentId: string;
+  level?: number;
+  isTaskTeam?: boolean;
 }
 
-export interface UpdateTaskInstanceDto {
+/**
+ * Update Task DTO
+ */
+export interface UpdateTaskDto {
   title?: string;
   description?: string;
-  target?: number;
-  unit?: string;
-  quantity?: number;
+  level?: number;
+  isTaskTeam?: boolean;
 }
 
-export interface UpdateTaskProgressDto {
-  delta: number;
-  source?: string;
-  note?: string;
-  occurredAt?: string;
-  createdBy?: string;
-}
-
-export interface CompleteTaskInstanceDto {
-  completedBy: string;
-  note?: string;
-}
-
-export interface ApproveTaskInstanceDto {
-  approvedBy: string;
-  reason?: string;
-}
-
-export interface RejectTaskInstanceDto {
-  rejectedBy: string;
-  rejectedReason: string;
-}
-
-export interface TaskInstanceListParams {
-  cycleId?: string;
-  templateId?: string;
-  scope?: TaskScope;
-  employeeId?: string;
+/**
+ * Query Task DTO
+ */
+export interface QueryTaskDto {
   departmentId?: string;
-  status?: TaskStatus;
   level?: number;
 }
 
-export interface TaskInstanceStatistics {
+/**
+ * Create Task Cycle DTO
+ */
+export interface CreateTaskCycleDto {
+  taskId: string;
+  periodStart: string; // ISO date string
+  periodEnd: string; // ISO date string
+}
+
+export interface CreateTaskCycleAllDto {
+  periodStart: string; // ISO date string
+  periodEnd: string; // ISO date string
+}
+
+
+/**
+ * Update Task Cycle DTO
+ */
+export interface UpdateTaskCycleDto {
+  periodStart?: string;
+  periodEnd?: string;
+}
+
+/**
+ * Query Task Cycle DTO
+ */
+export interface QueryTaskCycleDto {
+  taskId?: string;
+  periodStartFrom?: string;
+  periodStartTo?: string;
+}
+
+/**
+ * Create Task Assignment DTO (single)
+ */
+export interface CreateTaskAssignmentDto {
+  cycleId: string;
+  employeeId: string;
+  status?: TaskStatusV2;
+}
+
+/**
+ * Assign Employees To Cycle DTO (bulk)
+ */
+export interface AssignEmployeesToCycleDto {
+  cycleId: string;
+  employeeIds?: string[];
+  departmentId?: string;
+}
+
+/**
+ * Query Task Assignment DTO
+ */
+export interface QueryAssignmentDto {
+  cycleId?: string;
+  employeeId?: string;
+  departmentId?: string;
+  status?: TaskStatusV2;
+}
+
+/**
+ * Reject Assignment DTO
+ */
+export interface RejectAssignmentDto {
+  rejectedReason: string;
+}
+
+// ==================== RESPONSE DTOs ====================
+
+/**
+ * Task with relations response
+ */
+export interface TaskWithRelations extends Task {
+  department: Department;
+  cycles: TaskCycle[];
+}
+
+/**
+ * Task Cycle with relations response
+ */
+export interface TaskCycleWithRelations extends TaskCycle {
+  task: Task;
+  assignments?: TaskAssignment[];
+}
+
+/**
+ * Bulk assign response
+ */
+export interface BulkAssignResponse {
+  cycleId: string;
+  task: Task;
+  period: {
+    start: string;
+    end: string;
+  };
+  assignedCount: number;
+  skippedCount: number;
+  assignments: TaskAssignment[];
+}
+
+// ==================== UI HELPER TYPES ====================
+
+/**
+ * Task card data for UI display
+ */
+export interface TaskCardData {
+  id: string;
+  title: string;
+  description?: string;
+  department: string;
+  level: number;
+  cycleCount: number;
+  assignedCount: number;
+  completedCount: number;
+  isActive: boolean;
+}
+
+/**
+ * Assignment card data for employee view
+ */
+export interface AssignmentCardData {
+  id: string;
+  taskTitle: string;
+  taskDescription?: string;
+  status: TaskStatusV2;
+  periodStart: string;
+  periodEnd: string;
+  daysLeft: number;
+  completedAt?: string;
+  rejectedReason?: string;
+  rejectedBy?: string;
+}
+
+/**
+ * Pending approval item for manager view
+ */
+export interface PendingApprovalItem {
+  assignmentId: string;
+  taskTitle: string;
+  employeeId: string;
+  employeeName: string;
+  departmentName: string;
+  completedAt: string;
+  hoursAgo: number;
+}
+
+/**
+ * Task statistics
+ */
+export interface TaskStatistics {
   total: number;
   pending: number;
   inProgress: number;
@@ -322,9 +260,101 @@ export interface TaskInstanceStatistics {
   approved: number;
   rejected: number;
   expired: number;
-  completionRate: number;
 }
 
-export interface MarkExpiredResponse {
-  expiredCount: number;
+/**
+ * Department completion rate
+ */
+export interface DepartmentStats {
+  departmentId: string;
+  departmentName: string;
+  totalAssignments: number;
+  completedAssignments: number;
+  approvedAssignments: number;
+  completionRate: number; // 0-100
+  approvalRate: number; // 0-100
+}
+
+/**
+ * Employee performance
+ */
+export interface EmployeePerformance {
+  employeeId: string;
+  employeeName: string;
+  totalTasks: number;
+  completedTasks: number;
+  approvedTasks: number;
+  rejectedTasks: number;
+  completionRate: number; // 0-100
+  approvalRate: number; // 0-100
+}
+
+// ==================== FILTER TYPES ====================
+
+/**
+ * Status filter options
+ */
+export type StatusFilter = TaskStatusV2 | "ALL";
+
+/**
+ * Date range filter
+ */
+export interface DateRangeFilter {
+  from?: string; // ISO date string
+  to?: string; // ISO date string
+}
+
+/**
+ * Task filters for list view
+ */
+export interface TaskFilters {
+  departmentId?: string;
+  level?: number;
+  isActive?: boolean;
+  search?: string; // Search in title/description
+}
+
+/**
+ * Assignment filters for list view
+ */
+export interface AssignmentFilters {
+  status?: StatusFilter;
+  departmentId?: string;
+  employeeId?: string;
+  cycleId?: string;
+  dateRange?: DateRangeFilter;
+}
+
+// ==================== FORM TYPES ====================
+
+/**
+ * Create task form data
+ */
+export interface CreateTaskFormData {
+  // Step 1: Task Info
+  title: string;
+  description: string;
+  departmentId: string;
+  level: number;
+  isTaskTeam: boolean;
+  // Step 2: Period
+  periodStart: Date;
+  periodEnd: Date;
+  // Step 3: Assignment
+  assignmentType: "all" | "specific";
+  employeeIds?: string[];
+}
+
+/**
+ * Complete assignment form data
+ */
+export interface CompleteAssignmentFormData {
+  note?: string;
+}
+
+/**
+ * Reject assignment form data
+ */
+export interface RejectAssignmentFormData {
+  rejectedReason: string;
 }

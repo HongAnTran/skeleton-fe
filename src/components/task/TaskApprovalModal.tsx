@@ -1,129 +1,166 @@
-import React from "react";
-import { Modal, Form, Input, Button, Space, Radio, message } from "antd";
-import { useApproveTask, useRejectTask } from "../../queries/task.queries";
-import type { TaskInstance } from "../../types/task";
+import { Modal, Descriptions, Tag, Space, Button, Input } from "antd";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/vi";
+import type { TaskAssignment } from "../../types/task";
+
+dayjs.extend(relativeTime);
+dayjs.locale("vi");
 
 interface TaskApprovalModalProps {
-  instance: TaskInstance;
+  assignment: TaskAssignment | null;
   open: boolean;
-  onClose: () => void;
-  onSuccess?: () => void;
+  onApprove: () => void;
+  onReject: (reason: string) => void;
+  onCancel: () => void;
+  loading?: boolean;
 }
 
-export const TaskApprovalModal: React.FC<TaskApprovalModalProps> = ({
-  instance,
+export function TaskApprovalModal({
+  assignment,
   open,
-  onClose,
-  onSuccess,
-}) => {
-  const [form] = Form.useForm();
-  const [action, setAction] = React.useState<"approve" | "reject">("approve");
+  onApprove,
+  onReject,
+  onCancel,
+  loading = false,
+}: TaskApprovalModalProps) {
+  const [showRejectInput, setShowRejectInput] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
 
-  const approveMutation = useApproveTask();
-  const rejectMutation = useRejectTask();
+  const handleRejectClick = () => {
+    setShowRejectInput(true);
+  };
 
-  // Reset form when modal opens
-  React.useEffect(() => {
-    if (open) {
-      form.resetFields();
-      setAction("approve");
-    }
-  }, [open, form]);
-
-  const handleSubmit = async (values: any) => {
-    try {
-      if (action === "approve") {
-        await approveMutation.mutateAsync({
-          id: instance.id,
-          data: {
-            approvedBy: "current-user", // TODO: Get from auth context
-            reason: values.reason || "Đã phê duyệt",
-          },
-        });
-      } else {
-        await rejectMutation.mutateAsync({
-          id: instance.id,
-          data: {
-            rejectedBy: "current-user", // TODO: Get from auth context
-            rejectedReason: values.reason,
-          },
-        });
-      }
-      onSuccess?.();
-      onClose();
-    } catch (error) {
-      message.error(
-        `Không thể ${action === "approve" ? "phê duyệt" : "từ chối"} nhiệm vụ`
-      );
+  const handleRejectConfirm = () => {
+    if (rejectReason.trim()) {
+      onReject(rejectReason);
+      setRejectReason("");
+      setShowRejectInput(false);
     }
   };
 
   const handleCancel = () => {
-    form.resetFields();
-    setAction("approve");
-    onClose();
+    setShowRejectInput(false);
+    setRejectReason("");
+    onCancel();
   };
+
+  if (!assignment) return null;
 
   return (
     <Modal
-      title={`${action === "approve" ? "Phê duyệt" : "Từ chối"} nhiệm vụ`}
+      title={<div className="text-lg font-semibold">Phê duyệt Task</div>}
       open={open}
       onCancel={handleCancel}
       footer={null}
-      width={500}
+      width={600}
     >
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ fontWeight: 500, marginBottom: 8 }}>{instance.title}</div>
-        <div style={{ color: "#666", fontSize: "14px" }}>
-          Tiến độ: {instance.quantity} / {instance.target || 0} {instance.unit}
-        </div>
-      </div>
+      <div className="space-y-4">
+        <Descriptions column={1} bordered size="small">
+          <Descriptions.Item label="Task">
+            <div className="font-medium">{assignment.cycle?.task?.title}</div>
+          </Descriptions.Item>
+          <Descriptions.Item label="Nhân viên">
+            <div>
+              <div className="font-medium">{assignment.employee?.name}</div>
+              {assignment.employee?.account?.email && (
+                <div className="text-gray-500 text-sm">
+                  {assignment.employee.account.email}
+                </div>
+              )}
+            </div>
+          </Descriptions.Item>
+          <Descriptions.Item label="Phòng ban">
+            {assignment.employee?.department?.name}
+          </Descriptions.Item>
+          <Descriptions.Item label="Chu kỳ">
+            {dayjs(assignment.cycle?.periodStart).format("DD/MM/YYYY")} -{" "}
+            {dayjs(assignment.cycle?.periodEnd).format("DD/MM/YYYY")}
+          </Descriptions.Item>
+          <Descriptions.Item label="Trạng thái">
+            <Tag color="orange">Chờ duyệt</Tag>
+          </Descriptions.Item>
+          <Descriptions.Item label="Hoàn thành lúc">
+            {assignment.completedAt
+              ? dayjs(assignment.completedAt).format("DD/MM/YYYY HH:mm")
+              : "-"}
+            {assignment.completedAt && (
+              <span className="text-gray-500 ml-2">
+                ({dayjs(assignment.completedAt).fromNow()})
+              </span>
+            )}
+          </Descriptions.Item>
+        </Descriptions>
 
-      <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <Form.Item label="Hành động">
-          <Radio.Group
-            value={action}
-            onChange={(e) => setAction(e.target.value)}
-            style={{ width: "100%" }}
-          >
-            <Radio value="approve">Phê duyệt</Radio>
-            <Radio value="reject">Từ chối</Radio>
-          </Radio.Group>
-        </Form.Item>
+        {assignment.cycle?.task?.description && (
+          <div className="border rounded p-3 bg-gray-50">
+            <div className="text-sm font-medium mb-2">Yêu cầu task:</div>
+            <div className="text-sm text-gray-700 whitespace-pre-line">
+              {assignment.cycle.task.description}
+            </div>
+          </div>
+        )}
 
-        <Form.Item
-          name="reason"
-          label={
-            action === "approve"
-              ? "Lý do phê duyệt (tùy chọn)"
-              : "Lý do từ chối"
-          }
-          rules={[
-            {
-              required: action === "reject",
-              message: "Vui lòng nhập lý do từ chối",
-            },
-          ]}
-        >
-          <Input.TextArea
-            rows={4}
-            placeholder={`Nhập lý do ${action === "approve" ? "phê duyệt" : "từ chối"} nhiệm vụ`}
-          />
-        </Form.Item>
-
-        <Form.Item>
-          <Space>
-            <Button
-              type={action === "approve" ? "primary" : "default"}
-              htmlType="submit"
-              loading={approveMutation.isPending || rejectMutation.isPending}
-            >
-              {action === "approve" ? "Phê duyệt" : "Từ chối"}
+        {!showRejectInput ? (
+          <Space className="w-full justify-end">
+            <Button onClick={handleCancel} disabled={loading}>
+              Đóng
             </Button>
-            <Button onClick={handleCancel}>Hủy</Button>
+            <Button
+              danger
+              icon={<CloseCircleOutlined />}
+              onClick={handleRejectClick}
+              disabled={loading}
+            >
+              Từ chối
+            </Button>
+            <Button
+              type="primary"
+              icon={<CheckCircleOutlined />}
+              onClick={onApprove}
+              loading={loading}
+            >
+              Phê duyệt
+            </Button>
           </Space>
-        </Form.Item>
-      </Form>
+        ) : (
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium mb-2">
+                Lý do từ chối <span className="text-red-500">*</span>
+              </label>
+              <Input.TextArea
+                rows={4}
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="Nhập lý do từ chối task này..."
+                autoFocus
+              />
+            </div>
+            <Space className="w-full justify-end">
+              <Button
+                onClick={() => {
+                  setShowRejectInput(false);
+                  setRejectReason("");
+                }}
+                disabled={loading}
+              >
+                Hủy
+              </Button>
+              <Button
+                danger
+                onClick={handleRejectConfirm}
+                loading={loading}
+                disabled={!rejectReason.trim()}
+              >
+                Xác nhận từ chối
+              </Button>
+            </Space>
+          </div>
+        )}
+      </div>
     </Modal>
   );
-};
+}
