@@ -95,12 +95,12 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       label: "Đơn xin nghỉ",
       onClick: () => handleMenuClick("/u/leave-requests"),
     },
-    {
-      key: "/u/tasks",
-      icon: <UnorderedListOutlined />,
-      label: "Nhiệm vụ",
-      onClick: () => handleMenuClick("/u/tasks"),
-    },
+    // {
+    //   key: "/u/tasks",
+    //   icon: <UnorderedListOutlined />,
+    //   label: "Nhiệm vụ",
+    //   onClick: () => handleMenuClick("/u/tasks"),
+    // },
     {
       key: "/u/branchs",
       icon: <HomeOutlined />,

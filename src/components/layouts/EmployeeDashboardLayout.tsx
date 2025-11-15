@@ -89,12 +89,12 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
       label: "Đơn xin nghỉ",
       onClick: () => handleMenuClick("/e/leave-requests"),
     },
-    {
-      key: "/e/tasks",
-      icon: <UnorderedListOutlined />,
-      label: "Nhiệm vụ",
-      onClick: () => handleMenuClick("/e/tasks"),
-    },
+    // {
+    //   key: "/e/tasks",
+    //   icon: <UnorderedListOutlined />,
+    //   label: "Nhiệm vụ",
+    //   onClick: () => handleMenuClick("/e/tasks"),
+    // },
   ];
 
   const handleMenuButtonClick = () => {
