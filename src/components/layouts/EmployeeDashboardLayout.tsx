@@ -19,6 +19,7 @@ import {
   EnvironmentOutlined,
   SwapOutlined,
   UnorderedListOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
 import type { MenuProps } from "antd";
@@ -81,6 +82,12 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
       icon: <SwapOutlined />,
       label: "Yêu cầu đổi ca",
       onClick: () => handleMenuClick("/e/change-shift-requests"),
+    },
+    {
+      key: "/e/leave-requests",
+      icon: <FileTextOutlined />,
+      label: "Đơn xin nghỉ",
+      onClick: () => handleMenuClick("/e/leave-requests"),
     },
     {
       key: "/e/tasks",
