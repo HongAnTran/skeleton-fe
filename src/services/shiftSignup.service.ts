@@ -44,6 +44,14 @@ export class ShiftSignupService {
     return data;
   }
 
+  static async createMany(request: { slotIds: string[] }): Promise<number> {
+    const { data } = await axiosInstance.post<number>(
+      this.url + "/bulk-weekly",
+      request
+    );
+    return data;
+  }
+
   static async cancel(
     id: string,
     request: CancelShiftSignupDto
