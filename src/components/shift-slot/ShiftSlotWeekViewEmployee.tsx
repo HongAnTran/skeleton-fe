@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, Button, Typography, Tag, Space } from "antd";
 import {
   ClockCircleOutlined,
@@ -19,6 +19,8 @@ import type { ShiftSlot } from "../../types/shiftSlot";
 import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
 import { ShiftSignupStatus } from "../../types/shiftSignup";
 import { useCreateManyShiftSignups } from "../../queries/shiftSignup.queries";
+import { useMyLeaveRequests } from "../../queries/leaveRequest.queries";
+import { LeaveRequestStatus } from "../../types/leaveRequest";
 
 const { Title, Text } = Typography;
 
@@ -42,6 +44,37 @@ export default function ShiftSlotWeekViewEmployee({
   const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
 
   const createManyMutation = useCreateManyShiftSignups();
+
+  // Lấy các đơn xin off pending và approved của tuần hiện tại
+  const weekEnd = currentWeekStart.add(6, "day");
+  const { data: leaveRequestsData } = useMyLeaveRequests({
+    startDateFrom: currentWeekStart.startOf("day").toISOString(),
+    endDateTo: weekEnd.endOf("day").toISOString(),
+  });
+
+  // Lọc các leave requests có status PENDING hoặc APPROVED
+  const activeLeaveRequests = useMemo(() => {
+    if (!leaveRequestsData?.data) return [];
+    return leaveRequestsData.data.filter(
+      (req) =>
+        req.status === LeaveRequestStatus.PENDING ||
+        req.status === LeaveRequestStatus.APPROVED
+    );
+  }, [leaveRequestsData]);
+
+  // Kiểm tra xem một ngày có nằm trong khoảng thời gian nghỉ phép không
+  const isDateOnLeave = (date: Dayjs) => {
+    return activeLeaveRequests.some((req) => {
+      const startDate = dayjs(req.startDate).startOf("day");
+      const endDate = dayjs(req.endDate).endOf("day");
+      const dateStart = date.startOf("day");
+      return (
+        (dateStart.isAfter(startDate, "day") ||
+          dateStart.isSame(startDate, "day")) &&
+        (dateStart.isBefore(endDate, "day") || dateStart.isSame(endDate, "day"))
+      );
+    });
+  };
 
   const weekDays = Array.from({ length: 7 }, (_, i) =>
     currentWeekStart.add(i, "day")
@@ -154,12 +187,19 @@ export default function ShiftSlotWeekViewEmployee({
               `}
             >
               <div className="mb-4 pb-3 border-b border-gray-200">
-                <div
-                  className={`text-sm text-muted-foreground ${
-                    isToday(day) ? "text-green-500 font-bold" : ""
-                  }`}
-                >
-                  {dayOfWeek}
+                <div className="flex items-center justify-between mb-1">
+                  <div
+                    className={`text-sm text-muted-foreground ${
+                      isToday(day) ? "text-green-500 font-bold" : ""
+                    }`}
+                  >
+                    {dayOfWeek}
+                  </div>
+                  {isDateOnLeave(day) && (
+                    <Tag color="orange" className="text-xs">
+                      Nghỉ phép
+                    </Tag>
+                  )}
                 </div>
                 <div
                   className={`text-2xl font-semibold text-foreground ${
@@ -188,6 +228,7 @@ export default function ShiftSlotWeekViewEmployee({
                     const isEmployeeSignedUp = signups.some(
                       (signup) => signup.employee.id === employee?.id
                     );
+                    const isDayOnLeave = isDateOnLeave(day);
 
                     return (
                       <button
@@ -197,24 +238,28 @@ export default function ShiftSlotWeekViewEmployee({
                           if (
                             isSelectingMode &&
                             isAvailable &&
-                            !isEmployeeSignedUp
+                            !isEmployeeSignedUp &&
+                            !isDayOnLeave
                           ) {
                             handleToggleSlot(shift.id);
                           }
                         }}
                         disabled={
-                          !isSelectingMode || !isAvailable || isEmployeeSignedUp
+                          !isSelectingMode ||
+                          !isAvailable ||
+                          isEmployeeSignedUp ||
+                          isDayOnLeave
                         }
                         className={`w-full text-left p-3 rounded-lg border transition-all ${
                           isSelectingMode
                             ? isSelected
                               ? "border-blue-500 bg-blue-50 border-2"
-                              : isAvailable && !isEmployeeSignedUp
+                              : isAvailable &&
+                                  !isEmployeeSignedUp &&
+                                  !isDayOnLeave
                                 ? "border-gray-300  hover:bg-blue-50 "
                                 : "border-gray-300 opacity-50 cursor-not-allowed"
-                            : isAvailable
-                              ? "border-gray-300"
-                              : "border-red-500"
+                            : ""
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2 mb-2">

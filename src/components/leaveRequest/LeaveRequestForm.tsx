@@ -102,6 +102,7 @@ export function LeaveRequestForm({
         <DatePicker.RangePicker
           style={{ width: "100%" }}
           format="DD/MM/YYYY"
+          defaultPickerValue={[dayjs(), dayjs()]}
           disabledDate={(current) => {
             // Disable past dates
             return current && current < dayjs().startOf("day");
