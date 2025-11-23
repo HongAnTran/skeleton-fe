@@ -91,7 +91,7 @@ function LeaveRequestModal({
       onCancel={onCancel}
       footer={null}
       width={700}
-      destroyOnClose
+      destroyOnHidden
     >
       <Divider />
       <LeaveRequestForm

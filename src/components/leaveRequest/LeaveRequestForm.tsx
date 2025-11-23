@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Form, Input, Button, Space, DatePicker } from "antd";
+import { useEffect, useMemo } from "react";
+import { Form, Input, Button, Space, DatePicker, Typography } from "antd";
 import dayjs, { type Dayjs } from "dayjs";
 import type {
   LeaveRequest,
@@ -7,6 +7,7 @@ import type {
 } from "../../types/leaveRequest";
 
 const { TextArea } = Input;
+const { Text } = Typography;
 
 interface LeaveRequestFormProps {
   leaveRequest?: LeaveRequest | null;
@@ -26,8 +27,20 @@ export function LeaveRequestForm({
   cancelText = "Hủy",
 }: LeaveRequestFormProps) {
   const [form] = Form.useForm();
+  const dateRange = Form.useWatch("dateRange", form);
 
   const isEditing = !!leaveRequest;
+
+  // Tính số ngày nghỉ
+  const numberOfDays = useMemo(() => {
+    if (!dateRange || !dateRange[0] || !dateRange[1]) {
+      return null;
+    }
+    const start = dateRange[0].startOf("day");
+    const end = dateRange[1].startOf("day");
+    // Tính số ngày bao gồm cả ngày bắt đầu và kết thúc
+    return end.diff(start, "day") + 1;
+  }, [JSON.stringify(dateRange)]);
 
   const defaultSubmitText = isEditing ? "Cập nhật" : "Tạo";
   const finalSubmitText = submitText || `${defaultSubmitText} đơn xin nghỉ`;
@@ -109,6 +122,16 @@ export function LeaveRequestForm({
           }}
         />
       </Form.Item>
+      {numberOfDays !== null && (
+        <div className="my-2">
+          <Text type="secondary" className="text-sm">
+            Số ngày nghỉ:{" "}
+            <Text strong className="text-blue-600">
+              {numberOfDays} ngày
+            </Text>{" "}
+          </Text>
+        </div>
+      )}
 
       <Form.Item
         label="Lý do nghỉ (tùy chọn)"

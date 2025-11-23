@@ -94,7 +94,6 @@ export function ShiftSwapList() {
 
   const currentData = activeTab === "sent" ? sentData : receivedData;
   const currentLoading = activeTab === "sent" ? sentLoading : receivedLoading;
-  console.log(currentData);
   const handleTabChange = (key: string) => {
     setActiveTab(key as "sent" | "received");
     setCurrentPage(1);

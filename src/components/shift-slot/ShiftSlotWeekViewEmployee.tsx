@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Card, Button, Typography, Tag, Space } from "antd";
+import { Card, Button, Typography, Tag, Space, Badge } from "antd";
 import {
   ClockCircleOutlined,
   LeftOutlined,
@@ -145,32 +145,37 @@ export default function ShiftSlotWeekViewEmployee({
           />
         </div>
 
-        <Space>
-          {!isSelectingMode ? (
-            <Button type="primary" onClick={handleStartSelecting}>
-              Bắt đầu đăng ký
-            </Button>
-          ) : (
-            <>
-              <Button
-                danger
-                icon={<CloseOutlined />}
-                onClick={handleCancelSelecting}
-              >
-                Hủy
+        <div className="md:static fixed bottom-0 left-0 right-0 z-50 md:z-auto bg-white md:bg-transparent py-3 md:py-0 -mx-6 md:mx-0 px-6 md:px-0 shadow-lg md:shadow-none border-t md:border-t-0 border-gray-200">
+          <Space className="w-full md:w-auto justify-center md:justify-end">
+            {!isSelectingMode ? (
+              <Button type="primary" onClick={handleStartSelecting}>
+                Bắt đầu đăng ký
               </Button>
-              <Button
-                type="primary"
-                icon={<CheckOutlined />}
-                onClick={handleConfirmSelection}
-                disabled={selectedSlotIds.length === 0}
-                loading={createManyMutation.isPending}
-              >
-                Xác nhận ({selectedSlotIds.length})
-              </Button>
-            </>
-          )}
-        </Space>
+            ) : (
+              <>
+                <Button
+                  danger
+                  icon={<CloseOutlined />}
+                  onClick={handleCancelSelecting}
+                >
+                  Hủy
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  onClick={handleConfirmSelection}
+                  disabled={selectedSlotIds.length === 0}
+                  loading={createManyMutation.isPending}
+                >
+                  Xác nhận
+                  {selectedSlotIds.length > 0 && (
+                    <span className="ml-1">({selectedSlotIds.length})</span>
+                  )}
+                </Button>
+              </>
+            )}
+          </Space>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -250,15 +255,15 @@ export default function ShiftSlotWeekViewEmployee({
                           isEmployeeSignedUp ||
                           isDayOnLeave
                         }
-                        className={`w-full text-left p-3 rounded-lg border transition-all ${
+                        className={`w-full text-left p-3 rounded-lg border border-gray-200 transition-all ${
                           isSelectingMode
                             ? isSelected
                               ? "border-blue-500 bg-blue-50 border-2"
                               : isAvailable &&
                                   !isEmployeeSignedUp &&
                                   !isDayOnLeave
-                                ? "border-gray-300  hover:bg-blue-50 "
-                                : "border-gray-300 opacity-50 cursor-not-allowed"
+                                ? "border-gray-200  hover:bg-blue-50 "
+                                : "border-gray-200 opacity-50 cursor-not-allowed"
                             : ""
                         }`}
                       >

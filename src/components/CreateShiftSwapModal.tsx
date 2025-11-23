@@ -60,6 +60,7 @@ export function CreateShiftSwapModal({
   const { data: myShiftsData, isLoading: myShiftsLoading } =
     useShiftSignupsByEmployee({
       employeeId: currentEmployeeId,
+      startDate: dayjs().format("YYYY-MM-DD"),
     });
 
   // Get target employee's shift slots
@@ -67,6 +68,7 @@ export function CreateShiftSwapModal({
     useShiftSignupsByEmployee(
       {
         employeeId: targetEmployeeId!,
+        startDate: dayjs().format("YYYY-MM-DD"),
       },
       {
         enabled: !!targetEmployeeId,
