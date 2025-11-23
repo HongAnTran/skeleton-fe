@@ -5,9 +5,9 @@ import {
   Link,
 } from "@tanstack/react-router";
 import { Button, Form, Input, Card, Typography, message, Spin } from "antd";
-import { tokenStorage } from "../../../utils/token";
-import type { LoginRequest } from "../../../types/auth";
-import { useEmployeeAuth } from "../../../contexts/AuthEmployeeContext";
+import { tokenStorage } from "@/utils/token";
+import type { LoginRequest } from "@/types/auth";
+import { useEmployeeAuth } from "@/contexts/AuthEmployeeContext";
 
 const { Title, Text } = Typography;
 

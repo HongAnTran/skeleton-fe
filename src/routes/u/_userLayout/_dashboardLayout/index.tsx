@@ -1,16 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, Row, Col, Typography, Spin, Alert } from "antd";
-import { useUserAuth } from "../../../../contexts/AuthUserContext";
-import { useDashboardData } from "../../../../queries/dashboard.queries";
+import { useUserAuth } from "@/contexts/AuthUserContext";
+import { useDashboardData } from "@/queries/dashboard.queries";
 import {
-  DashboardStatsCards,
   DashboardFilters,
   DashboardRecentActivities,
   DashboardTopPerformers,
   DashboardDepartmentPerformance,
-} from "../../../../components";
-import type { DashboardQuery } from "../../../../types/dashboard";
+  TodayShiftsQuickView,
+} from "@/components";
+import type { DashboardQuery } from "@/types/dashboard";
 
 const { Title, Text } = Typography;
 
@@ -76,10 +76,11 @@ function RouteComponent() {
           </Text>
         </div>
       </Card>
+      <TodayShiftsQuickView branchId={filters.branchId} />
 
       <DashboardFilters onFiltersChange={setFilters} initialFilters={filters} />
 
-      <DashboardStatsCards stats={dashboardData.stats} />
+      {/* <DashboardStatsCards stats={dashboardData.stats} /> */}
 
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={8}>

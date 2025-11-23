@@ -5,10 +5,10 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { tokenStorage } from "../utils/token";
+import { tokenStorage } from "@/utils/token";
 import type { LoginRequest } from "../types/auth";
-import type { Employee } from "../types/employee";
-import { AuthEmployeeService } from "../services/authEmployee.service";
+import type { Employee } from "@/types/employee";
+import { AuthEmployeeService } from "@/services/authEmployee.service";
 import { Spin } from "antd";
 import { useRouter } from "@tanstack/react-router";
 interface AuthContextType {

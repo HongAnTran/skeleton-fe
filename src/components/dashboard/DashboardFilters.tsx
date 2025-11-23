@@ -10,9 +10,9 @@ import {
   Space,
 } from "antd";
 import dayjs from "dayjs";
-import { useBranches } from "../../queries/branch.queries";
-import { useDepartments } from "../../queries/department.queries";
-import type { DashboardQuery } from "../../types/dashboard";
+import { useBranches } from "@/queries/branch.queries";
+import { useDepartments } from "@/queries/department.queries";
+import type { DashboardQuery } from "@/types/dashboard";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;

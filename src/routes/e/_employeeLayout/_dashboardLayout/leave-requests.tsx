@@ -27,17 +27,14 @@ import {
   useCreateLeaveRequest,
   useUpdateLeaveRequest,
   useCancelLeaveRequest,
-} from "../../../../queries/leaveRequest.queries";
-import {
-  LeaveRequestForm,
-  CancelLeaveRequestModal,
-} from "../../../../components";
+} from "@/queries/leaveRequest.queries";
+import { LeaveRequestForm, CancelLeaveRequestModal } from "@/components";
 import type {
   LeaveRequest,
   CreateLeaveRequestDto,
   CancelLeaveRequestDto,
   LeaveRequestStatus,
-} from "../../../../types/leaveRequest";
+} from "@/types/leaveRequest";
 import dayjs from "dayjs";
 
 const { Title, Text } = Typography;

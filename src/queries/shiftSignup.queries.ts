@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { ShiftSignupService } from "../services/shiftSignup.service";
+import { ShiftSignupService } from "@/services/shiftSignup.service";
 import type {
   CreateShiftSignupDto,
   CreateShiftSignupByAdminDto,
   CancelShiftSignupDto,
   ShiftSignupListParams,
-} from "../types/shiftSignup";
-import type { ReactQueryOptions } from "../types/reactQuery";
+} from "@/types/shiftSignup";
+import type { ReactQueryOptions } from "@/types/reactQuery";
 
 export const SHIFT_SIGNUP_KEYS = {
   all: ["shift-signups"] as const,

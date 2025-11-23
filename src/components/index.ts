@@ -21,6 +21,7 @@ export { DashboardTopPerformers } from "./dashboard/DashboardTopPerformers";
 export { DashboardShiftTrends } from "./dashboard/DashboardShiftTrends";
 export { DashboardDepartmentPerformance } from "./dashboard/DashboardDepartmentPerformance";
 export { DashboardFilters } from "./dashboard/DashboardFilters";
+export { TodayShiftsQuickView } from "./dashboard/TodayShiftsQuickView";
 export * from "./task";
 export { LeaveRequestForm } from "./leaveRequest/LeaveRequestForm";
 export { RejectLeaveRequestModal } from "./leaveRequest/RejectLeaveRequestModal";

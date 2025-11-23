@@ -1,4 +1,4 @@
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import type {
   TaskCycle,
   TaskCycleWithRelations,
@@ -6,7 +6,7 @@ import type {
   UpdateTaskCycleDto,
   QueryTaskCycleDto,
   CreateTaskCycleAllDto,
-} from "../types/task";
+} from "@/types/task";
 
 /**
  * Task Cycle Service - Manages Task Cycles (Periods)

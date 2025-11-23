@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { TaskService } from "../services/task.service";
-import { TaskCycleService } from "../services/taskCycle.service";
-import { TaskAssignmentService } from "../services/taskAssignment.service";
+import { TaskService } from "@/services/task.service";
+import { TaskCycleService } from "@/services/taskCycle.service";
+import { TaskAssignmentService } from "@/services/taskAssignment.service";
 import type {
   CreateTaskDto,
   UpdateTaskDto,
@@ -16,8 +16,8 @@ import type {
   RejectAssignmentDto,
   CreateTaskCycleAllDto,
   TaskStatusV2,
-} from "../types/task";
-import type { ReactQueryOptions } from "../types/reactQuery";
+} from "@/types/task";
+import type { ReactQueryOptions } from "@/types/reactQuery";
 
 // ==================== QUERY KEYS ====================
 

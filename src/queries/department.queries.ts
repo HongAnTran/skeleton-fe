@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { DepartmentService } from "../services/department.service";
+import { DepartmentService } from "@/services/department.service";
 import type {
   CreateDepartmentRequest,
   UpdateDepartmentRequest,
   DepartmentListParams,
-} from "../types/department";
-import type { ReactQueryOptions } from "../types/reactQuery";
+} from "@/types/department";
+import type { ReactQueryOptions } from "@/types/reactQuery";
 
 export const DEPARTMENT_KEYS = {
   all: ["departments"] as const,

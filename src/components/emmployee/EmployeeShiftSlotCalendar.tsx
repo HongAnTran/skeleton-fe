@@ -30,18 +30,18 @@ import type { Dayjs } from "dayjs";
 dayjs.extend(weekday);
 dayjs.Ls.en.weekStart = 1; // 1 = Monday
 
-import { useShiftSlotsByEmployee } from "../../queries/shiftSlot.queries";
-import { useShiftSlotTypes } from "../../queries/shiftSlotType.queries";
+import { useShiftSlotsByEmployee } from "@/queries/shiftSlot.queries";
+import { useShiftSlotTypes } from "@/queries/shiftSlotType.queries";
 import {
   useCancelShiftSignup,
   useCreateShiftSignup,
-} from "../../queries/shiftSignup.queries";
-import type { ShiftSlot } from "../../types/shiftSlot";
+} from "@/queries/shiftSignup.queries";
+import type { ShiftSlot } from "@/types/shiftSlot";
 import ShiftSlotWeekViewEmployee from "../shift-slot/ShiftSlotWeekViewEmployee";
-import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
-import type { ShiftSignup } from "../../types/shiftSignup";
+import { useEmployeeAuth } from "@/contexts/AuthEmployeeContext";
+import type { ShiftSignup } from "@/types/shiftSignup";
 import { ShiftSignupCancelModal } from "../ShiftSignupCancelModal";
-import { useDepartments } from "../../queries/department.queries";
+import { useDepartments } from "@/queries/department.queries";
 
 const { Title, Text } = Typography;
 

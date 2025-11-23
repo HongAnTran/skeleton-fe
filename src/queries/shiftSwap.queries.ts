@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { ShiftSwapService } from "../services/shiftSwap.service";
+import { ShiftSwapService } from "@/services/shiftSwap.service";
 import type {
   CreateShiftSwapRequestDto,
   RespondShiftSwapRequestDto,
   ShiftSwapListParams,
-} from "../types/shiftSwap";
-import type { ReactQueryOptions } from "../types/reactQuery";
+} from "@/types/shiftSwap";
+import type { ReactQueryOptions } from "@/types/reactQuery";
 
 export const SHIFT_SWAP_KEYS = {
   all: ["shift-swaps"] as const,

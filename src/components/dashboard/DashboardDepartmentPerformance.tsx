@@ -1,4 +1,4 @@
-import type { DepartmentPerformance } from "../../types/dashboard";
+import type { DepartmentPerformance } from "@/types/dashboard";
 
 interface DashboardDepartmentPerformanceProps {
   departments: DepartmentPerformance[];

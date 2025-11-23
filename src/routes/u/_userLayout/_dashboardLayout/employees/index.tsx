@@ -34,15 +34,15 @@ import {
   useCreateEmployee,
   useUpdateEmployee,
   useDeleteEmployee,
-} from "../../../../../queries/employee.queries";
-import { useBranches } from "../../../../../queries/branch.queries";
-import { useDepartments } from "../../../../../queries/department.queries";
-import { EmployeeForm } from "../../../../../components/emmployee/EmployeeForm";
+} from "@/queries/employee.queries";
+import { useBranches } from "@/queries/branch.queries";
+import { useDepartments } from "@/queries/department.queries";
+import { EmployeeForm } from "@/components/emmployee/EmployeeForm";
 import type {
   Employee,
   CreateEmployeeDto,
   UpdateEmployeeDto,
-} from "../../../../../types/employee";
+} from "@/types/employee";
 
 const { Title, Text } = Typography;
 const { Search } = Input;

@@ -19,11 +19,11 @@ import dayjs from "dayjs";
 import {
   useShiftSignups,
   useCancelShiftSignup,
-} from "../../queries/shiftSignup.queries";
-import { ShiftSignupStatus, type ShiftSignup } from "../../types/shiftSignup";
+} from "@/queries/shiftSignup.queries";
+import { ShiftSignupStatus, type ShiftSignup } from "@/types/shiftSignup";
 import type { ColumnsType } from "antd/es/table";
 import { ShiftSignupCancelModal } from "../ShiftSignupCancelModal";
-import { useEmployeeAuth } from "../../contexts/AuthEmployeeContext";
+import { useEmployeeAuth } from "@/contexts/AuthEmployeeContext";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;

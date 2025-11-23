@@ -5,10 +5,10 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { AuthUserService } from "../services/authUser.service";
-import { tokenStorage } from "../utils/token";
-import type { LoginRequest } from "../types/auth";
-import type { User } from "../types/user";
+import { AuthUserService } from "@/services/authUser.service";
+import { tokenStorage } from "@/utils/token";
+import type { LoginRequest } from "@/types/auth";
+import type { User } from "@/types/user";
 import { Spin } from "antd";
 import { useRouter } from "@tanstack/react-router";
 

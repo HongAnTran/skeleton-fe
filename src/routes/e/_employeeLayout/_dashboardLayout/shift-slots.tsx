@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   EmployeeShiftSlotCalendar,
   EmployeeShiftSignupTable,
-} from "../../../../components";
+} from "@/components";
 import { Radio, Space } from "antd";
 import { CalendarOutlined, CheckCircleOutlined } from "@ant-design/icons";
 

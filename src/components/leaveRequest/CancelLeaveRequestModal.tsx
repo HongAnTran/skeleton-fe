@@ -1,5 +1,5 @@
 import { Modal, Form, Input, Button, Space } from "antd";
-import type { CancelLeaveRequestDto } from "../../types/leaveRequest";
+import type { CancelLeaveRequestDto } from "@/types/leaveRequest";
 
 const { TextArea } = Input;
 

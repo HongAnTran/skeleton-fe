@@ -1,4 +1,4 @@
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import type {
   TaskAssignment,
   CreateTaskAssignmentDto,
@@ -7,7 +7,7 @@ import type {
   RejectAssignmentDto,
   BulkAssignResponse,
   TaskStatusV2,
-} from "../types/task";
+} from "@/types/task";
 
 /**
  * Task Assignment Service - Manages Task Assignments

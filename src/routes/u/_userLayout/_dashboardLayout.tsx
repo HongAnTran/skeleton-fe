@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import UserDashboardLayout from "../../../components/layouts/UserDashboardLayout";
-import { tokenStorage } from "../../../utils/token";
+import UserDashboardLayout from "@/components/layouts/UserDashboardLayout";
+import { tokenStorage } from "@/utils/token";
 
 export const Route = createFileRoute("/u/_userLayout/_dashboardLayout")({
   beforeLoad: () => {

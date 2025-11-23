@@ -1,11 +1,11 @@
-import { axiosInstance } from "../lib/axios";
-import type { PaginatedResult } from "../types/api";
+import { axiosInstance } from "@/lib/axios";
+import type { PaginatedResult } from "@/types/api";
 import type {
   ShiftSwapRequest,
   CreateShiftSwapRequestDto,
   RespondShiftSwapRequestDto,
   ShiftSwapListParams,
-} from "../types/shiftSwap";
+} from "@/types/shiftSwap";
 
 export class ShiftSwapService {
   static url = "/shift-swaps";

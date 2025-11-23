@@ -1,14 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { BranchService } from "../services/branch.service";
+import { BranchService } from "@/services/branch.service";
 import type {
   CreateBranchRequest,
   UpdateBranchRequest,
   BranchListParams,
   Branch,
-} from "../types/branch";
-import type { ReactQueryOptions } from "../types/reactQuery";
-import type { PaginatedResult } from "../types/api";
+} from "@/types/branch";
+import type { ReactQueryOptions } from "@/types/reactQuery";
+import type { PaginatedResult } from "@/types/api";
 
 export const BRANCH_KEYS = {
   all: ["branches"] as const,

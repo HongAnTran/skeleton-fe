@@ -1,11 +1,11 @@
-import { axiosInstance } from "../lib/axios";
-import type { PaginatedResult } from "../types/api";
+import { axiosInstance } from "@/lib/axios";
+import type { PaginatedResult } from "@/types/api";
 import type {
   Branch,
   CreateBranchRequest,
   UpdateBranchRequest,
   BranchListParams,
-} from "../types/branch";
+} from "@/types/branch";
 
 export class BranchService {
   static url = "/branches";

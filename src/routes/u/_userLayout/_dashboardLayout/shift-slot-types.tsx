@@ -19,14 +19,14 @@ import {
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import type { ColumnsType } from "antd/es/table";
-import type { ShiftSlotType } from "../../../../types/shiftSlotType";
+import type { ShiftSlotType } from "@/types/shiftSlotType";
 import {
   useCreateShiftSlotType,
   useDeleteShiftSlotType,
   useShiftSlotTypes,
   useUpdateShiftSlotType,
-} from "../../../../queries/shiftSlotType.queries";
-import { ShiftSlotTypeForm } from "../../../../components";
+} from "@/queries/shiftSlotType.queries";
+import { ShiftSlotTypeForm } from "@/components";
 
 const { Title } = Typography;
 const { Search } = Input;

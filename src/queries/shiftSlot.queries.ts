@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { ShiftSlotService } from "../services/shiftSlot.service";
+import { ShiftSlotService } from "@/services/shiftSlot.service";
 import type {
   CreateShiftSlotDto,
   UpdateShiftSlotDto,
   ShiftSlotListParams,
-} from "../types/shiftSlot";
-import type { ReactQueryOptions } from "../types/reactQuery";
+} from "@/types/shiftSlot";
+import type { ReactQueryOptions } from "@/types/reactQuery";
 
 export const SHIFT_SLOT_KEYS = {
   all: ["shift-slots"] as const,

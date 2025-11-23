@@ -15,8 +15,8 @@ import type {
   CreateEmployeeDto,
   UpdateEmployeeDto,
 } from "../../types/employee";
-import { useBranches } from "../../queries/branch.queries";
-import { useDepartments } from "../../queries/department.queries";
+import { useBranches } from "@/queries/branch.queries";
+import { useDepartments } from "@/queries/department.queries";
 
 const { Text } = Typography;
 
@@ -204,9 +204,9 @@ export function EmployeeForm({
       <Divider>Thông tin bổ sung</Divider>
 
       <Row gutter={16}>
-        <Col span={12}>  
+        <Col span={12}>
           <Form.Item label="Vai trò" name="role">
-        <Input placeholder="Nhập vai trò" autoComplete="off" />
+            <Input placeholder="Nhập vai trò" autoComplete="off" />
           </Form.Item>
         </Col>
         <Col span={12}>

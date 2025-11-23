@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ShiftSlotTable, ShiftSlotCalendar } from "../../../../components";
+import { ShiftSlotTable, ShiftSlotCalendar } from "@/components";
 import { Radio, Space } from "antd";
 import { TableOutlined, CalendarOutlined } from "@ant-design/icons";
 

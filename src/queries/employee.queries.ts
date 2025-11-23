@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { EmployeeService } from "../services/employee.service";
+import { EmployeeService } from "@/services/employee.service";
 import type {
   CreateEmployeeDto,
   UpdateEmployeeDto,
   EmployeeListParams,
   EmployeeShiftSummaryParams,
-} from "../types/employee";
-import type { ReactQueryOptions } from "../types/reactQuery";
+} from "@/types/employee";
+import type { ReactQueryOptions } from "@/types/reactQuery";
 
 export const EMPLOYEE_KEYS = {
   all: ["employees"] as const,

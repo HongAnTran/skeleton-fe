@@ -25,13 +25,13 @@ import {
   useCreateDepartment,
   useUpdateDepartment,
   useDeleteDepartment,
-} from "../../../../queries/department.queries";
+} from "@/queries/department.queries";
 import type {
   Department,
   CreateDepartmentRequest,
   UpdateDepartmentRequest,
-} from "../../../../types/department";
-import { DepartmentForm } from "../../../../components";
+} from "@/types/department";
+import { DepartmentForm } from "@/components";
 
 const { Title } = Typography;
 const { Search } = Input;

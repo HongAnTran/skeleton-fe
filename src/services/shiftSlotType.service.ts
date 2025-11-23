@@ -1,11 +1,11 @@
-import { axiosInstance } from "../lib/axios";
-import type { PaginatedResult } from "../types/api";
+import { axiosInstance } from "@/lib/axios";
+import type { PaginatedResult } from "@/types/api";
 import type {
   ShiftSlotType,
   CreateShiftSlotTypeDto,
   UpdateShiftSlotTypeDto,
   ShiftSlotTypeListParams,
-} from "../types/shiftSlotType";
+} from "@/types/shiftSlotType";
 
 export class ShiftSlotTypeService {
   static url = "/shift-slot-types";

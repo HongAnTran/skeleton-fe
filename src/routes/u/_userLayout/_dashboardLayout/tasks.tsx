@@ -25,7 +25,7 @@ import {
   TaskApprovalModal,
   PendingApprovalList,
   TaskCycleTable,
-} from "../../../../components";
+} from "@/components";
 import {
   useTasks,
   useCreateTask,
@@ -39,12 +39,12 @@ import {
   useCreateTaskCycleAll,
   useTaskCycles,
   useDeleteTaskCycle,
-} from "../../../../queries/task.queries";
-import { useDepartments } from "../../../../queries/department.queries";
-import { TaskStatusV2 } from "../../../../types/task";
-import type { Task, TaskAssignment } from "../../../../types/task";
-import { LEVEL_OPTIONS_SELECT } from "../../../../consts/task";
-import { useFilters } from "../../../../hooks";
+} from "@/queries/task.queries";
+import { useDepartments } from "@/queries/department.queries";
+import { TaskStatusV2 } from "@/types/task";
+import type { Task, TaskAssignment } from "@/types/task";
+import { LEVEL_OPTIONS_SELECT } from "@/consts/task";
+import { useFilters } from "@/hooks";
 
 const { Title } = Typography;
 

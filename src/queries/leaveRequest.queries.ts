@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { message } from "antd";
-import { LeaveRequestService } from "../services/leaveRequest.service";
+import { LeaveRequestService } from "@/services/leaveRequest.service";
 import type {
   CreateLeaveRequestDto,
   QueryLeaveRequestDto,
   RejectLeaveRequestDto,
   CancelLeaveRequestDto,
-} from "../types/leaveRequest";
-import type { ReactQueryOptions } from "../types/reactQuery";
+} from "@/types/leaveRequest";
+import type { ReactQueryOptions } from "@/types/reactQuery";
 
 export const LEAVE_REQUEST_KEYS = {
   all: ["leave-requests"] as const,

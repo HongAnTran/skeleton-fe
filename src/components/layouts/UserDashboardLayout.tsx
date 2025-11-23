@@ -22,7 +22,7 @@ import {
   UnorderedListOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { useUserAuth } from "../../contexts/AuthUserContext";
+import { useUserAuth } from "@/contexts/AuthUserContext";
 import type { MenuProps } from "antd";
 import { useLocation, useRouter } from "@tanstack/react-router";
 
@@ -95,12 +95,12 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       label: "Đơn xin nghỉ",
       onClick: () => handleMenuClick("/u/leave-requests"),
     },
-    // {
-    //   key: "/u/tasks",
-    //   icon: <UnorderedListOutlined />,
-    //   label: "Nhiệm vụ",
-    //   onClick: () => handleMenuClick("/u/tasks"),
-    // },
+    {
+      key: "/u/tasks",
+      icon: <UnorderedListOutlined />,
+      label: "Nhiệm vụ",
+      onClick: () => handleMenuClick("/u/tasks"),
+    },
     {
       key: "/u/branchs",
       icon: <HomeOutlined />,

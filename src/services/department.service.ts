@@ -1,11 +1,11 @@
-import { axiosInstance } from "../lib/axios";
-import type { PaginatedResult } from "../types/api";
+import { axiosInstance } from "@/lib/axios";
+import type { PaginatedResult } from "@/types/api";
 import type {
   Department,
   CreateDepartmentRequest,
   UpdateDepartmentRequest,
   DepartmentListParams,
-} from "../types/department";
+} from "@/types/department";
 
 export class DepartmentService {
   static url = "/departments";

@@ -1,11 +1,11 @@
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import type {
   Task,
   TaskWithRelations,
   CreateTaskDto,
   UpdateTaskDto,
   QueryTaskDto,
-} from "../types/task";
+} from "@/types/task";
 
 /**
  * Task Service - Manages Task Templates (TaskV2)
@@ -57,4 +57,3 @@ export class TaskService {
     await axiosInstance.delete(`${this.url}/${id}`);
   }
 }
-

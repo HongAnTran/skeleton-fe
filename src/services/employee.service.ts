@@ -1,5 +1,5 @@
-import { axiosInstance } from "../lib/axios";
-import type { PaginatedResult } from "../types/api";
+import { axiosInstance } from "@/lib/axios";
+import type { PaginatedResult } from "@/types/api";
 import type {
   Employee,
   CreateEmployeeDto,
@@ -7,7 +7,7 @@ import type {
   EmployeeListParams,
   EmployeeShiftSummaryResponse,
   EmployeeShiftSummaryParams,
-} from "../types/employee";
+} from "@/types/employee";
 
 export class EmployeeService {
   static url = "/employees";

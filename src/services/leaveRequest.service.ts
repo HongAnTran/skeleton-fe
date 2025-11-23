@@ -1,4 +1,4 @@
-import { axiosInstance } from "../lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import type {
   LeaveRequest,
   CreateLeaveRequestDto,
@@ -6,7 +6,7 @@ import type {
   RejectLeaveRequestDto,
   CancelLeaveRequestDto,
   LeaveRequestListResponse,
-} from "../types/leaveRequest";
+} from "@/types/leaveRequest";
 
 export class LeaveRequestService {
   static url = "/leave-requests";

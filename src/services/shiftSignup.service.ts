@@ -1,12 +1,12 @@
-import { axiosInstance } from "../lib/axios";
-import type { PaginatedResult } from "../types/api";
+import { axiosInstance } from "@/lib/axios";
+import type { PaginatedResult } from "@/types/api";
 import type {
   ShiftSignup,
   CreateShiftSignupDto,
   CreateShiftSignupByAdminDto,
   CancelShiftSignupDto,
   ShiftSignupListParams,
-} from "../types/shiftSignup";
+} from "@/types/shiftSignup";
 
 export class ShiftSignupService {
   static url = "/shift-signups";

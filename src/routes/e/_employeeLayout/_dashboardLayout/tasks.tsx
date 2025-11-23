@@ -7,13 +7,13 @@ import {
   CloseCircleOutlined,
   SafetyOutlined,
 } from "@ant-design/icons";
-import { EmployeeTaskList, TaskCompleteModal } from "../../../../components";
+import { EmployeeTaskList, TaskCompleteModal } from "@/components";
 import {
   useEmployeeAssignments,
   useCompleteTask,
-} from "../../../../queries/task.queries";
-import { TaskStatusV2 } from "../../../../types/task";
-import type { TaskAssignment } from "../../../../types/task";
+} from "@/queries/task.queries";
+import { TaskStatusV2 } from "@/types/task";
+import type { TaskAssignment } from "@/types/task";
 
 const { Title } = Typography;
 

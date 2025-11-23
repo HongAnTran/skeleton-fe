@@ -1,8 +1,8 @@
-import { axiosInstance } from "../lib/axios";
-import type { LoginResponse, RefreshTokenResponse } from "../types/api";
-import type { LoginRequest } from "../types/auth";
-import type { Employee } from "../types/employee";
-import { tokenStorage } from "../utils/token";
+import { axiosInstance } from "@/lib/axios";
+import type { LoginResponse, RefreshTokenResponse } from "@/types/api";
+import type { LoginRequest } from "@/types/auth";
+import type { Employee } from "@/types/employee";
+import { tokenStorage } from "@/utils/token";
 
 export class AuthEmployeeService {
   static url = "/auth/employee";

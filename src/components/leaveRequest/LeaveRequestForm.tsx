@@ -1,10 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { Form, Input, Button, Space, DatePicker, Typography } from "antd";
 import dayjs, { type Dayjs } from "dayjs";
-import type {
-  LeaveRequest,
-  CreateLeaveRequestDto,
-} from "../../types/leaveRequest";
+import type { LeaveRequest, CreateLeaveRequestDto } from "@/types/leaveRequest";
 
 const { TextArea } = Input;
 const { Text } = Typography;

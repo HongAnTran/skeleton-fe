@@ -33,16 +33,16 @@ import {
   useApproveLeaveRequest,
   useRejectLeaveRequest,
   useDeleteLeaveRequest,
-} from "../../../../queries/leaveRequest.queries";
-import { RejectLeaveRequestModal } from "../../../../components";
+} from "@/queries/leaveRequest.queries";
+import { RejectLeaveRequestModal } from "@/components";
 import type {
   LeaveRequest,
   RejectLeaveRequestDto,
   LeaveRequestStatus,
   QueryLeaveRequestDto,
-} from "../../../../types/leaveRequest";
+} from "@/types/leaveRequest";
 import dayjs, { type Dayjs } from "dayjs";
-import { useEmployees } from "../../../../queries/employee.queries";
+import { useEmployees } from "@/queries/employee.queries";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;

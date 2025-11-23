@@ -24,8 +24,8 @@ import {
 } from "@ant-design/icons";
 import type { TableColumnsType } from "antd";
 import dayjs from "dayjs";
-import { useEmployeeShiftSummary } from "../../queries/employee.queries";
-import type { ShiftSignupSummary } from "../../types/employee";
+import { useEmployeeShiftSummary } from "@/queries/employee.queries";
+import type { ShiftSignupSummary } from "@/types/employee";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;

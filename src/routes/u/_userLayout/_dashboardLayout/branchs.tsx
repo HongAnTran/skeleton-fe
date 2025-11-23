@@ -26,13 +26,13 @@ import {
   useCreateBranch,
   useUpdateBranch,
   useDeleteBranch,
-} from "../../../../queries/branch.queries";
+} from "@/queries/branch.queries";
 import type {
   Branch,
   CreateBranchRequest,
   UpdateBranchRequest,
-} from "../../../../types/branch";
-import { BranchForm } from "../../../../components";
+} from "@/types/branch";
+import { BranchForm } from "@/components";
 
 const { Title } = Typography;
 const { Search } = Input;
