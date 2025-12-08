@@ -4,7 +4,7 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/vi";
-import type { TaskAssignment } from "../../types/task";
+import type { TaskAssignment } from "@/types/task";
 
 dayjs.extend(relativeTime);
 dayjs.locale("vi");

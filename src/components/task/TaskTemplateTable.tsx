@@ -79,15 +79,6 @@ export function TaskTemplateTable({
         ),
     },
     {
-      title: "Chu kỳ",
-      key: "cycles",
-      width: "8%",
-      align: "center",
-      render: (_, record) => (
-        <Tag color="purple">{record.cycles?.length || 0}</Tag>
-      ),
-    },
-    {
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",

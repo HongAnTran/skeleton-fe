@@ -11,6 +11,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WarrantyRouteImport } from './routes/warranty'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUserLayoutRouteImport } from './routes/u/_userLayout'
 import { Route as EEmployeeLayoutRouteImport } from './routes/e/_employeeLayout'
@@ -20,7 +21,6 @@ import { Route as EEmployeeLayoutLoginRouteImport } from './routes/e/_employeeLa
 import { Route as EEmployeeLayoutDashboardLayoutRouteImport } from './routes/e/_employeeLayout/_dashboardLayout'
 import { Route as UUserLayoutDashboardLayoutIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/index'
 import { Route as EEmployeeLayoutDashboardLayoutIndexRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/index'
-import { Route as UUserLayoutDashboardLayoutTasksRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks'
 import { Route as UUserLayoutDashboardLayoutShiftSlotsRouteImport } from './routes/u/_userLayout/_dashboardLayout/shift-slots'
 import { Route as UUserLayoutDashboardLayoutShiftSlotTypesRouteImport } from './routes/u/_userLayout/_dashboardLayout/shift-slot-types'
 import { Route as UUserLayoutDashboardLayoutSettingsRouteImport } from './routes/u/_userLayout/_dashboardLayout/settings'
@@ -31,7 +31,9 @@ import { Route as EEmployeeLayoutDashboardLayoutTasksRouteImport } from './route
 import { Route as EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/shift-slots'
 import { Route as EEmployeeLayoutDashboardLayoutLeaveRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/leave-requests'
 import { Route as EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/change-shift-requests'
+import { Route as UUserLayoutDashboardLayoutTasksIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks/index'
 import { Route as UUserLayoutDashboardLayoutEmployeesIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/index'
+import { Route as UUserLayoutDashboardLayoutTasksPendingApprovelRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks/pending-approvel'
 import { Route as UUserLayoutDashboardLayoutEmployeesIdRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/$id'
 
 const URouteImport = createFileRoute('/u')()
@@ -45,6 +47,11 @@ const URoute = URouteImport.update({
 const ERoute = ERouteImport.update({
   id: '/e',
   path: '/e',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WarrantyRoute = WarrantyRouteImport.update({
+  id: '/warranty',
+  path: '/warranty',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -91,12 +98,6 @@ const EEmployeeLayoutDashboardLayoutIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
-  } as any)
-const UUserLayoutDashboardLayoutTasksRoute =
-  UUserLayoutDashboardLayoutTasksRouteImport.update({
-    id: '/tasks',
-    path: '/tasks',
-    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
   } as any)
 const UUserLayoutDashboardLayoutShiftSlotsRoute =
   UUserLayoutDashboardLayoutShiftSlotsRouteImport.update({
@@ -158,10 +159,22 @@ const EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute =
     path: '/change-shift-requests',
     getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
   } as any)
+const UUserLayoutDashboardLayoutTasksIndexRoute =
+  UUserLayoutDashboardLayoutTasksIndexRouteImport.update({
+    id: '/tasks/',
+    path: '/tasks/',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
 const UUserLayoutDashboardLayoutEmployeesIndexRoute =
   UUserLayoutDashboardLayoutEmployeesIndexRouteImport.update({
     id: '/employees/',
     path: '/employees/',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutTasksPendingApprovelRoute =
+  UUserLayoutDashboardLayoutTasksPendingApprovelRouteImport.update({
+    id: '/tasks/pending-approvel',
+    path: '/tasks/pending-approvel',
     getParentRoute: () => UUserLayoutDashboardLayoutRoute,
   } as any)
 const UUserLayoutDashboardLayoutEmployeesIdRoute =
@@ -173,6 +186,7 @@ const UUserLayoutDashboardLayoutEmployeesIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/warranty': typeof WarrantyRoute
   '/e': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/u': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/e/login': typeof EEmployeeLayoutLoginRoute
@@ -187,14 +201,16 @@ export interface FileRoutesByFullPath {
   '/u/settings': typeof UUserLayoutDashboardLayoutSettingsRoute
   '/u/shift-slot-types': typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
   '/u/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
-  '/u/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
   '/e/': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u/': typeof UUserLayoutDashboardLayoutIndexRoute
   '/u/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
+  '/u/tasks/pending-approvel': typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
   '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
+  '/u/tasks': typeof UUserLayoutDashboardLayoutTasksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/warranty': typeof WarrantyRoute
   '/e': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u': typeof UUserLayoutDashboardLayoutIndexRoute
   '/e/login': typeof EEmployeeLayoutLoginRoute
@@ -209,13 +225,15 @@ export interface FileRoutesByTo {
   '/u/settings': typeof UUserLayoutDashboardLayoutSettingsRoute
   '/u/shift-slot-types': typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
   '/u/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
-  '/u/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
   '/u/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
+  '/u/tasks/pending-approvel': typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
   '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
+  '/u/tasks': typeof UUserLayoutDashboardLayoutTasksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/warranty': typeof WarrantyRoute
   '/e': typeof ERouteWithChildren
   '/e/_employeeLayout': typeof EEmployeeLayoutRouteWithChildren
   '/u': typeof URouteWithChildren
@@ -234,16 +252,18 @@ export interface FileRoutesById {
   '/u/_userLayout/_dashboardLayout/settings': typeof UUserLayoutDashboardLayoutSettingsRoute
   '/u/_userLayout/_dashboardLayout/shift-slot-types': typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
   '/u/_userLayout/_dashboardLayout/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
-  '/u/_userLayout/_dashboardLayout/tasks': typeof UUserLayoutDashboardLayoutTasksRoute
   '/e/_employeeLayout/_dashboardLayout/': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u/_userLayout/_dashboardLayout/': typeof UUserLayoutDashboardLayoutIndexRoute
   '/u/_userLayout/_dashboardLayout/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
+  '/u/_userLayout/_dashboardLayout/tasks/pending-approvel': typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
   '/u/_userLayout/_dashboardLayout/employees/': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
+  '/u/_userLayout/_dashboardLayout/tasks/': typeof UUserLayoutDashboardLayoutTasksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/warranty'
     | '/e'
     | '/u'
     | '/e/login'
@@ -258,14 +278,16 @@ export interface FileRouteTypes {
     | '/u/settings'
     | '/u/shift-slot-types'
     | '/u/shift-slots'
-    | '/u/tasks'
     | '/e/'
     | '/u/'
     | '/u/employees/$id'
+    | '/u/tasks/pending-approvel'
     | '/u/employees'
+    | '/u/tasks'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/warranty'
     | '/e'
     | '/u'
     | '/e/login'
@@ -280,12 +302,14 @@ export interface FileRouteTypes {
     | '/u/settings'
     | '/u/shift-slot-types'
     | '/u/shift-slots'
-    | '/u/tasks'
     | '/u/employees/$id'
+    | '/u/tasks/pending-approvel'
     | '/u/employees'
+    | '/u/tasks'
   id:
     | '__root__'
     | '/'
+    | '/warranty'
     | '/e'
     | '/e/_employeeLayout'
     | '/u'
@@ -304,15 +328,17 @@ export interface FileRouteTypes {
     | '/u/_userLayout/_dashboardLayout/settings'
     | '/u/_userLayout/_dashboardLayout/shift-slot-types'
     | '/u/_userLayout/_dashboardLayout/shift-slots'
-    | '/u/_userLayout/_dashboardLayout/tasks'
     | '/e/_employeeLayout/_dashboardLayout/'
     | '/u/_userLayout/_dashboardLayout/'
     | '/u/_userLayout/_dashboardLayout/employees/$id'
+    | '/u/_userLayout/_dashboardLayout/tasks/pending-approvel'
     | '/u/_userLayout/_dashboardLayout/employees/'
+    | '/u/_userLayout/_dashboardLayout/tasks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  WarrantyRoute: typeof WarrantyRoute
   ERoute: typeof ERouteWithChildren
   URoute: typeof URouteWithChildren
 }
@@ -331,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/e'
       fullPath: '/e'
       preLoaderRoute: typeof ERouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/warranty': {
+      id: '/warranty'
+      path: '/warranty'
+      fullPath: '/warranty'
+      preLoaderRoute: typeof WarrantyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -395,13 +428,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/e/'
       preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutIndexRouteImport
       parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
-    }
-    '/u/_userLayout/_dashboardLayout/tasks': {
-      id: '/u/_userLayout/_dashboardLayout/tasks'
-      path: '/tasks'
-      fullPath: '/u/tasks'
-      preLoaderRoute: typeof UUserLayoutDashboardLayoutTasksRouteImport
-      parentRoute: typeof UUserLayoutDashboardLayoutRoute
     }
     '/u/_userLayout/_dashboardLayout/shift-slots': {
       id: '/u/_userLayout/_dashboardLayout/shift-slots'
@@ -473,11 +499,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport
       parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
     }
+    '/u/_userLayout/_dashboardLayout/tasks/': {
+      id: '/u/_userLayout/_dashboardLayout/tasks/'
+      path: '/tasks'
+      fullPath: '/u/tasks'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutTasksIndexRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
     '/u/_userLayout/_dashboardLayout/employees/': {
       id: '/u/_userLayout/_dashboardLayout/employees/'
       path: '/employees'
       fullPath: '/u/employees'
       preLoaderRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/tasks/pending-approvel': {
+      id: '/u/_userLayout/_dashboardLayout/tasks/pending-approvel'
+      path: '/tasks/pending-approvel'
+      fullPath: '/u/tasks/pending-approvel'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutTasksPendingApprovelRouteImport
       parentRoute: typeof UUserLayoutDashboardLayoutRoute
     }
     '/u/_userLayout/_dashboardLayout/employees/$id': {
@@ -549,10 +589,11 @@ interface UUserLayoutDashboardLayoutRouteChildren {
   UUserLayoutDashboardLayoutSettingsRoute: typeof UUserLayoutDashboardLayoutSettingsRoute
   UUserLayoutDashboardLayoutShiftSlotTypesRoute: typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
   UUserLayoutDashboardLayoutShiftSlotsRoute: typeof UUserLayoutDashboardLayoutShiftSlotsRoute
-  UUserLayoutDashboardLayoutTasksRoute: typeof UUserLayoutDashboardLayoutTasksRoute
   UUserLayoutDashboardLayoutIndexRoute: typeof UUserLayoutDashboardLayoutIndexRoute
   UUserLayoutDashboardLayoutEmployeesIdRoute: typeof UUserLayoutDashboardLayoutEmployeesIdRoute
+  UUserLayoutDashboardLayoutTasksPendingApprovelRoute: typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
   UUserLayoutDashboardLayoutEmployeesIndexRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
+  UUserLayoutDashboardLayoutTasksIndexRoute: typeof UUserLayoutDashboardLayoutTasksIndexRoute
 }
 
 const UUserLayoutDashboardLayoutRouteChildren: UUserLayoutDashboardLayoutRouteChildren =
@@ -569,12 +610,15 @@ const UUserLayoutDashboardLayoutRouteChildren: UUserLayoutDashboardLayoutRouteCh
       UUserLayoutDashboardLayoutShiftSlotTypesRoute,
     UUserLayoutDashboardLayoutShiftSlotsRoute:
       UUserLayoutDashboardLayoutShiftSlotsRoute,
-    UUserLayoutDashboardLayoutTasksRoute: UUserLayoutDashboardLayoutTasksRoute,
     UUserLayoutDashboardLayoutIndexRoute: UUserLayoutDashboardLayoutIndexRoute,
     UUserLayoutDashboardLayoutEmployeesIdRoute:
       UUserLayoutDashboardLayoutEmployeesIdRoute,
+    UUserLayoutDashboardLayoutTasksPendingApprovelRoute:
+      UUserLayoutDashboardLayoutTasksPendingApprovelRoute,
     UUserLayoutDashboardLayoutEmployeesIndexRoute:
       UUserLayoutDashboardLayoutEmployeesIndexRoute,
+    UUserLayoutDashboardLayoutTasksIndexRoute:
+      UUserLayoutDashboardLayoutTasksIndexRoute,
   }
 
 const UUserLayoutDashboardLayoutRouteWithChildren =
@@ -608,6 +652,7 @@ const URouteWithChildren = URoute._addFileChildren(URouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  WarrantyRoute: WarrantyRoute,
   ERoute: ERouteWithChildren,
   URoute: URouteWithChildren,
 }

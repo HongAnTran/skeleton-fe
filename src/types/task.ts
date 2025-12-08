@@ -117,7 +117,6 @@ export interface CreateTaskCycleAllDto {
   periodEnd: string; // ISO date string
 }
 
-
 /**
  * Update Task Cycle DTO
  */
@@ -161,6 +160,7 @@ export interface QueryAssignmentDto {
   employeeId?: string;
   departmentId?: string;
   status?: TaskStatusV2;
+  level?: number;
 }
 
 /**

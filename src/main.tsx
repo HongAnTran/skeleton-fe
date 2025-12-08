@@ -14,7 +14,6 @@ registerSW({
 });
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
-import LocaleProvider from "./contexts/LocaleContext";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -31,9 +30,7 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <LocaleProvider>
-        <RouterProvider router={router} />
-      </LocaleProvider>
+      <RouterProvider router={router} />
     </StrictMode>
   );
 }
