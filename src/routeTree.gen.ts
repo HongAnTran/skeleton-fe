@@ -29,6 +29,7 @@ import { Route as UUserLayoutDashboardLayoutDepartmentsRouteImport } from './rou
 import { Route as UUserLayoutDashboardLayoutBranchsRouteImport } from './routes/u/_userLayout/_dashboardLayout/branchs'
 import { Route as EEmployeeLayoutDashboardLayoutTasksRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/tasks'
 import { Route as EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/shift-slots'
+import { Route as EEmployeeLayoutDashboardLayoutSettingsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/settings'
 import { Route as EEmployeeLayoutDashboardLayoutLeaveRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/leave-requests'
 import { Route as EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/change-shift-requests'
 import { Route as UUserLayoutDashboardLayoutTasksIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks/index'
@@ -147,6 +148,12 @@ const EEmployeeLayoutDashboardLayoutShiftSlotsRoute =
     path: '/shift-slots',
     getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
   } as any)
+const EEmployeeLayoutDashboardLayoutSettingsRoute =
+  EEmployeeLayoutDashboardLayoutSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
+  } as any)
 const EEmployeeLayoutDashboardLayoutLeaveRequestsRoute =
   EEmployeeLayoutDashboardLayoutLeaveRequestsRouteImport.update({
     id: '/leave-requests',
@@ -193,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/u/login': typeof UUserLayoutLoginRoute
   '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
   '/e/leave-requests': typeof EEmployeeLayoutDashboardLayoutLeaveRequestsRoute
+  '/e/settings': typeof EEmployeeLayoutDashboardLayoutSettingsRoute
   '/e/shift-slots': typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
   '/e/tasks': typeof EEmployeeLayoutDashboardLayoutTasksRoute
   '/u/branchs': typeof UUserLayoutDashboardLayoutBranchsRoute
@@ -217,6 +225,7 @@ export interface FileRoutesByTo {
   '/u/login': typeof UUserLayoutLoginRoute
   '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
   '/e/leave-requests': typeof EEmployeeLayoutDashboardLayoutLeaveRequestsRoute
+  '/e/settings': typeof EEmployeeLayoutDashboardLayoutSettingsRoute
   '/e/shift-slots': typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
   '/e/tasks': typeof EEmployeeLayoutDashboardLayoutTasksRoute
   '/u/branchs': typeof UUserLayoutDashboardLayoutBranchsRoute
@@ -244,6 +253,7 @@ export interface FileRoutesById {
   '/u/_userLayout/login': typeof UUserLayoutLoginRoute
   '/e/_employeeLayout/_dashboardLayout/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
   '/e/_employeeLayout/_dashboardLayout/leave-requests': typeof EEmployeeLayoutDashboardLayoutLeaveRequestsRoute
+  '/e/_employeeLayout/_dashboardLayout/settings': typeof EEmployeeLayoutDashboardLayoutSettingsRoute
   '/e/_employeeLayout/_dashboardLayout/shift-slots': typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
   '/e/_employeeLayout/_dashboardLayout/tasks': typeof EEmployeeLayoutDashboardLayoutTasksRoute
   '/u/_userLayout/_dashboardLayout/branchs': typeof UUserLayoutDashboardLayoutBranchsRoute
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/u/login'
     | '/e/change-shift-requests'
     | '/e/leave-requests'
+    | '/e/settings'
     | '/e/shift-slots'
     | '/e/tasks'
     | '/u/branchs'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/u/login'
     | '/e/change-shift-requests'
     | '/e/leave-requests'
+    | '/e/settings'
     | '/e/shift-slots'
     | '/e/tasks'
     | '/u/branchs'
@@ -320,6 +332,7 @@ export interface FileRouteTypes {
     | '/u/_userLayout/login'
     | '/e/_employeeLayout/_dashboardLayout/change-shift-requests'
     | '/e/_employeeLayout/_dashboardLayout/leave-requests'
+    | '/e/_employeeLayout/_dashboardLayout/settings'
     | '/e/_employeeLayout/_dashboardLayout/shift-slots'
     | '/e/_employeeLayout/_dashboardLayout/tasks'
     | '/u/_userLayout/_dashboardLayout/branchs'
@@ -485,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport
       parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
     }
+    '/e/_employeeLayout/_dashboardLayout/settings': {
+      id: '/e/_employeeLayout/_dashboardLayout/settings'
+      path: '/settings'
+      fullPath: '/e/settings'
+      preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutSettingsRouteImport
+      parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
+    }
     '/e/_employeeLayout/_dashboardLayout/leave-requests': {
       id: '/e/_employeeLayout/_dashboardLayout/leave-requests'
       path: '/leave-requests'
@@ -533,6 +553,7 @@ declare module '@tanstack/react-router' {
 interface EEmployeeLayoutDashboardLayoutRouteChildren {
   EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute: typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
   EEmployeeLayoutDashboardLayoutLeaveRequestsRoute: typeof EEmployeeLayoutDashboardLayoutLeaveRequestsRoute
+  EEmployeeLayoutDashboardLayoutSettingsRoute: typeof EEmployeeLayoutDashboardLayoutSettingsRoute
   EEmployeeLayoutDashboardLayoutShiftSlotsRoute: typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
   EEmployeeLayoutDashboardLayoutTasksRoute: typeof EEmployeeLayoutDashboardLayoutTasksRoute
   EEmployeeLayoutDashboardLayoutIndexRoute: typeof EEmployeeLayoutDashboardLayoutIndexRoute
@@ -544,6 +565,8 @@ const EEmployeeLayoutDashboardLayoutRouteChildren: EEmployeeLayoutDashboardLayou
       EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute,
     EEmployeeLayoutDashboardLayoutLeaveRequestsRoute:
       EEmployeeLayoutDashboardLayoutLeaveRequestsRoute,
+    EEmployeeLayoutDashboardLayoutSettingsRoute:
+      EEmployeeLayoutDashboardLayoutSettingsRoute,
     EEmployeeLayoutDashboardLayoutShiftSlotsRoute:
       EEmployeeLayoutDashboardLayoutShiftSlotsRoute,
     EEmployeeLayoutDashboardLayoutTasksRoute:
