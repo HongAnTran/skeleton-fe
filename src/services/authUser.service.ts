@@ -1,16 +1,8 @@
-<<<<<<< Updated upstream
-import { axiosInstance } from "@/lib/axios";
-import type { LoginResponse, RefreshTokenResponse } from "@/types/api";
-import type { LoginRequest } from "@/types/auth";
-import type { User } from "@/types/user";
-import { tokenStorage } from "@/utils/token";
-=======
 import { axiosInstance } from "../lib/axios";
 import type { LoginResponse, RefreshTokenResponse } from "../types/api";
 import type { LoginRequest, ChangePasswordRequest } from "../types/auth";
 import type { User } from "../types/user";
 import { tokenStorage } from "../utils/token";
->>>>>>> Stashed changes
 
 export class AuthUserService {
   static url = "/auth/user";

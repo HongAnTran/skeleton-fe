@@ -19,12 +19,9 @@ import {
   TeamOutlined,
   ScheduleOutlined,
   TableOutlined,
-<<<<<<< Updated upstream
   UnorderedListOutlined,
   FileTextOutlined,
-=======
   SettingOutlined,
->>>>>>> Stashed changes
 } from "@ant-design/icons";
 import { useUserAuth } from "@/contexts/AuthUserContext";
 import type { MenuProps } from "antd";

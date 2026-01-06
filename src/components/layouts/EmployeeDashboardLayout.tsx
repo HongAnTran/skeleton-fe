@@ -18,12 +18,9 @@ import {
   TableOutlined,
   EnvironmentOutlined,
   SwapOutlined,
-<<<<<<< Updated upstream
   UnorderedListOutlined,
   FileTextOutlined,
-=======
   SettingOutlined,
->>>>>>> Stashed changes
 } from "@ant-design/icons";
 import { useEmployeeAuth } from "@/contexts/AuthEmployeeContext";
 import type { MenuProps } from "antd";
