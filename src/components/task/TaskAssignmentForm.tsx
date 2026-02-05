@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Button, Space, Select, Radio, Checkbox, Alert } from "antd";
+import { Form, Button, Space, Radio, Checkbox, Alert } from "antd";
 import { useEmployees } from "../../queries/employee.queries";
 import type { TaskCycle, AssignEmployeesToCycleDto } from "../../types/task";
 
@@ -30,7 +30,7 @@ export function TaskAssignmentForm({
     },
     {
       enabled: !!departmentId && assignType === "specific",
-    }
+    },
   );
 
   const handleSubmit = async () => {
@@ -124,7 +124,7 @@ export function TaskAssignmentForm({
               onChange={(e) => {
                 if (e.target.checked) {
                   setSelectedEmployees(
-                    employeesData?.data.map((emp) => emp.id) || []
+                    employeesData?.data.map((emp) => emp.id) || [],
                   );
                 } else {
                   setSelectedEmployees([]);
@@ -147,7 +147,7 @@ export function TaskAssignmentForm({
                         ]);
                       } else {
                         setSelectedEmployees(
-                          selectedEmployees.filter((id) => id !== employee.id)
+                          selectedEmployees.filter((id) => id !== employee.id),
                         );
                       }
                     }}

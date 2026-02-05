@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Card, Button, Typography, Tag, Space, Badge } from "antd";
+import { Card, Button, Typography, Tag, Space } from "antd";
 import {
   ClockCircleOutlined,
   LeftOutlined,
@@ -38,7 +38,7 @@ export default function ShiftSlotWeekViewEmployee({
   const { employee } = useEmployeeAuth();
 
   const [currentWeekStart, setCurrentWeekStart] = useState(
-    selectedDate.startOf("week")
+    selectedDate.startOf("week"),
   );
   const [isSelectingMode, setIsSelectingMode] = useState(false);
   const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
@@ -58,7 +58,7 @@ export default function ShiftSlotWeekViewEmployee({
     return leaveRequestsData.data.filter(
       (req) =>
         req.status === LeaveRequestStatus.PENDING ||
-        req.status === LeaveRequestStatus.APPROVED
+        req.status === LeaveRequestStatus.APPROVED,
     );
   }, [leaveRequestsData]);
 
@@ -77,7 +77,7 @@ export default function ShiftSlotWeekViewEmployee({
   };
 
   const weekDays = Array.from({ length: 7 }, (_, i) =>
-    currentWeekStart.add(i, "day")
+    currentWeekStart.add(i, "day"),
   );
 
   const handlePrevWeek = () => {
@@ -106,7 +106,7 @@ export default function ShiftSlotWeekViewEmployee({
     setSelectedSlotIds((prev) =>
       prev.includes(slotId)
         ? prev.filter((id) => id !== slotId)
-        : [...prev, slotId]
+        : [...prev, slotId],
     );
   };
 
@@ -225,13 +225,13 @@ export default function ShiftSlotWeekViewEmployee({
                 ) : (
                   shifts.map((shift) => {
                     const signups = shift.signups.filter(
-                      (signup) => signup.status !== ShiftSignupStatus.CANCELLED
+                      (signup) => signup.status !== ShiftSignupStatus.CANCELLED,
                     );
                     const type = shift.type;
                     const isAvailable = signups.length < shift.capacity;
                     const isSelected = selectedSlotIds.includes(shift.id);
                     const isEmployeeSignedUp = signups.some(
-                      (signup) => signup.employee.id === employee?.id
+                      (signup) => signup.employee.id === employee?.id,
                     );
                     const isDayOnLeave = isDateOnLeave(day);
 
@@ -299,7 +299,7 @@ export default function ShiftSlotWeekViewEmployee({
                             {type?.startDate &&
                               type?.endDate &&
                               `${dayjs(type.startDate).format(
-                                "HH:mm"
+                                "HH:mm",
                               )} - ${dayjs(type.endDate).format("HH:mm")}`}
                           </span>
                         </div>

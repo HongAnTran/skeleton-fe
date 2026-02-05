@@ -1,9 +1,5 @@
 import { Table, Tag, Space, Button, Popconfirm, Tooltip, Progress } from "antd";
-import {
-  DeleteOutlined,
-  UserAddOutlined,
-  CalendarOutlined,
-} from "@ant-design/icons";
+import { DeleteOutlined, CalendarOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import type { ColumnsType } from "antd/es/table";
 import type { TaskCycle } from "../../types/task";
@@ -44,7 +40,7 @@ export function TaskCycleTable({
     if (!cycle.assignments || cycle.assignments.length === 0) return 0;
 
     const completed = cycle.assignments.filter(
-      (a) => a.status === "APPROVED"
+      (a) => a.status === "APPROVED",
     ).length;
     return Math.round((completed / cycle.assignments.length) * 100);
   };

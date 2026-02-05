@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button, Modal, Space, Select, Typography } from "antd";
 import { EyeOutlined, PlusOutlined } from "@ant-design/icons";
@@ -86,33 +86,55 @@ function RouteComponent() {
     await deleteTaskMutation.mutateAsync(taskId);
   };
 
-  // Handlers - Cycle
-  const handleCreateCycle = (task: Task) => {
-    setSelectedTask(task);
-    setCycleFormOpenType("single");
-  };
-
   const handleCycleSubmit = async (values: any) => {
     if (cycleFormOpenType === "single") {
       await createCycleMutation.mutateAsync(values);
     } else {
       await createCycleAllMutation.mutateAsync(values);
     }
+
     setCycleFormOpenType(null);
     setSelectedTask(null);
   };
 
-  const handleCreateCycleAll = () => {
-    setCycleFormOpenType("all");
+  const handleUpdateActive = async (taskId: string, isActive: boolean) => {
+    await updateTaskMutation.mutateAsync({
+      id: taskId,
+      data: { isActive },
+    });
   };
+
+  useEffect(() => {
+    if (departments && departments.data.length > 0) {
+      setFilter("department", departments.data[0].id);
+    }
+  }, [departments]);
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <Title level={2} className="!mb-0">
-          📋 Quản lý Task
+          📋 Quản lý nhiệm vụ
         </Title>
+        <Space>
+          <Button
+            type="default"
+            size="large"
+            onClick={() => navigate({ to: "/u/tasks/pending-approvel" })}
+            icon={<EyeOutlined />}
+          >
+            Chờ phê duyệt
+          </Button>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleCreateTask}
+            size="large"
+          >
+            Tạo nhiệm vụ mới
+          </Button>
+        </Space>
       </div>
 
       <Space wrap>
@@ -145,39 +167,13 @@ function RouteComponent() {
         {hasActiveFilters && (
           <Button onClick={clearAllFilters}>Xóa bộ lọc</Button>
         )}
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreateTask}
-          size="large"
-        >
-          Tạo nhiệm vụ mới
-        </Button>
-
-        <Button
-          type="default"
-          icon={<PlusOutlined />}
-          onClick={handleCreateCycleAll}
-          size="large"
-        >
-          Tạo nhanh nhiệm vụ tháng mới
-        </Button>
-
-        <Button
-          type="default"
-          size="large"
-          onClick={() => navigate({ to: "/u/tasks/pending-approvel" })}
-          icon={<EyeOutlined />}
-        >
-          Chờ phê duyệt
-        </Button>
       </Space>
       <TaskTemplateTable
         tasks={tasks || []}
         loading={tasksLoading}
         onEdit={handleEditTask}
         onDelete={handleDeleteTask}
-        onCreateCycle={handleCreateCycle}
+        onUpdateActive={handleUpdateActive}
       />
 
       {/* Modals */}

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Form, Input, Button, Space, Switch, Select, InputNumber } from "antd";
+import { Form, Input, Button, Space, Switch, Select } from "antd";
 import { useDepartments } from "../../queries/department.queries";
 import type { Task, CreateTaskDto, UpdateTaskDto } from "../../types/task";
 import { LEVEL_OPTIONS_SELECT } from "../../consts/task";

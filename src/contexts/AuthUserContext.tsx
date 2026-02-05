@@ -28,7 +28,7 @@ interface AuthProviderProps {
 
 export const AuthUserProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    tokenStorage.isAuthenticated()
+    tokenStorage.isAuthenticated(),
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [user, setUser] = useState<User | null>(null);
@@ -85,7 +85,7 @@ export const AuthUserProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setLoading(false);
       }
     },
-    []
+    [],
   );
 
   const logout = useCallback(async (): Promise<void> => {

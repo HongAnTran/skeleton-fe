@@ -91,8 +91,7 @@ export interface CreateTaskDto {
 export interface UpdateTaskDto {
   title?: string;
   description?: string;
-  level?: number;
-  isTaskTeam?: boolean;
+  isActive?: boolean;
 }
 
 /**

@@ -11,7 +11,7 @@ import { TaskApprovalModal } from "@/components/task/TaskApprovalModal";
 import type { TaskAssignment } from "@/types/task";
 
 export const Route = createFileRoute(
-  "/u/_userLayout/_dashboardLayout/tasks/pending-approvel"
+  "/u/_userLayout/_dashboardLayout/tasks/pending-approvel",
 )({
   component: RouteComponent,
 });
@@ -23,7 +23,7 @@ function RouteComponent() {
 
   const approveTaskMutation = useApproveTask();
   const rejectTaskMutation = useRejectTask();
-  const { filters, setFilter, clearAllFilters, hasActiveFilters } = useFilters({
+  const { filters } = useFilters({
     department: { type: "string" },
     level: { type: "number" },
     employeeId: { type: "string" },

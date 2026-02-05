@@ -1,5 +1,5 @@
-import { Table, Tag, Space, Button, Popconfirm, Tooltip } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { Table, Tag, Space, Button, Popconfirm, Tooltip, Switch } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import type { Task } from "../../types/task";
 import { getLevelOption } from "../../consts/task";
@@ -9,7 +9,7 @@ interface TaskTemplateTableProps {
   loading?: boolean;
   onEdit: (task: Task) => void;
   onDelete: (taskId: string) => void;
-  onCreateCycle: (task: Task) => void;
+  onUpdateActive: (taskId: string, isActive: boolean) => void;
 }
 
 export function TaskTemplateTable({
@@ -17,11 +17,11 @@ export function TaskTemplateTable({
   loading = false,
   onEdit,
   onDelete,
-  onCreateCycle,
+  onUpdateActive,
 }: TaskTemplateTableProps) {
   const columns: ColumnsType<Task> = [
     {
-      title: "Tên Task",
+      title: "Tên nhiệm vụ",
       dataIndex: "title",
       key: "title",
       width: "25%",
@@ -65,46 +65,42 @@ export function TaskTemplateTable({
         </Tag>
       ),
     },
-    {
-      title: "Bắt buộc",
-      dataIndex: "required",
-      key: "required",
-      width: "8%",
-      align: "center",
-      render: (required: boolean) =>
-        required ? (
-          <Tag color="red">Bắt buộc</Tag>
-        ) : (
-          <Tag color="default">Tùy chọn</Tag>
-        ),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "isActive",
-      key: "isActive",
-      width: "8%",
-      render: (isActive: boolean) => (
-        <Tag color={isActive ? "success" : "default"}>
-          {isActive ? "Hoạt động" : "Tắt"}
-        </Tag>
-      ),
-    },
+    // {
+    //   title: "Bắt buộc",
+    //   dataIndex: "required",
+    //   key: "required",
+    //   width: "8%",
+    //   align: "center",
+    //   render: (required: boolean) =>
+    //     required ? (
+    //       <Tag color="red">Bắt buộc</Tag>
+    //     ) : (
+    //       <Tag color="default">Tùy chọn</Tag>
+    //     ),
+    // },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "isActive",
+    //   key: "isActive",
+    //   width: "8%",
+    //   render: (isActive: boolean) => (
+    //     <Tag color={isActive ? "success" : "default"}>
+    //       {isActive ? "Hoạt động" : "Tắt"}
+    //     </Tag>
+    //   ),
+    // },
     {
       title: "Thao tác",
       key: "actions",
       width: "18%",
       render: (_, record) => (
         <Space size="small">
-          {/* <Tooltip title="Tạo chu kỳ mới">
-            <Button
-              type="primary"
-              size="small"
-              icon={<PlusOutlined />}
-              onClick={() => onCreateCycle(record)}
-            >
-              Chu kỳ
-            </Button>
-          </Tooltip> */}
+          <Tooltip title="Kích hoạt/Tắt">
+            <Switch
+              checked={record.isActive}
+              onChange={(checked) => onUpdateActive(record.id, checked)}
+            />
+          </Tooltip>
           <Tooltip title="Chỉnh sửa">
             <Button
               type="default"

@@ -31,8 +31,10 @@ import { Route as EEmployeeLayoutDashboardLayoutTasksRouteImport } from './route
 import { Route as EEmployeeLayoutDashboardLayoutShiftSlotsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/shift-slots'
 import { Route as EEmployeeLayoutDashboardLayoutLeaveRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/leave-requests'
 import { Route as EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/change-shift-requests'
+import { Route as UUserLayoutDashboardLayoutUserAdminsIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/user-admins/index'
 import { Route as UUserLayoutDashboardLayoutTasksIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks/index'
 import { Route as UUserLayoutDashboardLayoutEmployeesIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/index'
+import { Route as UUserLayoutDashboardLayoutUserAdminsIdRouteImport } from './routes/u/_userLayout/_dashboardLayout/user-admins/$id'
 import { Route as UUserLayoutDashboardLayoutTasksPendingApprovelRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks/pending-approvel'
 import { Route as UUserLayoutDashboardLayoutEmployeesIdRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/$id'
 
@@ -159,6 +161,12 @@ const EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute =
     path: '/change-shift-requests',
     getParentRoute: () => EEmployeeLayoutDashboardLayoutRoute,
   } as any)
+const UUserLayoutDashboardLayoutUserAdminsIndexRoute =
+  UUserLayoutDashboardLayoutUserAdminsIndexRouteImport.update({
+    id: '/user-admins/',
+    path: '/user-admins/',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
 const UUserLayoutDashboardLayoutTasksIndexRoute =
   UUserLayoutDashboardLayoutTasksIndexRouteImport.update({
     id: '/tasks/',
@@ -169,6 +177,12 @@ const UUserLayoutDashboardLayoutEmployeesIndexRoute =
   UUserLayoutDashboardLayoutEmployeesIndexRouteImport.update({
     id: '/employees/',
     path: '/employees/',
+    getParentRoute: () => UUserLayoutDashboardLayoutRoute,
+  } as any)
+const UUserLayoutDashboardLayoutUserAdminsIdRoute =
+  UUserLayoutDashboardLayoutUserAdminsIdRouteImport.update({
+    id: '/user-admins/$id',
+    path: '/user-admins/$id',
     getParentRoute: () => UUserLayoutDashboardLayoutRoute,
   } as any)
 const UUserLayoutDashboardLayoutTasksPendingApprovelRoute =
@@ -205,8 +219,10 @@ export interface FileRoutesByFullPath {
   '/u/': typeof UUserLayoutDashboardLayoutIndexRoute
   '/u/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   '/u/tasks/pending-approvel': typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
+  '/u/user-admins/$id': typeof UUserLayoutDashboardLayoutUserAdminsIdRoute
   '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
   '/u/tasks': typeof UUserLayoutDashboardLayoutTasksIndexRoute
+  '/u/user-admins': typeof UUserLayoutDashboardLayoutUserAdminsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -227,8 +243,10 @@ export interface FileRoutesByTo {
   '/u/shift-slots': typeof UUserLayoutDashboardLayoutShiftSlotsRoute
   '/u/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   '/u/tasks/pending-approvel': typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
+  '/u/user-admins/$id': typeof UUserLayoutDashboardLayoutUserAdminsIdRoute
   '/u/employees': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
   '/u/tasks': typeof UUserLayoutDashboardLayoutTasksIndexRoute
+  '/u/user-admins': typeof UUserLayoutDashboardLayoutUserAdminsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -256,8 +274,10 @@ export interface FileRoutesById {
   '/u/_userLayout/_dashboardLayout/': typeof UUserLayoutDashboardLayoutIndexRoute
   '/u/_userLayout/_dashboardLayout/employees/$id': typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   '/u/_userLayout/_dashboardLayout/tasks/pending-approvel': typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
+  '/u/_userLayout/_dashboardLayout/user-admins/$id': typeof UUserLayoutDashboardLayoutUserAdminsIdRoute
   '/u/_userLayout/_dashboardLayout/employees/': typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
   '/u/_userLayout/_dashboardLayout/tasks/': typeof UUserLayoutDashboardLayoutTasksIndexRoute
+  '/u/_userLayout/_dashboardLayout/user-admins/': typeof UUserLayoutDashboardLayoutUserAdminsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -282,8 +302,10 @@ export interface FileRouteTypes {
     | '/u/'
     | '/u/employees/$id'
     | '/u/tasks/pending-approvel'
+    | '/u/user-admins/$id'
     | '/u/employees'
     | '/u/tasks'
+    | '/u/user-admins'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -304,8 +326,10 @@ export interface FileRouteTypes {
     | '/u/shift-slots'
     | '/u/employees/$id'
     | '/u/tasks/pending-approvel'
+    | '/u/user-admins/$id'
     | '/u/employees'
     | '/u/tasks'
+    | '/u/user-admins'
   id:
     | '__root__'
     | '/'
@@ -332,8 +356,10 @@ export interface FileRouteTypes {
     | '/u/_userLayout/_dashboardLayout/'
     | '/u/_userLayout/_dashboardLayout/employees/$id'
     | '/u/_userLayout/_dashboardLayout/tasks/pending-approvel'
+    | '/u/_userLayout/_dashboardLayout/user-admins/$id'
     | '/u/_userLayout/_dashboardLayout/employees/'
     | '/u/_userLayout/_dashboardLayout/tasks/'
+    | '/u/_userLayout/_dashboardLayout/user-admins/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -499,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRouteImport
       parentRoute: typeof EEmployeeLayoutDashboardLayoutRoute
     }
+    '/u/_userLayout/_dashboardLayout/user-admins/': {
+      id: '/u/_userLayout/_dashboardLayout/user-admins/'
+      path: '/user-admins'
+      fullPath: '/u/user-admins'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutUserAdminsIndexRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
     '/u/_userLayout/_dashboardLayout/tasks/': {
       id: '/u/_userLayout/_dashboardLayout/tasks/'
       path: '/tasks'
@@ -511,6 +544,13 @@ declare module '@tanstack/react-router' {
       path: '/employees'
       fullPath: '/u/employees'
       preLoaderRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRouteImport
+      parentRoute: typeof UUserLayoutDashboardLayoutRoute
+    }
+    '/u/_userLayout/_dashboardLayout/user-admins/$id': {
+      id: '/u/_userLayout/_dashboardLayout/user-admins/$id'
+      path: '/user-admins/$id'
+      fullPath: '/u/user-admins/$id'
+      preLoaderRoute: typeof UUserLayoutDashboardLayoutUserAdminsIdRouteImport
       parentRoute: typeof UUserLayoutDashboardLayoutRoute
     }
     '/u/_userLayout/_dashboardLayout/tasks/pending-approvel': {
@@ -592,8 +632,10 @@ interface UUserLayoutDashboardLayoutRouteChildren {
   UUserLayoutDashboardLayoutIndexRoute: typeof UUserLayoutDashboardLayoutIndexRoute
   UUserLayoutDashboardLayoutEmployeesIdRoute: typeof UUserLayoutDashboardLayoutEmployeesIdRoute
   UUserLayoutDashboardLayoutTasksPendingApprovelRoute: typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
+  UUserLayoutDashboardLayoutUserAdminsIdRoute: typeof UUserLayoutDashboardLayoutUserAdminsIdRoute
   UUserLayoutDashboardLayoutEmployeesIndexRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
   UUserLayoutDashboardLayoutTasksIndexRoute: typeof UUserLayoutDashboardLayoutTasksIndexRoute
+  UUserLayoutDashboardLayoutUserAdminsIndexRoute: typeof UUserLayoutDashboardLayoutUserAdminsIndexRoute
 }
 
 const UUserLayoutDashboardLayoutRouteChildren: UUserLayoutDashboardLayoutRouteChildren =
@@ -615,10 +657,14 @@ const UUserLayoutDashboardLayoutRouteChildren: UUserLayoutDashboardLayoutRouteCh
       UUserLayoutDashboardLayoutEmployeesIdRoute,
     UUserLayoutDashboardLayoutTasksPendingApprovelRoute:
       UUserLayoutDashboardLayoutTasksPendingApprovelRoute,
+    UUserLayoutDashboardLayoutUserAdminsIdRoute:
+      UUserLayoutDashboardLayoutUserAdminsIdRoute,
     UUserLayoutDashboardLayoutEmployeesIndexRoute:
       UUserLayoutDashboardLayoutEmployeesIndexRoute,
     UUserLayoutDashboardLayoutTasksIndexRoute:
       UUserLayoutDashboardLayoutTasksIndexRoute,
+    UUserLayoutDashboardLayoutUserAdminsIndexRoute:
+      UUserLayoutDashboardLayoutUserAdminsIndexRoute,
   }
 
 const UUserLayoutDashboardLayoutRouteWithChildren =

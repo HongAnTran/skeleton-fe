@@ -21,10 +21,12 @@ import {
   TableOutlined,
   UnorderedListOutlined,
   FileTextOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import { useUserAuth } from "@/contexts/AuthUserContext";
 import type { MenuProps } from "antd";
 import { useLocation, useRouter } from "@tanstack/react-router";
+import { UserRole } from "@/types/user";
 
 const { Header, Sider, Content } = Layout;
 interface UserDashboardLayoutProps {
@@ -113,6 +115,16 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
       label: "Phòng ban",
       onClick: () => handleMenuClick("/u/departments"),
     },
+    ...(user?.role === UserRole.USER
+      ? [
+          {
+            key: "/u/user-admins",
+            icon: <UserSwitchOutlined />,
+            label: "User Admin",
+            onClick: () => handleMenuClick("/u/user-admins"),
+          },
+        ]
+      : []),
     // {
     //   key: "/u/settings",
     //   icon: <SettingOutlined />,
