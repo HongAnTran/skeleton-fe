@@ -22,6 +22,7 @@ import {
   UnorderedListOutlined,
   FileTextOutlined,
   UserSwitchOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { useUserAuth } from "@/contexts/AuthUserContext";
 import type { MenuProps } from "antd";
@@ -142,14 +143,15 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
   };
 
   const userMenuItems: MenuProps["items"] = [
-    // {
-    //   key: "1",
-    //   icon: <UserOutlined />,
-    //   label: "Tài khoản",
-    // },
-    // {
-    //   type: "divider",
-    // },
+    {
+      key: "1",
+      icon: <SettingOutlined />,
+      label: "Cài đặt",
+      onClick: () => handleMenuClick("/u/settings"),
+    },
+    {
+      type: "divider",
+    },
     {
       key: "3",
       icon: <LogoutOutlined />,

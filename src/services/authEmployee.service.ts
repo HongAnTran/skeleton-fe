@@ -1,8 +1,8 @@
-import { axiosInstance } from "@/lib/axios";
-import type { LoginResponse, RefreshTokenResponse } from "@/types/api";
-import type { LoginRequest } from "@/types/auth";
-import type { Employee } from "@/types/employee";
-import { tokenStorage } from "@/utils/token";
+import { axiosInstance } from "../lib/axios";
+import type { LoginResponse, RefreshTokenResponse } from "../types/api";
+import type { LoginRequest, ChangePasswordRequest } from "../types/auth";
+import type { Employee } from "../types/employee";
+import { tokenStorage } from "../utils/token";
 
 export class AuthEmployeeService {
   static url = "/auth/employee";
@@ -54,5 +54,9 @@ export class AuthEmployeeService {
       throw new Error("No employee data available");
     }
     return data;
+  }
+
+  static async changePassword(passwords: ChangePasswordRequest): Promise<void> {
+    await axiosInstance.post(`${this.url}/change-password`, passwords);
   }
 }

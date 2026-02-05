@@ -20,6 +20,7 @@ import {
   SwapOutlined,
   UnorderedListOutlined,
   FileTextOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { useEmployeeAuth } from "@/contexts/AuthEmployeeContext";
 import type { MenuProps } from "antd";
@@ -106,14 +107,15 @@ const EmployeeDashboardLayout: React.FC<EmployeeDashboardLayoutProps> = ({
   };
 
   const employeeMenuItems: MenuProps["items"] = [
-    // {
-    //   key: "1",
-    //   icon: <UserOutlined />,
-    //   label: "Tài khoản",
-    // },
-    // {
-    //   type: "divider",
-    // },
+    {
+      key: "1",
+      icon: <SettingOutlined />,
+      label: "Cài đặt",
+      onClick: () => handleMenuClick("/e/settings"),
+    },
+    {
+      type: "divider",
+    },
     {
       key: "3",
       icon: <LogoutOutlined />,

@@ -63,15 +63,6 @@ function WarrantyLookupPage() {
   return (
     <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <img src="/logo.webp" alt="logo" className="w-20 h-20" />
-          </div>
-          <Title level={1} className="mb-2 text-blue-500">
-            Tra cứu bảo hành
-          </Title>
-        </div>
 
         {/* Search Form */}
         <Card className="shadow-lg mb-8 border-0">
