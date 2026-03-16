@@ -1,0 +1,327 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import {
+  Card,
+  Form,
+  Select,
+  DatePicker,
+  Button,
+  Table,
+  Statistic,
+  Row,
+  Col,
+  Alert,
+  Spin,
+  Empty,
+  Tag,
+  Typography,
+  Space,
+} from "antd";
+import {
+  TeamOutlined,
+  FileTextOutlined,
+  DollarOutlined,
+  SafetyCertificateOutlined,
+  CalendarOutlined,
+  UserOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import { KiotVietService } from "@/services/kiotviet.service";
+import type {
+  KiotVietUser,
+  Invoice,
+  InvoicesByUserReport,
+} from "@/types/kiotviet";
+import dayjs from "dayjs";
+
+const { RangePicker } = DatePicker;
+const { Title, Text } = Typography;
+
+export const Route = createFileRoute("/kiotviet-report")({
+  component: KiotVietReportPage,
+});
+
+function KiotVietReportPage() {
+  const [form] = Form.useForm();
+  const [userId, setUserId] = useState<number | null>(null);
+  const [dateRange, setDateRange] = useState<[string, string] | null>(null);
+
+  const { data: usersData, isLoading: loadingUsers } = useQuery({
+    queryKey: ["kiotviet-users"],
+    queryFn: () =>
+      KiotVietService.getUsers({
+        pageSize: 100,
+        orderBy: "givenName",
+        orderDirection: "Asc",
+      }),
+  });
+
+  const {
+    data: invoicesData,
+    isLoading: loadingInvoices,
+    isFetching: fetchingInvoices,
+    error: invoicesError,
+  } = useQuery({
+    queryKey: ["kiotviet-invoices-by-user", userId, dateRange],
+    queryFn: () =>
+      KiotVietService.getInvoicesByUser({
+        userId: userId!,
+        ...(dateRange?.[0] && { fromPurchaseDate: dateRange[0] }),
+        ...(dateRange?.[1] && { toPurchaseDate: dateRange[1] }),
+      }),
+    enabled: !!userId,
+  });
+
+  const users: KiotVietUser[] = usersData?.data ?? [];
+  const report: InvoicesByUserReport | undefined = invoicesData?.report;
+  const invoices: Invoice[] = invoicesData?.data ?? [];
+
+  const handleSearch = (values: {
+    userId: number;
+    dateRange?: [dayjs.Dayjs, dayjs.Dayjs];
+  }) => {
+    setUserId(values.userId);
+    setDateRange(
+      values.dateRange
+        ? [
+            values.dateRange[0].startOf("day").toISOString(),
+            values.dateRange[1].endOf("day").toISOString(),
+          ]
+        : null,
+    );
+  };
+
+  const formatDate = (dateString: string) =>
+    dayjs(dateString).format("DD/MM/YYYY HH:mm");
+  const formatMoney = (n: number) =>
+    new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(n);
+
+  const columns = [
+    {
+      title: "Mã HĐ",
+      dataIndex: "code",
+      key: "code",
+      width: 120,
+      render: (code: string) => (
+        <Space>
+          <FileTextOutlined className="text-gray-400" />
+          <Text strong>{code}</Text>
+        </Space>
+      ),
+    },
+    {
+      title: "Ngày bán",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      width: 150,
+      render: (v: string) => (
+        <Space>
+          <CalendarOutlined className="text-gray-400" />
+          {formatDate(v)}
+        </Space>
+      ),
+    },
+    {
+      title: "Khách hàng",
+      dataIndex: "customerName",
+      key: "customerName",
+      ellipsis: true,
+      render: (v: string) => (
+        <Space>
+          <UserOutlined className="text-gray-400" />
+          {v}
+        </Space>
+      ),
+    },
+    {
+      title: "Tổng thanh toán",
+      dataIndex: "totalPayment",
+      key: "totalPayment",
+      width: 140,
+      align: "right" as const,
+      render: (v: number) => <Text strong>{formatMoney(v)}</Text>,
+    },
+    {
+      title: "Bảo hành",
+      key: "warranty",
+      width: 110,
+      render: (_: unknown, record: Invoice) =>
+        record.warranty ? (
+          <Tag
+            icon={<SafetyCertificateOutlined />}
+            color={
+              record.warranty.status === "Còn hiệu lực" ? "green" : "default"
+            }
+          >
+            {record.warranty.status}
+          </Tag>
+        ) : (
+          <Text type="secondary">—</Text>
+        ),
+    },
+  ];
+
+  return (
+    <div className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 bg-gray-50/50">
+      <div className="max-w-6xl mx-auto">
+        <Card className="shadow-sm mb-6">
+          <Title level={4} className="!mb-4">
+            <TeamOutlined className="mr-2" />
+            Báo cáo hóa đơn theo nhân viên
+          </Title>
+          <Form
+            form={form}
+            onFinish={handleSearch}
+            layout="inline"
+            className="flex flex-wrap gap-3 items-end"
+          >
+            <Form.Item
+              name="userId"
+              rules={[{ required: true, message: "Chọn nhân viên" }]}
+              className="!mb-0 lg:min-w-[320px] min-w-[300px]"
+            >
+              <Select
+                placeholder="Chọn nhân viên"
+                loading={loadingUsers}
+                showSearch
+                optionFilterProp="label"
+                options={users.map((u) => ({
+                  value: u.id,
+                  label: `${u.givenName} (${u.userName})`,
+                }))}
+                suffixIcon={<UserOutlined className="text-gray-400" />}
+                allowClear
+              />
+            </Form.Item>
+            <Form.Item name="dateRange" className="!mb-0">
+              <RangePicker
+                format="DD/MM/YYYY"
+                placeholder={["Từ ngày", "Đến ngày"]}
+                className="w-full"
+              />
+            </Form.Item>
+            <Form.Item className="!mb-0 w-full lg:w-auto">
+              <Button
+                className="w-full lg:w-auto"
+                type="primary"
+                htmlType="submit"
+                icon={<SearchOutlined />}
+                loading={fetchingInvoices && !!userId}
+              >
+                Xem báo cáo
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
+
+        {invoicesError && (
+          <Alert
+            message="Không thể tải dữ liệu"
+            description="Kiểm tra kết nối KiotViet hoặc thử lại sau."
+            type="error"
+            showIcon
+            className="mb-6"
+            closable
+          />
+        )}
+
+        {loadingInvoices && userId && (
+          <div className="flex justify-center py-12">
+            <Spin size="large" tip="Đang tải hóa đơn..." />
+          </div>
+        )}
+
+        {!loadingInvoices && userId && invoicesData && (
+          <>
+            <Row gutter={[16, 16]} className="mb-6 mt-6">
+              <Col xs={24} sm={12} md={8}>
+                <Card size="small" className="shadow-sm">
+                  <Statistic
+                    title={
+                      <Space>
+                        <FileTextOutlined />
+                        <span>Tổng số đơn</span>
+                      </Space>
+                    }
+                    value={report?.totalOrders ?? 0}
+                  />
+                </Card>
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Card size="small" className="shadow-sm">
+                  <Statistic
+                    title={
+                      <Space>
+                        <DollarOutlined />
+                        <span>Doanh thu</span>
+                      </Space>
+                    }
+                    value={report?.revenue ?? 0}
+                    formatter={(v) => formatMoney(Number(v))}
+                  />
+                </Card>
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Card size="small" className="shadow-sm">
+                  <Statistic
+                    title={
+                      <Space>
+                        <SafetyCertificateOutlined />
+                        <span>Đơn có bảo hành</span>
+                      </Space>
+                    }
+                    value={report?.warrantyOrderCount ?? 0}
+                  />
+                </Card>
+              </Col>
+            </Row>
+
+            <Card
+              title={
+                <Space>
+                  <FileTextOutlined />
+                  <span>Danh sách hóa đơn</span>
+                  <Tag color="blue">{invoices.length} đơn</Tag>
+                </Space>
+              }
+              className="shadow-sm"
+            >
+              {invoices.length === 0 ? (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="Không có hóa đơn trong khoảng thời gian đã chọn."
+                />
+              ) : (
+                <Table
+                  rowKey="id"
+                  dataSource={invoices}
+                  columns={columns}
+                  pagination={{
+                    pageSize: 10,
+                    showSizeChanger: true,
+                    showTotal: (t) => `Tổng ${t} đơn`,
+                  }}
+                  size="middle"
+                  scroll={{ x: 700 }}
+                />
+              )}
+            </Card>
+          </>
+        )}
+
+        {!userId && !loadingInvoices && (
+          <Card className="shadow-sm">
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="Chọn nhân viên và bấm «Xem báo cáo» để xem hóa đơn."
+            />
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}

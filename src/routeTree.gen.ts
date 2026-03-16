@@ -12,6 +12,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarrantyRouteImport } from './routes/warranty'
+import { Route as KiotvietReportRouteImport } from './routes/kiotviet-report'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUserLayoutRouteImport } from './routes/u/_userLayout'
 import { Route as EEmployeeLayoutRouteImport } from './routes/e/_employeeLayout'
@@ -55,6 +56,11 @@ const ERoute = ERouteImport.update({
 const WarrantyRoute = WarrantyRouteImport.update({
   id: '/warranty',
   path: '/warranty',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KiotvietReportRoute = KiotvietReportRouteImport.update({
+  id: '/kiotviet-report',
+  path: '/kiotviet-report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -207,6 +213,7 @@ const UUserLayoutDashboardLayoutEmployeesIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/kiotviet-report': typeof KiotvietReportRoute
   '/warranty': typeof WarrantyRoute
   '/e': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/u': typeof UUserLayoutDashboardLayoutRouteWithChildren
@@ -234,6 +241,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/kiotviet-report': typeof KiotvietReportRoute
   '/warranty': typeof WarrantyRoute
   '/e': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u': typeof UUserLayoutDashboardLayoutIndexRoute
@@ -260,6 +268,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/kiotviet-report': typeof KiotvietReportRoute
   '/warranty': typeof WarrantyRoute
   '/e': typeof ERouteWithChildren
   '/e/_employeeLayout': typeof EEmployeeLayoutRouteWithChildren
@@ -293,6 +302,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/kiotviet-report'
     | '/warranty'
     | '/e'
     | '/u'
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/kiotviet-report'
     | '/warranty'
     | '/e'
     | '/u'
@@ -345,6 +356,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/kiotviet-report'
     | '/warranty'
     | '/e'
     | '/e/_employeeLayout'
@@ -377,6 +389,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  KiotvietReportRoute: typeof KiotvietReportRoute
   WarrantyRoute: typeof WarrantyRoute
   ERoute: typeof ERouteWithChildren
   URoute: typeof URouteWithChildren
@@ -403,6 +416,13 @@ declare module '@tanstack/react-router' {
       path: '/warranty'
       fullPath: '/warranty'
       preLoaderRoute: typeof WarrantyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kiotviet-report': {
+      id: '/kiotviet-report'
+      path: '/kiotviet-report'
+      fullPath: '/kiotviet-report'
+      preLoaderRoute: typeof KiotvietReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -721,6 +741,7 @@ const URouteWithChildren = URoute._addFileChildren(URouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  KiotvietReportRoute: KiotvietReportRoute,
   WarrantyRoute: WarrantyRoute,
   ERoute: ERouteWithChildren,
   URoute: URouteWithChildren,

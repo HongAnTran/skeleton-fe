@@ -108,3 +108,54 @@ export interface Invoice {
  * Response từ API tra cứu hóa đơn
  */
 export type SearchInvoiceResponse = Invoice[];
+
+// --- API Users (GET /kiotviet/users) ---
+
+export interface KiotVietUser {
+  id: number;
+  userName: string;
+  givenName: string;
+  address?: string;
+  mobilePhone?: string;
+  email?: string;
+  description?: string;
+  retailerId: number;
+  birthDate?: string;
+  createdDate: string;
+}
+
+export interface KiotVietUsersParams {
+  lastModifiedFrom?: string;
+  pageSize?: number;
+  currentItem?: number;
+  orderBy?: string;
+  orderDirection?: "Asc" | "Desc";
+  includeRemoveIds?: boolean;
+}
+
+export interface KiotVietUsersResponse {
+  total: number;
+  pageSize: number;
+  data: KiotVietUser[];
+  removeIds?: number[];
+}
+
+// --- API Invoices by user (GET /kiotviet/invoices/by-user) ---
+
+export interface InvoicesByUserParams {
+  userId: number;
+  fromPurchaseDate?: string;
+  toPurchaseDate?: string;
+}
+
+export interface InvoicesByUserReport {
+  totalOrders: number;
+  totalValue: number;
+  warrantyOrderCount: number;
+  revenue: number;
+}
+
+export interface InvoicesByUserResponse {
+  data: Invoice[];
+  report: InvoicesByUserReport;
+}
