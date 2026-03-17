@@ -142,6 +142,14 @@ function KiotVietReportPage() {
       ),
     },
     {
+      title: "số lượng",
+      dataIndex: "invoiceDetails",
+      key: "invoiceDetails",
+      width: 140,
+      align: "right" as const,
+      render: (v: any[]) => <Text strong>{v.length}</Text>,
+    },
+    {
       title: "Tổng thanh toán",
       dataIndex: "totalPayment",
       key: "totalPayment",
