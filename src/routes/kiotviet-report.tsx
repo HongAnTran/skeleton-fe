@@ -45,7 +45,10 @@ export const Route = createFileRoute("/kiotviet-report")({
 function KiotVietReportPage() {
   const [form] = Form.useForm();
   const [userId, setUserId] = useState<number | null>(null);
-  const [dateRange, setDateRange] = useState<[string, string] | null>(null);
+  const [dateRange, setDateRange] = useState<[string, string] | null>([
+    dayjs().startOf("day").toISOString(),
+    dayjs().endOf("day").toISOString(),
+  ]);
 
   const { data: usersData, isLoading: loadingUsers } = useQuery({
     queryKey: ["kiotviet-users"],
@@ -206,6 +209,7 @@ function KiotVietReportPage() {
           </Title>
           <Form
             form={form}
+            initialValues={{ dateRange: [dayjs(), dayjs()] }}
             onFinish={handleSearch}
             layout="inline"
             className="flex flex-wrap gap-3 items-end"
