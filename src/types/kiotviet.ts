@@ -151,7 +151,16 @@ export interface InvoicesByUserParams {
 export interface InvoicesByUserReport {
   totalOrders: number;
   totalValue: number;
+  accessoryRevenue: number;
+  warrantyRevenue: number;
   warrantyOrderCount: number;
+  warrantyQuantity: number;
+  warrantyBreakdown: Array<{
+    warrantyType: string;
+    quantity: number;
+    revenue: number;
+    orderCount: number;
+  }>;
   revenue: number;
 }
 

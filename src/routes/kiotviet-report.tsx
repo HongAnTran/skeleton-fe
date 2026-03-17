@@ -94,12 +94,13 @@ function KiotVietReportPage() {
 
   const formatDate = (dateString: string) =>
     dayjs(dateString).format("DD/MM/YYYY HH:mm");
-  const formatMoney = (n: number) =>
-    new Intl.NumberFormat("vi-VN", {
+  const formatMoney = (n: number) => {
+    const amount = n * 1000;
+    return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
-    }).format(n);
-
+    }).format(amount);
+  };
   const columns = [
     {
       title: "Mã HĐ",
@@ -162,6 +163,36 @@ function KiotVietReportPage() {
         ) : (
           <Text type="secondary">—</Text>
         ),
+    },
+  ];
+
+  const warrantyBreakdownColumns = [
+    {
+      title: "Gói bảo hành",
+      dataIndex: "warrantyType",
+      key: "warrantyType",
+      ellipsis: true,
+      render: (v: string) => (
+        <Space>
+          <SafetyCertificateOutlined className="text-gray-400" />
+          <Text strong>{v}</Text>
+        </Space>
+      ),
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 110,
+      align: "right" as const,
+    },
+    {
+      title: "Doanh thu",
+      dataIndex: "revenue",
+      key: "revenue",
+      width: 170,
+      align: "right" as const,
+      render: (v: number) => <Text strong>{formatMoney(v)}</Text>,
     },
   ];
 
@@ -278,7 +309,77 @@ function KiotVietReportPage() {
                   />
                 </Card>
               </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Card size="small" className="shadow-sm">
+                  <Statistic
+                    title={
+                      <Space>
+                        <DollarOutlined />
+                        <span>Doanh thu phụ kiện</span>
+                      </Space>
+                    }
+                    value={report?.accessoryRevenue ?? 0}
+                    formatter={(v) => formatMoney(Number(v))}
+                  />
+                </Card>
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Card size="small" className="shadow-sm">
+                  <Statistic
+                    title={
+                      <Space>
+                        <SafetyCertificateOutlined />
+                        <span>Doanh thu bảo hành</span>
+                      </Space>
+                    }
+                    value={report?.warrantyRevenue ?? 0}
+                    formatter={(v) => formatMoney(Number(v))}
+                  />
+                </Card>
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Card size="small" className="shadow-sm">
+                  <Statistic
+                    title={
+                      <Space>
+                        <SafetyCertificateOutlined />
+                        <span>SL gói bảo hành</span>
+                      </Space>
+                    }
+                    value={report?.warrantyQuantity ?? 0}
+                  />
+                </Card>
+              </Col>
             </Row>
+
+            <Card
+              title={
+                <Space>
+                  <SafetyCertificateOutlined />
+                  <span>Chi tiết gói bảo hành</span>
+                  <Tag color="green">
+                    {report?.warrantyBreakdown?.length ?? 0} loại
+                  </Tag>
+                </Space>
+              }
+              className="shadow-sm mb-6"
+            >
+              {report?.warrantyBreakdown?.length ? (
+                <Table
+                  rowKey={(r) => r.warrantyType}
+                  dataSource={report.warrantyBreakdown}
+                  columns={warrantyBreakdownColumns}
+                  pagination={false}
+                  size="small"
+                  scroll={{ x: 650 }}
+                />
+              ) : (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="Không có gói bảo hành trong các hóa đơn đã lọc."
+                />
+              )}
+            </Card>
 
             <Card
               title={
