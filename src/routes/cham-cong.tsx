@@ -34,7 +34,7 @@ import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
 
-export const Route = createFileRoute("/report/dahahi")({
+export const Route = createFileRoute("/cham-cong")({
   component: DahahiReportPage,
 });
 
@@ -152,10 +152,15 @@ function DahahiReportPage() {
                 placeholder="Tìm theo tên — chọn nhân viên Dahahi"
                 loading={loadingEmployees}
                 showSearch
-                filterOption={false}
+                filterOption={(input, option) => {
+                  const label = (option?.label ?? "").toString().toLowerCase();
+                  const value = (option?.value ?? "").toString().toLowerCase();
+                  const search = input.trim().toLowerCase();
+                  return label.includes(search) || value.includes(search);
+                }}
                 options={employees.map((e) => ({
                   value: e.EmployeeCode,
-                  label: e.Name,
+                  label: `${e.Name}`,
                 }))}
                 suffixIcon={<UserOutlined className="text-gray-400" />}
                 allowClear

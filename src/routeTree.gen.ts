@@ -12,13 +12,15 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarrantyRouteImport } from './routes/warranty'
+import { Route as ChamCongRouteImport } from './routes/cham-cong'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUserLayoutRouteImport } from './routes/u/_userLayout'
-import { Route as ReportKiotvietRouteImport } from './routes/report/kiotviet'
-import { Route as ReportDahahiRouteImport } from './routes/report/dahahi'
+import { Route as ReportReportLayoutRouteImport } from './routes/report/_reportLayout'
 import { Route as EEmployeeLayoutRouteImport } from './routes/e/_employeeLayout'
 import { Route as UUserLayoutLoginRouteImport } from './routes/u/_userLayout/login'
 import { Route as UUserLayoutDashboardLayoutRouteImport } from './routes/u/_userLayout/_dashboardLayout'
+import { Route as ReportReportLayoutKiotvietRouteImport } from './routes/report/_reportLayout/kiotviet'
+import { Route as ReportReportLayoutDahahiRouteImport } from './routes/report/_reportLayout/dahahi'
 import { Route as EEmployeeLayoutLoginRouteImport } from './routes/e/_employeeLayout/login'
 import { Route as EEmployeeLayoutDashboardLayoutRouteImport } from './routes/e/_employeeLayout/_dashboardLayout'
 import { Route as UUserLayoutDashboardLayoutIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/index'
@@ -42,11 +44,17 @@ import { Route as UUserLayoutDashboardLayoutTasksPendingApprovelRouteImport } fr
 import { Route as UUserLayoutDashboardLayoutEmployeesIdRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/$id'
 
 const URouteImport = createFileRoute('/u')()
+const ReportRouteImport = createFileRoute('/report')()
 const ERouteImport = createFileRoute('/e')()
 
 const URoute = URouteImport.update({
   id: '/u',
   path: '/u',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ERoute = ERouteImport.update({
@@ -59,6 +67,11 @@ const WarrantyRoute = WarrantyRouteImport.update({
   path: '/warranty',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChamCongRoute = ChamCongRouteImport.update({
+  id: '/cham-cong',
+  path: '/cham-cong',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -68,15 +81,9 @@ const UUserLayoutRoute = UUserLayoutRouteImport.update({
   id: '/_userLayout',
   getParentRoute: () => URoute,
 } as any)
-const ReportKiotvietRoute = ReportKiotvietRouteImport.update({
-  id: '/report/kiotviet',
-  path: '/report/kiotviet',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReportDahahiRoute = ReportDahahiRouteImport.update({
-  id: '/report/dahahi',
-  path: '/report/dahahi',
-  getParentRoute: () => rootRouteImport,
+const ReportReportLayoutRoute = ReportReportLayoutRouteImport.update({
+  id: '/_reportLayout',
+  getParentRoute: () => ReportRoute,
 } as any)
 const EEmployeeLayoutRoute = EEmployeeLayoutRouteImport.update({
   id: '/_employeeLayout',
@@ -91,6 +98,18 @@ const UUserLayoutDashboardLayoutRoute =
   UUserLayoutDashboardLayoutRouteImport.update({
     id: '/_dashboardLayout',
     getParentRoute: () => UUserLayoutRoute,
+  } as any)
+const ReportReportLayoutKiotvietRoute =
+  ReportReportLayoutKiotvietRouteImport.update({
+    id: '/kiotviet',
+    path: '/kiotviet',
+    getParentRoute: () => ReportReportLayoutRoute,
+  } as any)
+const ReportReportLayoutDahahiRoute =
+  ReportReportLayoutDahahiRouteImport.update({
+    id: '/dahahi',
+    path: '/dahahi',
+    getParentRoute: () => ReportReportLayoutRoute,
   } as any)
 const EEmployeeLayoutLoginRoute = EEmployeeLayoutLoginRouteImport.update({
   id: '/login',
@@ -219,12 +238,14 @@ const UUserLayoutDashboardLayoutEmployeesIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cham-cong': typeof ChamCongRoute
   '/warranty': typeof WarrantyRoute
   '/e': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
-  '/report/dahahi': typeof ReportDahahiRoute
-  '/report/kiotviet': typeof ReportKiotvietRoute
+  '/report': typeof ReportReportLayoutRouteWithChildren
   '/u': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/e/login': typeof EEmployeeLayoutLoginRoute
+  '/report/dahahi': typeof ReportReportLayoutDahahiRoute
+  '/report/kiotviet': typeof ReportReportLayoutKiotvietRoute
   '/u/login': typeof UUserLayoutLoginRoute
   '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
   '/e/leave-requests': typeof EEmployeeLayoutDashboardLayoutLeaveRequestsRoute
@@ -248,12 +269,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cham-cong': typeof ChamCongRoute
   '/warranty': typeof WarrantyRoute
   '/e': typeof EEmployeeLayoutDashboardLayoutIndexRoute
-  '/report/dahahi': typeof ReportDahahiRoute
-  '/report/kiotviet': typeof ReportKiotvietRoute
+  '/report': typeof ReportReportLayoutRouteWithChildren
   '/u': typeof UUserLayoutDashboardLayoutIndexRoute
   '/e/login': typeof EEmployeeLayoutLoginRoute
+  '/report/dahahi': typeof ReportReportLayoutDahahiRoute
+  '/report/kiotviet': typeof ReportReportLayoutKiotvietRoute
   '/u/login': typeof UUserLayoutLoginRoute
   '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
   '/e/leave-requests': typeof EEmployeeLayoutDashboardLayoutLeaveRequestsRoute
@@ -276,15 +299,18 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cham-cong': typeof ChamCongRoute
   '/warranty': typeof WarrantyRoute
   '/e': typeof ERouteWithChildren
   '/e/_employeeLayout': typeof EEmployeeLayoutRouteWithChildren
-  '/report/dahahi': typeof ReportDahahiRoute
-  '/report/kiotviet': typeof ReportKiotvietRoute
+  '/report': typeof ReportRouteWithChildren
+  '/report/_reportLayout': typeof ReportReportLayoutRouteWithChildren
   '/u': typeof URouteWithChildren
   '/u/_userLayout': typeof UUserLayoutRouteWithChildren
   '/e/_employeeLayout/_dashboardLayout': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/e/_employeeLayout/login': typeof EEmployeeLayoutLoginRoute
+  '/report/_reportLayout/dahahi': typeof ReportReportLayoutDahahiRoute
+  '/report/_reportLayout/kiotviet': typeof ReportReportLayoutKiotvietRoute
   '/u/_userLayout/_dashboardLayout': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/u/_userLayout/login': typeof UUserLayoutLoginRoute
   '/e/_employeeLayout/_dashboardLayout/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
@@ -311,12 +337,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/cham-cong'
     | '/warranty'
     | '/e'
-    | '/report/dahahi'
-    | '/report/kiotviet'
+    | '/report'
     | '/u'
     | '/e/login'
+    | '/report/dahahi'
+    | '/report/kiotviet'
     | '/u/login'
     | '/e/change-shift-requests'
     | '/e/leave-requests'
@@ -340,12 +368,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cham-cong'
     | '/warranty'
     | '/e'
-    | '/report/dahahi'
-    | '/report/kiotviet'
+    | '/report'
     | '/u'
     | '/e/login'
+    | '/report/dahahi'
+    | '/report/kiotviet'
     | '/u/login'
     | '/e/change-shift-requests'
     | '/e/leave-requests'
@@ -367,15 +397,18 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/cham-cong'
     | '/warranty'
     | '/e'
     | '/e/_employeeLayout'
-    | '/report/dahahi'
-    | '/report/kiotviet'
+    | '/report'
+    | '/report/_reportLayout'
     | '/u'
     | '/u/_userLayout'
     | '/e/_employeeLayout/_dashboardLayout'
     | '/e/_employeeLayout/login'
+    | '/report/_reportLayout/dahahi'
+    | '/report/_reportLayout/kiotviet'
     | '/u/_userLayout/_dashboardLayout'
     | '/u/_userLayout/login'
     | '/e/_employeeLayout/_dashboardLayout/change-shift-requests'
@@ -401,10 +434,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ChamCongRoute: typeof ChamCongRoute
   WarrantyRoute: typeof WarrantyRoute
   ERoute: typeof ERouteWithChildren
-  ReportDahahiRoute: typeof ReportDahahiRoute
-  ReportKiotvietRoute: typeof ReportKiotvietRoute
+  ReportRoute: typeof ReportRouteWithChildren
   URoute: typeof URouteWithChildren
 }
 
@@ -415,6 +448,13 @@ declare module '@tanstack/react-router' {
       path: '/u'
       fullPath: '/u'
       preLoaderRoute: typeof URouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/e': {
@@ -431,6 +471,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WarrantyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cham-cong': {
+      id: '/cham-cong'
+      path: '/cham-cong'
+      fullPath: '/cham-cong'
+      preLoaderRoute: typeof ChamCongRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -445,19 +492,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UUserLayoutRouteImport
       parentRoute: typeof URoute
     }
-    '/report/kiotviet': {
-      id: '/report/kiotviet'
-      path: '/report/kiotviet'
-      fullPath: '/report/kiotviet'
-      preLoaderRoute: typeof ReportKiotvietRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/report/dahahi': {
-      id: '/report/dahahi'
-      path: '/report/dahahi'
-      fullPath: '/report/dahahi'
-      preLoaderRoute: typeof ReportDahahiRouteImport
-      parentRoute: typeof rootRouteImport
+    '/report/_reportLayout': {
+      id: '/report/_reportLayout'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportReportLayoutRouteImport
+      parentRoute: typeof ReportRoute
     }
     '/e/_employeeLayout': {
       id: '/e/_employeeLayout'
@@ -479,6 +519,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/u'
       preLoaderRoute: typeof UUserLayoutDashboardLayoutRouteImport
       parentRoute: typeof UUserLayoutRoute
+    }
+    '/report/_reportLayout/kiotviet': {
+      id: '/report/_reportLayout/kiotviet'
+      path: '/kiotviet'
+      fullPath: '/report/kiotviet'
+      preLoaderRoute: typeof ReportReportLayoutKiotvietRouteImport
+      parentRoute: typeof ReportReportLayoutRoute
+    }
+    '/report/_reportLayout/dahahi': {
+      id: '/report/_reportLayout/dahahi'
+      path: '/dahahi'
+      fullPath: '/report/dahahi'
+      preLoaderRoute: typeof ReportReportLayoutDahahiRouteImport
+      parentRoute: typeof ReportReportLayoutRoute
     }
     '/e/_employeeLayout/login': {
       id: '/e/_employeeLayout/login'
@@ -685,6 +739,30 @@ const ERouteChildren: ERouteChildren = {
 
 const ERouteWithChildren = ERoute._addFileChildren(ERouteChildren)
 
+interface ReportReportLayoutRouteChildren {
+  ReportReportLayoutDahahiRoute: typeof ReportReportLayoutDahahiRoute
+  ReportReportLayoutKiotvietRoute: typeof ReportReportLayoutKiotvietRoute
+}
+
+const ReportReportLayoutRouteChildren: ReportReportLayoutRouteChildren = {
+  ReportReportLayoutDahahiRoute: ReportReportLayoutDahahiRoute,
+  ReportReportLayoutKiotvietRoute: ReportReportLayoutKiotvietRoute,
+}
+
+const ReportReportLayoutRouteWithChildren =
+  ReportReportLayoutRoute._addFileChildren(ReportReportLayoutRouteChildren)
+
+interface ReportRouteChildren {
+  ReportReportLayoutRoute: typeof ReportReportLayoutRouteWithChildren
+}
+
+const ReportRouteChildren: ReportRouteChildren = {
+  ReportReportLayoutRoute: ReportReportLayoutRouteWithChildren,
+}
+
+const ReportRouteWithChildren =
+  ReportRoute._addFileChildren(ReportRouteChildren)
+
 interface UUserLayoutDashboardLayoutRouteChildren {
   UUserLayoutDashboardLayoutBranchsRoute: typeof UUserLayoutDashboardLayoutBranchsRoute
   UUserLayoutDashboardLayoutDepartmentsRoute: typeof UUserLayoutDashboardLayoutDepartmentsRoute
@@ -761,10 +839,10 @@ const URouteWithChildren = URoute._addFileChildren(URouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ChamCongRoute: ChamCongRoute,
   WarrantyRoute: WarrantyRoute,
   ERoute: ERouteWithChildren,
-  ReportDahahiRoute: ReportDahahiRoute,
-  ReportKiotvietRoute: ReportKiotvietRoute,
+  ReportRoute: ReportRouteWithChildren,
   URoute: URouteWithChildren,
 }
 export const routeTree = rootRouteImport

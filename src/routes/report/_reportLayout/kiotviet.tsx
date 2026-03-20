@@ -38,7 +38,7 @@ import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
 
-export const Route = createFileRoute("/report/kiotviet")({
+export const Route = createFileRoute("/report/_reportLayout/kiotviet")({
   component: KiotVietReportPage,
 });
 
