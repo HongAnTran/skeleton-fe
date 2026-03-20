@@ -30,8 +30,8 @@ export interface DahahiCheckinRecord {
 }
 
 export interface DahahiCheckinReport {
-  workDays: number;
-  forgotCheckoutCount: number;
+  totalWorkHours: number;
+  forgotCheckoutDates: string[];
   totalRecords: number;
 }
 

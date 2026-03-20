@@ -193,21 +193,21 @@ function DahahiReportPage() {
 
         {!loadingCheckin && employeeCode && checkinData && (
           <>
-            <Row gutter={[16, 16]} className="mb-6">
-              <Col xs={24} sm={8}>
+            <Row gutter={[16, 16]} className="mb-6 mt-6">
+              <Col xs={24} sm={12}>
                 <Card size="small" className="shadow-sm">
                   <Statistic
                     title={
                       <Space>
                         <CalendarOutlined />
-                        <span>Số ngày công</span>
+                        <span>Tổng giờ làm</span>
                       </Space>
                     }
-                    value={report?.workDays ?? 0}
+                    value={report?.totalWorkHours ?? 0}
                   />
                 </Card>
               </Col>
-              <Col xs={24} sm={8}>
+              <Col xs={24} sm={12}>
                 <Card size="small" className="shadow-sm">
                   <Statistic
                     title={
@@ -217,19 +217,6 @@ function DahahiReportPage() {
                       </Space>
                     }
                     value={report?.totalRecords ?? 0}
-                  />
-                </Card>
-              </Col>
-              <Col xs={24} sm={8}>
-                <Card size="small" className="shadow-sm">
-                  <Statistic
-                    title={
-                      <Space>
-                        <ExclamationCircleOutlined />
-                        <span>Quên checkout</span>
-                      </Space>
-                    }
-                    value={report?.forgotCheckoutCount ?? 0}
                   />
                 </Card>
               </Col>
@@ -252,7 +239,9 @@ function DahahiReportPage() {
                 />
               ) : (
                 <Table
-                  rowKey={(r, i) => `${r.EmployeeIdStr}-${r.CheckinTime1Str}-${i}`}
+                  rowKey={(r, i) =>
+                    `${r.EmployeeIdStr}-${r.CheckinTime1Str}-${i}`
+                  }
                   dataSource={records}
                   columns={columns}
                   pagination={{
