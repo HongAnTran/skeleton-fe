@@ -146,9 +146,55 @@ export interface InvoicesByUserParams {
   userId: number;
   fromPurchaseDate?: string;
   toPurchaseDate?: string;
+  productNameContains?: string;
+}
+
+export type IphoneMarketKind = "lock" | "international" | "unknown";
+
+export interface IphoneMarketTotals {
+  lockQuantity: number;
+  internationalQuantity: number;
+  unknownMarketQuantity: number;
+}
+
+export interface IphoneModelBreakdown {
+  modelName: string;
+  quantity: number;
+  lockQuantity: number;
+  internationalQuantity: number;
+  unknownMarketQuantity: number;
+}
+
+export interface IphoneStorageBreakdown {
+  storage: string;
+  quantity: number;
+}
+
+export interface IphoneColorBreakdown {
+  color: string;
+  quantity: number;
+}
+
+export interface IphoneDetailRow {
+  modelName: string;
+  storage: string;
+  color: string;
+  marketType: string;
+  productGroup?: string;
+  quantity: number;
+}
+
+export interface IphoneSalesReport {
+  totalIphoneUnits: number;
+  byMarket: IphoneMarketTotals;
+  byModel: IphoneModelBreakdown[];
+  byStorage: IphoneStorageBreakdown[];
+  byColor: IphoneColorBreakdown[];
+  detailRows: IphoneDetailRow[];
 }
 
 export interface InvoicesByUserReport {
+  /** Backend: tổng quantity các dòng có mã IMEI, không phải số hóa đơn. */
   totalOrders: number;
   totalValue: number;
   accessoryRevenue: number;
@@ -162,6 +208,7 @@ export interface InvoicesByUserReport {
     orderCount: number;
   }>;
   revenue: number;
+  iphoneReport?: IphoneSalesReport;
 }
 
 export interface InvoicesByUserResponse {

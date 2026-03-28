@@ -25,6 +25,7 @@ import {
   CalendarOutlined,
   UserOutlined,
   SearchOutlined,
+  MobileOutlined,
 } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { KiotVietService } from "@/services/kiotviet.service";
@@ -32,6 +33,7 @@ import type {
   KiotVietUser,
   Invoice,
   InvoicesByUserReport,
+  IphoneDetailRow,
 } from "@/types/kiotviet";
 import dayjs from "dayjs";
 
@@ -200,12 +202,140 @@ function KiotVietReportPage() {
       align: "right" as const,
     },
     {
+      title: "Số đơn",
+      dataIndex: "orderCount",
+      key: "orderCount",
+      width: 100,
+      align: "right" as const,
+    },
+    {
       title: "Doanh thu",
       dataIndex: "revenue",
       key: "revenue",
       width: 170,
       align: "right" as const,
       render: (v: number) => <Text strong>{formatMoney(v)}</Text>,
+    },
+  ];
+
+  const iphone = report?.iphoneReport;
+
+  const renderMarketTag = (marketType: string) => {
+    const t = marketType.toLowerCase();
+    if (t === "lock") return <Tag>Lock</Tag>;
+    if (t === "international") return <Tag color="blue">Quốc tế</Tag>;
+    return <Text type="secondary">—</Text>;
+  };
+
+  const iphoneByModelColumns = [
+    {
+      title: "Dòng máy",
+      dataIndex: "modelName",
+      key: "modelName",
+      ellipsis: true,
+    },
+    {
+      title: "Tổng",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 90,
+      align: "right" as const,
+    },
+    {
+      title: "Lock",
+      dataIndex: "lockQuantity",
+      key: "lockQuantity",
+      width: 90,
+      align: "right" as const,
+    },
+    {
+      title: "QT",
+      dataIndex: "internationalQuantity",
+      key: "internationalQuantity",
+      width: 90,
+      align: "right" as const,
+    },
+    {
+      title: "Chưa rõ",
+      dataIndex: "unknownMarketQuantity",
+      key: "unknownMarketQuantity",
+      width: 100,
+      align: "right" as const,
+    },
+  ];
+
+  const iphoneByStorageColumns = [
+    {
+      title: "Dung lượng",
+      dataIndex: "storage",
+      key: "storage",
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 120,
+      align: "right" as const,
+    },
+  ];
+
+  const iphoneByColorColumns = [
+    {
+      title: "Màu",
+      dataIndex: "color",
+      key: "color",
+      ellipsis: true,
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 120,
+      align: "right" as const,
+    },
+  ];
+
+  const iphoneDetailColumns = [
+    {
+      title: "Dòng máy",
+      dataIndex: "modelName",
+      key: "modelName",
+      ellipsis: true,
+    },
+    {
+      title: "Dung lượng",
+      dataIndex: "storage",
+      key: "storage",
+      width: 110,
+    },
+    {
+      title: "Màu",
+      dataIndex: "color",
+      key: "color",
+      ellipsis: true,
+    },
+    {
+      title: "Thị trường",
+      dataIndex: "marketType",
+      key: "marketType",
+      width: 120,
+      render: (v: string) => renderMarketTag(v),
+    },
+    {
+      title: "Nhóm hàng",
+      dataIndex: "productGroup",
+      key: "productGroup",
+      width: 120,
+      ellipsis: true,
+      render: (v: string | undefined) =>
+        v ? <Text>{v}</Text> : <Text type="secondary">—</Text>,
+    },
+    {
+      title: "SL",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 80,
+      align: "right" as const,
     },
   ];
 
@@ -289,7 +419,7 @@ function KiotVietReportPage() {
                     title={
                       <Space>
                         <FileTextOutlined />
-                        <span>Tổng số đơn</span>
+                        <span>Tổng số máy (IMEI)</span>
                       </Space>
                     }
                     value={report?.totalOrders ?? 0}
@@ -392,6 +522,142 @@ function KiotVietReportPage() {
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   description="Không có gói bảo hành trong các hóa đơn đã lọc."
                 />
+              )}
+            </Card>
+
+            <Card
+              title={
+                <Space>
+                  <MobileOutlined />
+                  <span>Báo cáo iPhone (IMEI)</span>
+                  {iphone != null && iphone.totalIphoneUnits > 0 && (
+                    <Tag color="purple">{iphone.totalIphoneUnits} máy</Tag>
+                  )}
+                </Space>
+              }
+              className="shadow-sm mb-6"
+            >
+              {!iphone ? (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="Không có dữ liệu iphoneReport từ API."
+                />
+              ) : iphone.totalIphoneUnits === 0 &&
+                !iphone.byModel?.length &&
+                !iphone.detailRows?.length ? (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="Không có máy iPhone (IMEI) trong kỳ đã chọn."
+                />
+              ) : (
+                <>
+                  <Row gutter={[16, 16]} className="mb-6">
+                    <Col xs={24} sm={8}>
+                      <Statistic
+                        title="Lock"
+                        value={iphone.byMarket?.lockQuantity ?? 0}
+                      />
+                    </Col>
+                    <Col xs={24} sm={8}>
+                      <Statistic
+                        title="Quốc tế"
+                        value={iphone.byMarket?.internationalQuantity ?? 0}
+                      />
+                    </Col>
+                    <Col xs={24} sm={8}>
+                      <Statistic
+                        title="Chưa xác định"
+                        value={iphone.byMarket?.unknownMarketQuantity ?? 0}
+                      />
+                    </Col>
+                  </Row>
+
+                  <Title level={5} className="!mt-0 !mb-2">
+                    Theo dòng máy
+                  </Title>
+                  {iphone.byModel?.length ? (
+                    <Table
+                      rowKey={(r) => r.modelName}
+                      dataSource={iphone.byModel}
+                      columns={iphoneByModelColumns}
+                      pagination={false}
+                      size="small"
+                      className="mb-6"
+                      scroll={{ x: 520 }}
+                    />
+                  ) : (
+                    <Empty
+                      className="mb-6"
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description="Không có phân tích theo dòng máy."
+                    />
+                  )}
+
+                  <Title level={5} className="!mb-2">
+                    Theo dung lượng
+                  </Title>
+                  {iphone.byStorage?.length ? (
+                    <Table
+                      rowKey={(r) => r.storage}
+                      dataSource={iphone.byStorage}
+                      columns={iphoneByStorageColumns}
+                      pagination={false}
+                      size="small"
+                      className="mb-6"
+                      scroll={{ x: 320 }}
+                    />
+                  ) : (
+                    <Empty
+                      className="mb-6"
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description="Không có phân tích theo dung lượng."
+                    />
+                  )}
+
+                  <Title level={5} className="!mb-2">
+                    Theo màu
+                  </Title>
+                  {iphone.byColor?.length ? (
+                    <Table
+                      rowKey={(r) => r.color}
+                      dataSource={iphone.byColor}
+                      columns={iphoneByColorColumns}
+                      pagination={false}
+                      size="small"
+                      className="mb-6"
+                      scroll={{ x: 320 }}
+                    />
+                  ) : (
+                    <Empty
+                      className="mb-6"
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description="Không có phân tích theo màu."
+                    />
+                  )}
+
+                  <Title level={5} className="!mb-2">
+                    Chi tiết cấu hình + thị trường
+                  </Title>
+                  {iphone.detailRows?.length ? (
+                    <Table<IphoneDetailRow>
+                      rowKey={(_, i) => String(i)}
+                      dataSource={iphone.detailRows}
+                      columns={iphoneDetailColumns}
+                      pagination={{
+                        pageSize: 15,
+                        showSizeChanger: true,
+                        showTotal: (t) => `Tổng ${t} dòng`,
+                      }}
+                      size="small"
+                      scroll={{ x: 800 }}
+                    />
+                  ) : (
+                    <Empty
+                      image={Empty.PRESENTED_IMAGE_SIMPLE}
+                      description="Không có dòng chi tiết."
+                    />
+                  )}
+                </>
               )}
             </Card>
 
