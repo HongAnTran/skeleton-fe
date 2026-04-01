@@ -24,7 +24,7 @@ function ReportLayout() {
             {
               key: "kiotviet",
               label: (
-                <Link to="/report/kiotviet" className="text-inherit">
+                <Link to="/admin/kiotviet" className="text-inherit">
                   Bán hàng
                 </Link>
               ),
@@ -32,7 +32,7 @@ function ReportLayout() {
             {
               key: "dahahi",
               label: (
-                <Link to="/report/dahahi" className="text-inherit">
+                <Link to="/admin/dahahi" className="text-inherit">
                   Chấm công
                 </Link>
               ),
