@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { Tabs } from "antd";
 
-export const Route = createFileRoute("/report/_reportLayout")({
+export const Route = createFileRoute("/admin/_reportLayout")({
   component: ReportLayout,
 });
 
