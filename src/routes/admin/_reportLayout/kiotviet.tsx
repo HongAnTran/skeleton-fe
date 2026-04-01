@@ -20,6 +20,7 @@ import {
 import {
   TeamOutlined,
   FileTextOutlined,
+  FileExcelOutlined,
   DollarOutlined,
   SafetyCertificateOutlined,
   CalendarOutlined,
@@ -27,6 +28,7 @@ import {
   SearchOutlined,
   MobileOutlined,
 } from "@ant-design/icons";
+import * as XLSX from "xlsx";
 import { useQuery } from "@tanstack/react-query";
 import { KiotVietService } from "@/services/kiotviet.service";
 import type {
@@ -117,6 +119,27 @@ function KiotVietReportPage() {
       currency: "VND",
     }).format(amount);
   };
+
+  const exportInvoicesExcel = () => {
+    if (invoices.length === 0) return;
+    const rows = invoices.map((inv) => ({
+      "Mã HĐ": inv.code,
+      "Ngày bán": formatDate(inv.createdDate),
+      "Nhân viên": inv.soldByName ?? "",
+      "Khách hàng": inv.customerName,
+      "số lượng": inv.invoiceDetails?.length ?? 0,
+      "Tổng thanh toán": formatMoney(inv.totalPayment),
+      "Bảo hành": inv.warranty?.status ?? "—",
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Hóa đơn");
+    XLSX.writeFile(
+      wb,
+      `kiotviet-hoa-don-${dayjs().format("YYYY-MM-DD-HHmm")}.xlsx`,
+    );
+  };
+
   const columns = [
     {
       title: "Mã HĐ",
@@ -415,6 +438,14 @@ function KiotVietReportPage() {
               </Button>
             </Form.Item>
           </Form>
+
+          {
+            invoices.length > 0 ? (
+              <Button icon={<FileExcelOutlined />} onClick={exportInvoicesExcel} className="my-6">
+                Xuất Excel
+              </Button>
+            ) : null
+          }
         </Card>
 
         {invoicesError && (
@@ -693,6 +724,7 @@ function KiotVietReportPage() {
                   <Tag color="blue">{invoices.length} đơn</Tag>
                 </Space>
               }
+
               className="shadow-sm"
             >
               {invoices.length === 0 ? (

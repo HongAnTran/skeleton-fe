@@ -94,6 +94,9 @@ export interface Invoice {
   customerCode: string;
   customerName: string;
 
+  /** Nhân viên bán (API báo cáo theo user) */
+  soldByName: string;
+
   /** Danh sách sản phẩm (đã loại bỏ các sản phẩm bảo hành) */
   invoiceDetails: InvoiceProduct[];
 
