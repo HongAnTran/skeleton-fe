@@ -40,13 +40,21 @@ import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
 
+/** Giá trị Select khi báo cáo tổng — không gửi userId lên API */
+const INVOICES_REPORT_STORE_TOTAL = "__store_total__" as const;
+type InvoicesReportSubject =
+  | number
+  | typeof INVOICES_REPORT_STORE_TOTAL
+  | null;
+
 export const Route = createFileRoute("/admin/_reportLayout/kiotviet")({
   component: KiotVietReportPage,
 });
 
 function KiotVietReportPage() {
   const [form] = Form.useForm();
-  const [userId, setUserId] = useState<number | null>(null);
+  const [reportSubject, setReportSubject] =
+    useState<InvoicesReportSubject>(null);
   const [dateRange, setDateRange] = useState<[string, string] | null>([
     dayjs().startOf("day").toISOString(),
     dayjs().endOf("day").toISOString(),
@@ -69,14 +77,15 @@ function KiotVietReportPage() {
     isFetching: fetchingInvoices,
     error: invoicesError,
   } = useQuery({
-    queryKey: ["kiotviet-invoices-by-user", userId, dateRange],
+    queryKey: ["kiotviet-invoices-by-user", reportSubject, dateRange],
     queryFn: () =>
       KiotVietService.getInvoicesByUser({
-        userId: userId!,
+        ...(reportSubject !== INVOICES_REPORT_STORE_TOTAL &&
+          reportSubject != null && { userId: reportSubject }),
         ...(dateRange?.[0] && { fromPurchaseDate: dateRange[0] }),
         ...(dateRange?.[1] && { toPurchaseDate: dateRange[1] }),
       }),
-    enabled: !!userId,
+    enabled: reportSubject != null,
     staleTime: 60 * 3 * 1000, // 3 minutes
   });
 
@@ -85,16 +94,16 @@ function KiotVietReportPage() {
   const invoices: Invoice[] = invoicesData?.data ?? [];
 
   const handleSearch = (values: {
-    userId: number;
+    userId: number | typeof INVOICES_REPORT_STORE_TOTAL;
     dateRange?: [dayjs.Dayjs, dayjs.Dayjs];
   }) => {
-    setUserId(values.userId);
+    setReportSubject(values.userId);
     setDateRange(
       values.dateRange
         ? [
-            values.dateRange[0].startOf("day").toISOString(),
-            values.dateRange[1].endOf("day").toISOString(),
-          ]
+          values.dateRange[0].startOf("day").toISOString(),
+          values.dateRange[1].endOf("day").toISOString(),
+        ]
         : null,
     );
   };
@@ -132,6 +141,13 @@ function KiotVietReportPage() {
           {formatDate(v)}
         </Space>
       ),
+    },
+    {
+      title: "Nhân viên",
+      dataIndex: "soldByName",
+      key: "soldByName",
+      width: 160,
+      render: (v: string) => <Text strong>{v}</Text>,
     },
     {
       title: "Khách hàng",
@@ -345,7 +361,7 @@ function KiotVietReportPage() {
         <Card className="shadow-sm mb-6">
           <Title level={4} className="!mb-4">
             <TeamOutlined className="mr-2" />
-            Báo cáo hóa đơn theo nhân viên
+            Báo cáo hóa đơn
           </Title>
           <Form
             form={form}
@@ -356,18 +372,26 @@ function KiotVietReportPage() {
           >
             <Form.Item
               name="userId"
-              rules={[{ required: true, message: "Chọn nhân viên" }]}
+              rules={[
+                { required: true, message: "Chọn phạm vi báo cáo hoặc nhân viên" },
+              ]}
               className="!mb-0 lg:min-w-[320px] min-w-[300px]"
             >
               <Select
-                placeholder="Chọn nhân viên"
+                placeholder="Nhân viên hoặc tổng cửa hàng"
                 loading={loadingUsers}
                 showSearch
                 optionFilterProp="label"
-                options={users.map((u) => ({
-                  value: u.id,
-                  label: `${u.givenName} (${u.userName})`,
-                }))}
+                options={[
+                  {
+                    value: INVOICES_REPORT_STORE_TOTAL,
+                    label: "Tổng cửa hàng (toàn bộ)",
+                  },
+                  ...users.map((u) => ({
+                    value: u.id,
+                    label: `${u.givenName} (${u.userName})`,
+                  })),
+                ]}
                 suffixIcon={<UserOutlined className="text-gray-400" />}
                 allowClear
               />
@@ -385,7 +409,7 @@ function KiotVietReportPage() {
                 type="primary"
                 htmlType="submit"
                 icon={<SearchOutlined />}
-                loading={fetchingInvoices && !!userId}
+                loading={fetchingInvoices && reportSubject != null}
               >
                 Xem báo cáo
               </Button>
@@ -404,13 +428,13 @@ function KiotVietReportPage() {
           />
         )}
 
-        {loadingInvoices && userId && (
+        {loadingInvoices && reportSubject != null && (
           <div className="flex justify-center py-12">
             <Spin size="large" tip="Đang tải hóa đơn..." />
           </div>
         )}
 
-        {!loadingInvoices && userId && invoicesData && (
+        {!loadingInvoices && reportSubject != null && invoicesData && (
           <>
             <Row gutter={[16, 16]} className="mb-6 mt-6">
               <Col xs={24} sm={12} md={8}>
@@ -694,11 +718,11 @@ function KiotVietReportPage() {
           </>
         )}
 
-        {!userId && !loadingInvoices && (
+        {!reportSubject && !loadingInvoices && (
           <Card className="shadow-sm">
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="Chọn nhân viên và bấm «Xem báo cáo» để xem hóa đơn."
+              description="Chọn nhân viên hoặc «Tổng cửa hàng», rồi bấm «Xem báo cáo»."
             />
           </Card>
         )}

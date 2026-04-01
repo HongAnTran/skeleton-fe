@@ -143,7 +143,7 @@ export interface KiotVietUsersResponse {
 // --- API Invoices by user (GET /kiotviet/invoices/by-user) ---
 
 export interface InvoicesByUserParams {
-  userId: number;
+  userId?: number;
   fromPurchaseDate?: string;
   toPurchaseDate?: string;
   productNameContains?: string;

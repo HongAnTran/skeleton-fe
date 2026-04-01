@@ -8,6 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarrantyRouteImport } from './routes/warranty'
 import { Route as ChamCongRouteImport } from './routes/cham-cong'
@@ -41,6 +43,25 @@ import { Route as UUserLayoutDashboardLayoutUserAdminsIdRouteImport } from './ro
 import { Route as UUserLayoutDashboardLayoutTasksPendingApprovelRouteImport } from './routes/u/_userLayout/_dashboardLayout/tasks/pending-approvel'
 import { Route as UUserLayoutDashboardLayoutEmployeesIdRouteImport } from './routes/u/_userLayout/_dashboardLayout/employees/$id'
 
+const URouteImport = createFileRoute('/u')()
+const ERouteImport = createFileRoute('/e')()
+const AdminRouteImport = createFileRoute('/admin')()
+
+const URoute = URouteImport.update({
+  id: '/u',
+  path: '/u',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ERoute = ERouteImport.update({
+  id: '/e',
+  path: '/e',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WarrantyRoute = WarrantyRouteImport.update({
   id: '/warranty',
   path: '/warranty',
@@ -279,8 +300,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/cham-cong': typeof ChamCongRoute
   '/warranty': typeof WarrantyRoute
+  '/admin': typeof AdminRouteWithChildren
   '/admin/_reportLayout': typeof AdminReportLayoutRouteWithChildren
+  '/e': typeof ERouteWithChildren
   '/e/_employeeLayout': typeof EEmployeeLayoutRouteWithChildren
+  '/u': typeof URouteWithChildren
   '/u/_userLayout': typeof UUserLayoutRouteWithChildren
   '/admin/_reportLayout/dahahi': typeof AdminReportLayoutDahahiRoute
   '/admin/_reportLayout/kiotviet': typeof AdminReportLayoutKiotvietRoute
@@ -374,8 +398,11 @@ export interface FileRouteTypes {
     | '/'
     | '/cham-cong'
     | '/warranty'
+    | '/admin'
     | '/admin/_reportLayout'
+    | '/e'
     | '/e/_employeeLayout'
+    | '/u'
     | '/u/_userLayout'
     | '/admin/_reportLayout/dahahi'
     | '/admin/_reportLayout/kiotviet'
@@ -408,10 +435,34 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChamCongRoute: typeof ChamCongRoute
   WarrantyRoute: typeof WarrantyRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  ERoute: typeof ERouteWithChildren
+  URoute: typeof URouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/u': {
+      id: '/u'
+      path: '/u'
+      fullPath: '/u'
+      preLoaderRoute: typeof URouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/e': {
+      id: '/e'
+      path: '/e'
+      fullPath: '/e'
+      preLoaderRoute: typeof ERouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/warranty': {
       id: '/warranty'
       path: '/warranty'
@@ -435,21 +486,21 @@ declare module '@tanstack/react-router' {
     }
     '/u/_userLayout': {
       id: '/u/_userLayout'
-      path: ''
+      path: '/u'
       fullPath: '/u'
       preLoaderRoute: typeof UUserLayoutRouteImport
       parentRoute: typeof URoute
     }
     '/e/_employeeLayout': {
       id: '/e/_employeeLayout'
-      path: ''
+      path: '/e'
       fullPath: '/e'
       preLoaderRoute: typeof EEmployeeLayoutRouteImport
       parentRoute: typeof ERoute
     }
     '/admin/_reportLayout': {
       id: '/admin/_reportLayout'
-      path: ''
+      path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminReportLayoutRouteImport
       parentRoute: typeof AdminRoute
@@ -632,10 +683,165 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminReportLayoutRouteChildren {
+  AdminReportLayoutDahahiRoute: typeof AdminReportLayoutDahahiRoute
+  AdminReportLayoutKiotvietRoute: typeof AdminReportLayoutKiotvietRoute
+}
+
+const AdminReportLayoutRouteChildren: AdminReportLayoutRouteChildren = {
+  AdminReportLayoutDahahiRoute: AdminReportLayoutDahahiRoute,
+  AdminReportLayoutKiotvietRoute: AdminReportLayoutKiotvietRoute,
+}
+
+const AdminReportLayoutRouteWithChildren =
+  AdminReportLayoutRoute._addFileChildren(AdminReportLayoutRouteChildren)
+
+interface AdminRouteChildren {
+  AdminReportLayoutRoute: typeof AdminReportLayoutRouteWithChildren
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminReportLayoutRoute: AdminReportLayoutRouteWithChildren,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface EEmployeeLayoutDashboardLayoutRouteChildren {
+  EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute: typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
+  EEmployeeLayoutDashboardLayoutLeaveRequestsRoute: typeof EEmployeeLayoutDashboardLayoutLeaveRequestsRoute
+  EEmployeeLayoutDashboardLayoutSettingsRoute: typeof EEmployeeLayoutDashboardLayoutSettingsRoute
+  EEmployeeLayoutDashboardLayoutShiftSlotsRoute: typeof EEmployeeLayoutDashboardLayoutShiftSlotsRoute
+  EEmployeeLayoutDashboardLayoutTasksRoute: typeof EEmployeeLayoutDashboardLayoutTasksRoute
+  EEmployeeLayoutDashboardLayoutIndexRoute: typeof EEmployeeLayoutDashboardLayoutIndexRoute
+}
+
+const EEmployeeLayoutDashboardLayoutRouteChildren: EEmployeeLayoutDashboardLayoutRouteChildren =
+  {
+    EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute:
+      EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute,
+    EEmployeeLayoutDashboardLayoutLeaveRequestsRoute:
+      EEmployeeLayoutDashboardLayoutLeaveRequestsRoute,
+    EEmployeeLayoutDashboardLayoutSettingsRoute:
+      EEmployeeLayoutDashboardLayoutSettingsRoute,
+    EEmployeeLayoutDashboardLayoutShiftSlotsRoute:
+      EEmployeeLayoutDashboardLayoutShiftSlotsRoute,
+    EEmployeeLayoutDashboardLayoutTasksRoute:
+      EEmployeeLayoutDashboardLayoutTasksRoute,
+    EEmployeeLayoutDashboardLayoutIndexRoute:
+      EEmployeeLayoutDashboardLayoutIndexRoute,
+  }
+
+const EEmployeeLayoutDashboardLayoutRouteWithChildren =
+  EEmployeeLayoutDashboardLayoutRoute._addFileChildren(
+    EEmployeeLayoutDashboardLayoutRouteChildren,
+  )
+
+interface EEmployeeLayoutRouteChildren {
+  EEmployeeLayoutDashboardLayoutRoute: typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
+  EEmployeeLayoutLoginRoute: typeof EEmployeeLayoutLoginRoute
+}
+
+const EEmployeeLayoutRouteChildren: EEmployeeLayoutRouteChildren = {
+  EEmployeeLayoutDashboardLayoutRoute:
+    EEmployeeLayoutDashboardLayoutRouteWithChildren,
+  EEmployeeLayoutLoginRoute: EEmployeeLayoutLoginRoute,
+}
+
+const EEmployeeLayoutRouteWithChildren = EEmployeeLayoutRoute._addFileChildren(
+  EEmployeeLayoutRouteChildren,
+)
+
+interface ERouteChildren {
+  EEmployeeLayoutRoute: typeof EEmployeeLayoutRouteWithChildren
+}
+
+const ERouteChildren: ERouteChildren = {
+  EEmployeeLayoutRoute: EEmployeeLayoutRouteWithChildren,
+}
+
+const ERouteWithChildren = ERoute._addFileChildren(ERouteChildren)
+
+interface UUserLayoutDashboardLayoutRouteChildren {
+  UUserLayoutDashboardLayoutBranchsRoute: typeof UUserLayoutDashboardLayoutBranchsRoute
+  UUserLayoutDashboardLayoutDepartmentsRoute: typeof UUserLayoutDashboardLayoutDepartmentsRoute
+  UUserLayoutDashboardLayoutLeaveRequestsRoute: typeof UUserLayoutDashboardLayoutLeaveRequestsRoute
+  UUserLayoutDashboardLayoutSettingsRoute: typeof UUserLayoutDashboardLayoutSettingsRoute
+  UUserLayoutDashboardLayoutShiftSlotTypesRoute: typeof UUserLayoutDashboardLayoutShiftSlotTypesRoute
+  UUserLayoutDashboardLayoutShiftSlotsRoute: typeof UUserLayoutDashboardLayoutShiftSlotsRoute
+  UUserLayoutDashboardLayoutIndexRoute: typeof UUserLayoutDashboardLayoutIndexRoute
+  UUserLayoutDashboardLayoutEmployeesIdRoute: typeof UUserLayoutDashboardLayoutEmployeesIdRoute
+  UUserLayoutDashboardLayoutTasksPendingApprovelRoute: typeof UUserLayoutDashboardLayoutTasksPendingApprovelRoute
+  UUserLayoutDashboardLayoutUserAdminsIdRoute: typeof UUserLayoutDashboardLayoutUserAdminsIdRoute
+  UUserLayoutDashboardLayoutEmployeesIndexRoute: typeof UUserLayoutDashboardLayoutEmployeesIndexRoute
+  UUserLayoutDashboardLayoutTasksIndexRoute: typeof UUserLayoutDashboardLayoutTasksIndexRoute
+  UUserLayoutDashboardLayoutUserAdminsIndexRoute: typeof UUserLayoutDashboardLayoutUserAdminsIndexRoute
+}
+
+const UUserLayoutDashboardLayoutRouteChildren: UUserLayoutDashboardLayoutRouteChildren =
+  {
+    UUserLayoutDashboardLayoutBranchsRoute:
+      UUserLayoutDashboardLayoutBranchsRoute,
+    UUserLayoutDashboardLayoutDepartmentsRoute:
+      UUserLayoutDashboardLayoutDepartmentsRoute,
+    UUserLayoutDashboardLayoutLeaveRequestsRoute:
+      UUserLayoutDashboardLayoutLeaveRequestsRoute,
+    UUserLayoutDashboardLayoutSettingsRoute:
+      UUserLayoutDashboardLayoutSettingsRoute,
+    UUserLayoutDashboardLayoutShiftSlotTypesRoute:
+      UUserLayoutDashboardLayoutShiftSlotTypesRoute,
+    UUserLayoutDashboardLayoutShiftSlotsRoute:
+      UUserLayoutDashboardLayoutShiftSlotsRoute,
+    UUserLayoutDashboardLayoutIndexRoute: UUserLayoutDashboardLayoutIndexRoute,
+    UUserLayoutDashboardLayoutEmployeesIdRoute:
+      UUserLayoutDashboardLayoutEmployeesIdRoute,
+    UUserLayoutDashboardLayoutTasksPendingApprovelRoute:
+      UUserLayoutDashboardLayoutTasksPendingApprovelRoute,
+    UUserLayoutDashboardLayoutUserAdminsIdRoute:
+      UUserLayoutDashboardLayoutUserAdminsIdRoute,
+    UUserLayoutDashboardLayoutEmployeesIndexRoute:
+      UUserLayoutDashboardLayoutEmployeesIndexRoute,
+    UUserLayoutDashboardLayoutTasksIndexRoute:
+      UUserLayoutDashboardLayoutTasksIndexRoute,
+    UUserLayoutDashboardLayoutUserAdminsIndexRoute:
+      UUserLayoutDashboardLayoutUserAdminsIndexRoute,
+  }
+
+const UUserLayoutDashboardLayoutRouteWithChildren =
+  UUserLayoutDashboardLayoutRoute._addFileChildren(
+    UUserLayoutDashboardLayoutRouteChildren,
+  )
+
+interface UUserLayoutRouteChildren {
+  UUserLayoutDashboardLayoutRoute: typeof UUserLayoutDashboardLayoutRouteWithChildren
+  UUserLayoutLoginRoute: typeof UUserLayoutLoginRoute
+}
+
+const UUserLayoutRouteChildren: UUserLayoutRouteChildren = {
+  UUserLayoutDashboardLayoutRoute: UUserLayoutDashboardLayoutRouteWithChildren,
+  UUserLayoutLoginRoute: UUserLayoutLoginRoute,
+}
+
+const UUserLayoutRouteWithChildren = UUserLayoutRoute._addFileChildren(
+  UUserLayoutRouteChildren,
+)
+
+interface URouteChildren {
+  UUserLayoutRoute: typeof UUserLayoutRouteWithChildren
+}
+
+const URouteChildren: URouteChildren = {
+  UUserLayoutRoute: UUserLayoutRouteWithChildren,
+}
+
+const URouteWithChildren = URoute._addFileChildren(URouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChamCongRoute: ChamCongRoute,
   WarrantyRoute: WarrantyRoute,
+  AdminRoute: AdminRouteWithChildren,
+  ERoute: ERouteWithChildren,
+  URoute: URouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
