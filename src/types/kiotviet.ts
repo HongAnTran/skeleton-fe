@@ -201,6 +201,7 @@ export interface InvoicesByUserReport {
   totalOrders: number;
   totalValue: number;
   accessoryRevenue: number;
+  exchangeInvoiceCount: number;
   warrantyRevenue: number;
   warrantyOrderCount: number;
   warrantyQuantity: number;

@@ -120,26 +120,6 @@ function KiotVietReportPage() {
     }).format(amount);
   };
 
-  const exportInvoicesExcel = () => {
-    if (invoices.length === 0) return;
-    const rows = invoices.map((inv) => ({
-      "Mã HĐ": inv.code,
-      "Ngày bán": formatDate(inv.createdDate),
-      "Nhân viên": inv.soldByName ?? "",
-      "Khách hàng": inv.customerName,
-      "số lượng": inv.invoiceDetails?.length ?? 0,
-      "Tổng thanh toán": formatMoney(inv.totalPayment),
-      "Bảo hành": inv.warranty?.status ?? "—",
-    }));
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Hóa đơn");
-    XLSX.writeFile(
-      wb,
-      `kiotviet-hoa-don-${dayjs().format("YYYY-MM-DD-HHmm")}.xlsx`,
-    );
-  };
-
   const columns = [
     {
       title: "Mã HĐ",
@@ -259,10 +239,17 @@ function KiotVietReportPage() {
 
   const iphone = report?.iphoneReport;
 
-  const renderMarketTag = (marketType: string) => {
+  const formatMarketLabel = (marketType: string) => {
     const t = marketType.toLowerCase();
-    if (t === "lock") return <Tag>Lock</Tag>;
-    if (t === "international") return <Tag color="blue">Quốc tế</Tag>;
+    if (t === "lock") return "Lock";
+    if (t === "international") return "Quốc tế";
+    return "—";
+  };
+
+  const renderMarketTag = (marketType: string) => {
+    const label = formatMarketLabel(marketType);
+    if (label === "Lock") return <Tag>Lock</Tag>;
+    if (label === "Quốc tế") return <Tag color="blue">Quốc tế</Tag>;
     return <Text type="secondary">—</Text>;
   };
 
@@ -378,6 +365,26 @@ function KiotVietReportPage() {
     },
   ];
 
+  const exportIphoneDetailExcel = () => {
+    const detailRows = iphone?.detailRows;
+    if (!detailRows?.length) return;
+    const rows = detailRows.map((r) => ({
+      "Dòng máy": r.modelName,
+      "Dung lượng": r.storage,
+      Màu: r.color,
+      "Thị trường": formatMarketLabel(r.marketType),
+      "Nhóm hàng": r.productGroup ?? "—",
+      SL: r.quantity,
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Chi tiết iPhone");
+    XLSX.writeFile(
+      wb,
+      `kiotviet-iphone-chi-tiet-${dayjs().format("YYYY-MM-DD-HHmm")}.xlsx`,
+    );
+  };
+
   return (
     <div className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 bg-gray-50/50">
       <div className="max-w-6xl mx-auto">
@@ -438,14 +445,6 @@ function KiotVietReportPage() {
               </Button>
             </Form.Item>
           </Form>
-
-          {
-            invoices.length > 0 ? (
-              <Button icon={<FileExcelOutlined />} onClick={exportInvoicesExcel} className="my-6">
-                Xuất Excel
-              </Button>
-            ) : null
-          }
         </Card>
 
         {invoicesError && (
@@ -546,6 +545,19 @@ function KiotVietReportPage() {
                       </Space>
                     }
                     value={report?.warrantyQuantity ?? 0}
+                  />
+                </Card>
+              </Col>
+              <Col xs={24} sm={12} md={8}>
+                <Card size="small" className="shadow-sm">
+                  <Statistic
+                    title={
+                      <Space>
+                        <SafetyCertificateOutlined />
+                        <span>SL đổi trả</span>
+                      </Space>
+                    }
+                    value={report?.exchangeInvoiceCount ?? 0}
                   />
                 </Card>
               </Col>
@@ -690,9 +702,20 @@ function KiotVietReportPage() {
                     />
                   )}
 
-                  <Title level={5} className="!mb-2">
-                    Chi tiết cấu hình + thị trường
-                  </Title>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <Title level={5} className="!mb-0">
+                      Chi tiết cấu hình + thị trường
+                    </Title>
+                    {iphone.detailRows?.length ? (
+                      <Button
+                        icon={<FileExcelOutlined />}
+                        size="small"
+                        onClick={exportIphoneDetailExcel}
+                      >
+                        Xuất Excel
+                      </Button>
+                    ) : null}
+                  </div>
                   {iphone.detailRows?.length ? (
                     <Table<IphoneDetailRow>
                       rowKey={(_, i) => String(i)}
