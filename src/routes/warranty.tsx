@@ -316,7 +316,7 @@ function WarrantyLookupPage() {
         {/* No Results */}
         {!searchMutation.isPending &&
           !searchMutation.isError &&
-          searchResults.length === 0 &&
+          searchResults.filter(invoice => invoice.warranty).length === 0 &&
           searchMutation.isSuccess && (
             <Card className="shadow-lg border-0">
               <Empty
