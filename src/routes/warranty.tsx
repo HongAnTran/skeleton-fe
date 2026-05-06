@@ -150,7 +150,7 @@ function WarrantyLookupPage() {
             voucherMutation.isSuccess &&
             voucherResult?.voucher && (
               <div className="mx-auto mt-6 max-w-2xl">
-                <p className="mb-3 text-center text-sm text-gray-500">
+                <p className="mb-3 text-center text-sm text-white">
                   Chúc mừng bạn đã nhận được voucher giảm giá
                 </p>
                 <VoucherTicketItem voucher={voucherResult.voucher} />
