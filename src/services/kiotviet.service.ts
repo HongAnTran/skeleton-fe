@@ -5,12 +5,14 @@ import type {
   KiotVietUsersResponse,
   InvoicesByUserParams,
   InvoicesByUserResponse,
+  SearchVouchersResponse,
 } from "@/types/kiotviet";
 
 export class KiotVietService {
   static url = "/kiotviet/invoices";
   static usersUrl = "/kiotviet/users";
   static invoicesByUserUrl = "/kiotviet/invoices/by-user";
+  static vouchersUrl = "/kiotviet/vouchers";
 
   /**
    * Tra cứu hóa đơn và bảo hành bằng số điện thoại hoặc serial/IMEI
@@ -49,6 +51,20 @@ export class KiotVietService {
     const { data } = await axiosInstance.get<InvoicesByUserResponse>(
       this.invoicesByUserUrl,
       { params }
+    );
+    return data;
+  }
+
+  /**
+   * Tra cứu voucher của khách theo SĐT.
+   * Public API.
+   */
+  static async searchVouchers(
+    phone: string
+  ): Promise<SearchVouchersResponse> {
+    const { data } = await axiosInstance.post<SearchVouchersResponse>(
+      this.vouchersUrl,
+      { phone }
     );
     return data;
   }

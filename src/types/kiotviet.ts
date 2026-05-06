@@ -219,3 +219,30 @@ export interface InvoicesByUserResponse {
   data: Invoice[];
   report: InvoicesByUserReport;
 }
+
+// --- API Voucher (POST /kiotviet/vouchers) ---
+
+export interface VoucherDto {
+  ruleId: string;
+  discountVnd: number;
+  label: string;
+  conditionType: "INVOICE_COUNT_TIER" | "WARRANTY_ACTIVE";
+  flags: string[];
+}
+
+export interface VoucherCandidateDto {
+  ruleId: string;
+  conditionType: "INVOICE_COUNT_TIER" | "WARRANTY_ACTIVE";
+  discountVnd: number;
+  label: string;
+  flags: string[];
+}
+
+export interface SearchVouchersResponse {
+  phone: string;
+  customerId: number | null;
+  customerName: string | null;
+  totalInvoices: number;
+  voucher: VoucherDto | null;
+  candidates: VoucherCandidateDto[];
+}

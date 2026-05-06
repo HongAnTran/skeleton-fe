@@ -1,18 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  Card,
-  Form,
-  Input,
-  Button,
-  Typography,
-  Space,
-  Alert,
-  Spin,
-  Divider,
-  Tag,
-  Empty,
-} from "antd";
+import { Form, Input, Button, Spin, Alert } from "antd";
 import {
   SearchOutlined,
   PhoneOutlined,
@@ -21,315 +9,292 @@ import {
   CloseCircleOutlined,
   UserOutlined,
   FileTextOutlined,
+  InboxOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { KiotVietService } from "@/services/kiotviet.service";
-import type { Invoice } from "@/types/kiotviet";
+import type { Invoice, SearchVouchersResponse } from "@/types/kiotviet";
+import { VoucherTicketItem } from "@/components/voucher/VoucherTicketItem";
 import dayjs from "dayjs";
-
-const { Title, Text } = Typography;
 
 export const Route = createFileRoute("/warranty")({
   component: WarrantyLookupPage,
 });
 
+function isPhoneNumber(input: string): boolean {
+  const cleaned = input.replace(/[\s\-()]/g, "");
+  return /^\d{9,11}$/.test(cleaned);
+}
+
 function WarrantyLookupPage() {
   const [form] = Form.useForm();
   const [searchResults, setSearchResults] = useState<Invoice[]>([]);
+  const [voucherResult, setVoucherResult] =
+    useState<SearchVouchersResponse | null>(null);
 
   const searchMutation = useMutation({
-    mutationFn: (phoneOrSerial: string) => {
-      return KiotVietService.searchInvoices(phoneOrSerial);
-    },
-    onSuccess: (data) => {
-      setSearchResults(data);
-    },
-    onError: () => {
-      setSearchResults([]);
-    },
+    mutationFn: (phoneOrSerial: string) =>
+      KiotVietService.searchInvoices(phoneOrSerial),
+    onSuccess: (data) => setSearchResults(data),
+    onError: () => setSearchResults([]),
+  });
+
+  const voucherMutation = useMutation({
+    mutationFn: (phone: string) => KiotVietService.searchVouchers(phone),
+    onSuccess: (data) => setVoucherResult(data),
+    onError: () => setVoucherResult(null),
   });
 
   const handleSearch = (values: { phoneOrSerial: string }) => {
-    if (!values.phoneOrSerial?.trim()) {
-      return;
+    const input = values.phoneOrSerial?.trim();
+    if (!input) return;
+    searchMutation.mutate(input);
+    if (isPhoneNumber(input)) {
+      voucherMutation.mutate(input.replace(/[\s\-()]/g, ""));
+    } else {
+      setVoucherResult(null);
+      voucherMutation.reset();
     }
-    searchMutation.mutate(values.phoneOrSerial.trim());
   };
 
-  const formatDate = (dateString: string) => {
-    return dayjs(dateString).format("DD/MM/YYYY HH:mm");
-  };
+  const formatDate = (dateString: string) =>
+    dayjs(dateString).format("DD/MM/YYYY HH:mm");
 
   return (
     <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
 
-        {/* Search Form */}
-        <Card className="shadow-lg mb-8 border-0">
-          <Form
-            form={form}
-            onFinish={handleSearch}
-            layout="vertical"
-            className="max-w-2xl mx-auto"
-          >
-            <Form.Item
-              name="phoneOrSerial"
-              label={
-                <span className="text-base font-medium">
-                  <PhoneOutlined className="mr-2" />
-                  Số điện thoại hoặc Serial/IMEI
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập số điện thoại hoặc Serial/IMEI",
-                },
-                {
-                  min: 3,
-                  message: "Vui lòng nhập ít nhất 3 ký tự",
-                },
-              ]}
+        <div className="relative z-10 mx-auto max-w-5xl">
+          {/* Search Card */}
+          <div className="mx-auto max-w-2xl">
+            <div
+              className="rounded-3xl border border-[#d89b2b]/15 bg-[#fffaf0] p-6 sm:p-9"
+              style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.25)" }}
             >
-              <Input
-                size="large"
-                placeholder="Nhập số điện thoại (0912345678) hoặc Serial/IMEI"
-                prefix={<PhoneOutlined className="text-gray-400" />}
-                className="rounded-lg"
-              />
-            </Form.Item>
-
-            <Form.Item className="mb-0">
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                icon={<SearchOutlined />}
-                loading={searchMutation.isPending}
-                className="w-full h-12 text-lg font-medium rounded-lg"
+              <Form
+                form={form}
+                onFinish={handleSearch}
+                layout="vertical"
+                requiredMark={false}
               >
-                Tra cứu
-              </Button>
-            </Form.Item>
-          </Form>
-        </Card>
+                <Form.Item
+                  name="phoneOrSerial"
+                  label={
+                    <span className="text-sm font-medium text-gray-700">
+                      Số điện thoại, Serial hoặc IMEI
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số điện thoại hoặc Serial/IMEI",
+                    },
+                    {
+                      min: 3,
+                      message: "Vui lòng nhập ít nhất 3 ký tự",
+                    },
+                  ]}
+                >
+                  <Input
+                    size="large"
+                    placeholder="Nhập SĐT, Serial hoặc IMEI"
+                    prefix={<PhoneOutlined className="mr-1 text-gray-400" />}
+                    className="!h-12 !rounded-xl !text-base"
+                  />
+                </Form.Item>
 
-        {/* Error Alert */}
-        {searchMutation.isError && (
-          <Alert
-            message="Lỗi tra cứu"
-            description={
-              (searchMutation.error as any)?.message ||
-              "Không thể kết nối tới hệ thống. Vui lòng thử lại sau."
-            }
-            type="error"
-            showIcon
-            className="mb-6"
-            closable
-          />
-        )}
-
-        {/* Loading State */}
-        {searchMutation.isPending && (
-          <div className="text-center py-12">
-            <Spin size="large" />
-            <div className="mt-4">
-              <Text type="secondary">Đang tra cứu thông tin...</Text>
+                <Form.Item className="!mb-0">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    size="large"
+                    icon={<SearchOutlined />}
+                    loading={searchMutation.isPending}
+                    className="!h-12 w-full !rounded-xl !border-[#d89b2b] !bg-[#d89b2b] !text-base !font-semibold hover:!border-[#c0871f] hover:!bg-[#c0871f]"
+                  >
+                    Tra cứu
+                  </Button>
+                </Form.Item>
+              </Form>
             </div>
           </div>
-        )}
 
-        {/* Results */}
-        {!searchMutation.isPending &&
-          !searchMutation.isError &&
-          searchResults.length > 0 && (
-            <div className="space-y-6 mt-4">
-              {searchResults.map((invoice) => (
-                <Card
-                  key={invoice.id}
-                  className="shadow-lg border-0 hover:shadow-xl transition-shadow"
-                >
-                  {/* Invoice Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 pb-4 border-b">
-                    <div className="mb-2 sm:mb-0">
-                      <Space>
-                        <FileTextOutlined className="text-blue-500 text-xl" />
-                        <Title level={4} className="!mb-0">
+          {/* Error */}
+          {searchMutation.isError && (
+            <div className="mx-auto mt-6 max-w-2xl">
+              <Alert
+                message="Lỗi tra cứu"
+                description={
+                  (searchMutation.error as any)?.message ||
+                  "Không thể kết nối tới hệ thống. Vui lòng thử lại sau."
+                }
+                type="error"
+                showIcon
+                closable
+              />
+            </div>
+          )}
+
+          {/* Loading */}
+          {searchMutation.isPending && (
+            <div className="py-12 text-center">
+              <Spin size="large" />
+              <div className="mt-4 text-sm text-[#d6d6d6]">
+                Đang tra cứu thông tin...
+              </div>
+            </div>
+          )}
+
+          {/* Voucher */}
+          {!voucherMutation.isPending &&
+            voucherMutation.isSuccess &&
+            voucherResult?.voucher && (
+              <div className="mx-auto mt-6 max-w-2xl">
+                <p className="mb-3 text-center text-sm text-gray-500">
+                  Chúc mừng bạn đã nhận được voucher giảm giá
+                </p>
+                <VoucherTicketItem voucher={voucherResult.voucher} />
+              </div>
+            )}
+
+          {/* Invoices */}
+          {!searchMutation.isPending &&
+            !searchMutation.isError &&
+            searchResults.length > 0 && (
+              <div className="mx-auto mt-6 flex max-w-2xl flex-col gap-5">
+                {searchResults.map((invoice) => (
+                  <article
+                    key={invoice.id}
+                    className="rounded-2xl border border-[#e8e2d8] bg-[#fffaf0] p-5 sm:p-6"
+                    style={{ boxShadow: "0 12px 32px rgba(0,0,0,0.18)" }}
+                  >
+                    {/* Invoice Header */}
+                    <header className="mb-4 flex flex-col gap-2 border-b border-[#e8e2d8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileTextOutlined className="text-xl text-[#d89b2b]" />
+                        <h3 className="m-0 text-base font-semibold text-gray-900 sm:text-lg">
                           Hóa đơn: {invoice.code}
-                        </Title>
-                      </Space>
-                    </div>
-                  </div>
-
-                  {/* Invoice Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <UserOutlined className="text-gray-400 mr-2" />
-                        <Text strong>Khách hàng: </Text>
-                        <Text className="ml-2">{invoice.customerName}</Text>
+                        </h3>
                       </div>
-                      <div className="flex items-center">
-                        <CalendarOutlined className="text-gray-400 mr-2" />
-                        <Text strong>Ngày mua: </Text>
-                        <Text className="ml-2">
-                          {formatDate(invoice.createdDate)}
-                        </Text>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <CalendarOutlined />
+                        <span>{formatDate(invoice.createdDate)}</span>
+                      </div>
+                    </header>
+
+                    {/* Invoice Info */}
+                    <div className="mb-5">
+                      <div className="flex min-w-0 items-center gap-2 text-sm">
+                        <UserOutlined className="text-gray-400" />
+                        <span className="text-gray-500">Khách hàng:</span>
+                        <span className="truncate font-medium text-gray-900">
+                          {invoice.customerName}
+                        </span>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Products */}
-                  {invoice.invoiceDetails &&
-                    invoice.invoiceDetails.length > 0 && (
-                      <div className="mb-6">
-                        <Title level={5} className="!mb-3">
-                          Sản phẩm:
-                        </Title>
-                        <div className="space-y-3">
-                          {invoice.invoiceDetails.map((product, idx) => (
-                            <Card
-                              key={idx}
-                              size="small"
-                              className="bg-gray-50 border-gray-200"
-                            >
-                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                <div className="flex-1">
-                                  <Text strong className="text-base block mb-1">
-                                    {product.productName}
-                                  </Text>
-                                  <div className="flex flex-wrap gap-2 text-sm text-gray-600">
-                                    <span>Mã SP: {product.productCode}</span>
-                                  </div>
+                    {/* Products */}
+                    {invoice.invoiceDetails &&
+                      invoice.invoiceDetails.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            Sản phẩm
+                          </h4>
+                          <div className="flex flex-col gap-2">
+                            {invoice.invoiceDetails.map((product, idx) => (
+                              <div
+                                key={idx}
+                                className="rounded-xl border border-[#ece6da] bg-[#fafafa] px-4 py-3"
+                              >
+                                <div className="break-words font-semibold text-gray-900">
+                                  {product.productName}
+                                </div>
+                                <div className="mt-0.5 break-all text-sm text-gray-500">
+                                  Mã SP: {product.productCode}
                                 </div>
                               </div>
-                            </Card>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Warranty */}
+                    {invoice.warranty ? (
+                      <div className="mt-4 rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-5">
+                        <div className="mb-4 flex flex-wrap items-center gap-3">
+                          {invoice.warranty.status === "Còn hiệu lực" ? (
+                            <CheckCircleOutlined className="text-2xl text-emerald-500" />
+                          ) : (
+                            <CloseCircleOutlined className="text-2xl text-red-500" />
+                          )}
+                          <h4 className="m-0 text-base font-semibold text-gray-900">
+                            Thông tin bảo hành
+                          </h4>
+                          <span
+                            className={`ml-auto rounded-full px-3 py-0.5 text-xs font-semibold ${invoice.warranty.status === "Còn hiệu lực"
+                              ? "bg-emerald-100 text-emerald-700"
+                              : "bg-red-100 text-red-700"
+                              }`}
+                          >
+                            {invoice.warranty.status}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                          {[
+                            ["Loại bảo hành", invoice.warranty.warrantyType],
+                            ["Thời hạn", `${invoice.warranty.warrantyDays} ngày`],
+                            [
+                              "Bắt đầu",
+                              formatDate(invoice.warranty.warrantyStartDate),
+                            ],
+                            [
+                              "Kết thúc",
+                              formatDate(invoice.warranty.warrantyEndDate),
+                            ],
+                          ].map(([label, value]) => (
+                            <div key={label}>
+                              <div className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                                {label}
+                              </div>
+                              <div className="mt-0.5 font-medium text-gray-900">
+                                {value}
+                              </div>
+                            </div>
                           ))}
+                        </div>
+
+                        <div className="mt-4 flex items-center justify-between border-t border-emerald-200/70 pt-4">
+                          <span className="text-sm font-medium text-gray-700">
+                            Số ngày còn lại
+                          </span>
+                          <span
+                            className={`rounded-full px-3 py-1 text-sm font-semibold ${invoice.warranty.status === "Còn hiệu lực"
+                              ? "bg-emerald-500 text-white"
+                              : "bg-red-500 text-white"
+                              }`}
+                          >
+                            {invoice.warranty.remainingDays} ngày
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-4 flex flex-col items-center gap-1 rounded-xl border border-dashed border-[#e8e2d8] bg-white px-4 py-5 text-center">
+                        <InboxOutlined className="text-2xl text-gray-400" />
+                        <div className="font-medium text-gray-700">
+                          Chưa có thông tin bảo hành
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Vui lòng liên hệ shop để được hỗ trợ kiểm tra thêm.
                         </div>
                       </div>
                     )}
-
-                  {/* Warranty Info */}
-                  {invoice.warranty && (
-                    <>
-                      <Divider className="!my-6" />
-                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200">
-                        <div className="flex items-center mb-4">
-                          {invoice.warranty.status === "Còn hiệu lực" ? (
-                            <CheckCircleOutlined className="text-green-500 text-2xl mr-3" />
-                          ) : (
-                            <CloseCircleOutlined className="text-red-500 text-2xl mr-3" />
-                          )}
-                          <Title level={4} className="!mb-0">
-                            Thông tin bảo hành
-                          </Title>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-3">
-                            <div>
-                              <Text
-                                type="secondary"
-                                className="text-sm block mb-1"
-                              >
-                                Loại bảo hành
-                              </Text>
-                              <Text strong className="text-base">
-                                {invoice.warranty.warrantyType}
-                              </Text>
-                            </div>
-                            <div>
-                              <Text
-                                type="secondary"
-                                className="text-sm block mb-1"
-                              >
-                                Thời hạn bảo hành
-                              </Text>
-                              <Text strong className="text-base">
-                                {invoice.warranty.warrantyDays} ngày
-                              </Text>
-                            </div>
-                          </div>
-                          <div className="space-y-3">
-                            <div>
-                              <Text
-                                type="secondary"
-                                className="text-sm block mb-1"
-                              >
-                                Ngày bắt đầu
-                              </Text>
-                              <Text strong className="text-base">
-                                {formatDate(invoice.warranty.warrantyStartDate)}
-                              </Text>
-                            </div>
-                            <div>
-                              <Text
-                                type="secondary"
-                                className="text-sm block mb-1"
-                              >
-                                Ngày kết thúc
-                              </Text>
-                              <Text strong className="text-base">
-                                {formatDate(invoice.warranty.warrantyEndDate)}
-                              </Text>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 pt-4 border-t border-green-200">
-                          <div className="flex items-center justify-between">
-                            <Text strong className="text-base">
-                              Số ngày còn lại:
-                            </Text>
-                            <Tag
-                              color={
-                                invoice.warranty.status === "Còn hiệu lực"
-                                  ? "success"
-                                  : "error"
-                              }
-                              className="text-base px-3 py-1"
-                            >
-                              {invoice.warranty.remainingDays} ngày
-                            </Tag>
-                          </div>
-                          <div className="mt-2">
-                            <Tag
-                              color={
-                                invoice.warranty.status === "Còn hiệu lực"
-                                  ? "success"
-                                  : "error"
-                              }
-                              className="text-base px-3 py-1"
-                            >
-                              {invoice.warranty.status}
-                            </Tag>
-                          </div>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </Card>
-              ))}
-            </div>
-          )}
-
-        {/* No Results */}
-        {!searchMutation.isPending &&
-          !searchMutation.isError &&
-          searchResults.filter(invoice => invoice.warranty).length === 0 &&
-          searchMutation.isSuccess && (
-            <Card className="shadow-lg border-0">
-              <Empty
-                description={
-                  <Text type="secondary" className="text-base">
-                    Không tìm thấy thông tin bảo hành. Vui lòng kiểm tra lại số
-                    điện thoại hoặc Serial/IMEI.
-                  </Text>
-                }
-              />
-            </Card>
-          )}
+                  </article>
+                ))}
+              </div>
+            )}
+        </div>
       </div>
-    </div>
+    </div >
   );
 }
