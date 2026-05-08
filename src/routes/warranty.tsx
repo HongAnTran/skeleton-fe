@@ -10,6 +10,7 @@ import {
   UserOutlined,
   FileTextOutlined,
   InboxOutlined,
+  GiftOutlined,
 } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { KiotVietService } from "@/services/kiotviet.service";
@@ -59,6 +60,8 @@ function WarrantyLookupPage() {
 
   const formatDate = (dateString: string) =>
     dayjs(dateString).format("DD/MM/YYYY HH:mm");
+
+  const customerComment = voucherResult?.customerComments?.trim();
 
   return (
     <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
@@ -154,6 +157,22 @@ function WarrantyLookupPage() {
                   Chúc mừng bạn đã nhận được voucher giảm giá
                 </p>
                 <VoucherTicketItem voucher={voucherResult.voucher} />
+              </div>
+            )}
+
+          {!voucherMutation.isPending &&
+            voucherMutation.isSuccess &&
+            customerComment && (
+              <div className="mx-auto mt-4 max-w-2xl">
+                <div className="rounded-2xl border border-[#d4c4a8] bg-[#fef9f1] p-4 text-[#3d2914]">
+                  <div className="mb-2 inline-flex items-center gap-1.5 rounded-md bg-[#4a3221] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                    <GiftOutlined />
+                    Ưu đãi riêng
+                  </div>
+                  <div className="text-sm font-bold leading-snug sm:text-[15px]">
+                    {customerComment}
+                  </div>
+                </div>
               </div>
             )}
 

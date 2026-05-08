@@ -242,6 +242,7 @@ export interface SearchVouchersResponse {
   phone: string;
   customerId: number | null;
   customerName: string | null;
+  customerComments: string | null;
   totalInvoices: number;
   voucher: VoucherDto | null;
   candidates: VoucherCandidateDto[];
