@@ -166,6 +166,103 @@ const detailColumns = [
   },
 ];
 
+interface ModelAgg {
+  modelName: string;
+  quantity: number;
+  lockQuantity: number;
+  internationalQuantity: number;
+  unknownMarketQuantity: number;
+}
+
+/** Gộp tồn theo dòng máy, kèm tách Lock / QT / chưa rõ. Sắp theo tồn giảm dần. */
+const aggregateByModel = (rows: IphoneInventoryDetailRow[]): ModelAgg[] => {
+  const map = new Map<string, ModelAgg>();
+  for (const r of rows) {
+    const cur =
+      map.get(r.modelName) ??
+      {
+        modelName: r.modelName,
+        quantity: 0,
+        lockQuantity: 0,
+        internationalQuantity: 0,
+        unknownMarketQuantity: 0,
+      };
+    cur.quantity += r.onHand;
+    const kind = normalizeMarket(r.marketType);
+    if (kind === "lock") cur.lockQuantity += r.onHand;
+    else if (kind === "international") cur.internationalQuantity += r.onHand;
+    else cur.unknownMarketQuantity += r.onHand;
+    map.set(r.modelName, cur);
+  }
+  return Array.from(map.values()).sort((a, b) => b.quantity - a.quantity);
+};
+
+/** Gộp tồn theo một thuộc tính (dung lượng/màu). Sắp theo tồn giảm dần. */
+const aggregateByKey = (
+  rows: IphoneInventoryDetailRow[],
+  key: "storage" | "color",
+) => {
+  const map = new Map<string, number>();
+  for (const r of rows) map.set(r[key], (map.get(r[key]) ?? 0) + r.onHand);
+  return Array.from(map.entries())
+    .map(([value, quantity]) => ({ value, quantity }))
+    .sort((a, b) => b.quantity - a.quantity);
+};
+
+const byModelColumns = [
+  { title: "Dòng máy", dataIndex: "modelName", key: "modelName", ellipsis: true },
+  {
+    title: "Tổng",
+    dataIndex: "quantity",
+    key: "quantity",
+    width: 90,
+    align: "right" as const,
+  },
+  {
+    title: "Lock",
+    dataIndex: "lockQuantity",
+    key: "lockQuantity",
+    width: 90,
+    align: "right" as const,
+  },
+  {
+    title: "QT",
+    dataIndex: "internationalQuantity",
+    key: "internationalQuantity",
+    width: 90,
+    align: "right" as const,
+  },
+  {
+    title: "Chưa rõ",
+    dataIndex: "unknownMarketQuantity",
+    key: "unknownMarketQuantity",
+    width: 100,
+    align: "right" as const,
+  },
+];
+
+const byStorageColumns = [
+  { title: "Dung lượng", dataIndex: "value", key: "value" },
+  {
+    title: "Số lượng",
+    dataIndex: "quantity",
+    key: "quantity",
+    width: 120,
+    align: "right" as const,
+  },
+];
+
+const byColorColumns = [
+  { title: "Màu", dataIndex: "value", key: "value", ellipsis: true },
+  {
+    title: "Số lượng",
+    dataIndex: "quantity",
+    key: "quantity",
+    width: 120,
+    align: "right" as const,
+  },
+];
+
 function exportBranchExcel(branch: IphoneInventoryBranch) {
   if (!branch.detailRows?.length) return;
   const rows = branch.detailRows.map((r) => ({
@@ -186,6 +283,10 @@ function exportBranchExcel(branch: IphoneInventoryBranch) {
 }
 
 function BranchPanel({ branch }: { branch: IphoneInventoryBranch }) {
+  const byModel = aggregateByModel(branch.detailRows);
+  const byStorage = aggregateByKey(branch.detailRows, "storage");
+  const byColor = aggregateByKey(branch.detailRows, "color");
+
   return (
     <>
       <Row gutter={[16, 16]} className="mb-6">
@@ -206,6 +307,70 @@ function BranchPanel({ branch }: { branch: IphoneInventoryBranch }) {
             title="Chưa xác định"
             value={branch.byMarket.unknownMarketQuantity}
           />
+        </Col>
+      </Row>
+
+      <Title level={5} className="!mt-0 !mb-2">
+        Theo dòng máy
+      </Title>
+      {byModel.length ? (
+        <Table<ModelAgg>
+          rowKey="modelName"
+          dataSource={byModel}
+          columns={byModelColumns}
+          pagination={false}
+          size="small"
+          className="mb-6"
+          scroll={{ x: 520 }}
+        />
+      ) : (
+        <Empty
+          className="mb-6"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Không có dữ liệu theo dòng máy."
+        />
+      )}
+
+      <Row gutter={[16, 16]} className="mb-6">
+        <Col xs={24} md={12}>
+          <Title level={5} className="!mt-0 !mb-2">
+            Theo dung lượng
+          </Title>
+          {byStorage.length ? (
+            <Table
+              rowKey="value"
+              dataSource={byStorage}
+              columns={byStorageColumns}
+              pagination={false}
+              size="small"
+              scroll={{ x: 320 }}
+            />
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="Không có dữ liệu theo dung lượng."
+            />
+          )}
+        </Col>
+        <Col xs={24} md={12}>
+          <Title level={5} className="!mt-0 !mb-2">
+            Theo màu
+          </Title>
+          {byColor.length ? (
+            <Table
+              rowKey="value"
+              dataSource={byColor}
+              columns={byColorColumns}
+              pagination={false}
+              size="small"
+              scroll={{ x: 320 }}
+            />
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="Không có dữ liệu theo màu."
+            />
+          )}
         </Col>
       </Row>
 
