@@ -13,7 +13,11 @@ export const Route = createFileRoute("/admin/_reportLayout")({
 function ReportLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const active = pathname.includes("/dahahi") ? "dahahi" : "kiotviet";
+  const active = pathname.includes("/dahahi")
+    ? "dahahi"
+    : pathname.includes("/iphone-inventory")
+      ? "iphone-inventory"
+      : "kiotviet";
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -34,6 +38,14 @@ function ReportLayout() {
               label: (
                 <Link to="/admin/dahahi" className="text-inherit">
                   Chấm công
+                </Link>
+              ),
+            },
+            {
+              key: "iphone-inventory",
+              label: (
+                <Link to="/admin/iphone-inventory" className="text-inherit">
+                  Tồn kho iPhone
                 </Link>
               ),
             },

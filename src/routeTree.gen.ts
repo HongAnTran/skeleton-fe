@@ -22,6 +22,7 @@ import { Route as UUserLayoutDashboardLayoutRouteImport } from './routes/u/_user
 import { Route as EEmployeeLayoutLoginRouteImport } from './routes/e/_employeeLayout/login'
 import { Route as EEmployeeLayoutDashboardLayoutRouteImport } from './routes/e/_employeeLayout/_dashboardLayout'
 import { Route as AdminReportLayoutKiotvietRouteImport } from './routes/admin/_reportLayout/kiotviet'
+import { Route as AdminReportLayoutIphoneInventoryRouteImport } from './routes/admin/_reportLayout/iphone-inventory'
 import { Route as AdminReportLayoutDahahiRouteImport } from './routes/admin/_reportLayout/dahahi'
 import { Route as UUserLayoutDashboardLayoutIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/index'
 import { Route as EEmployeeLayoutDashboardLayoutIndexRouteImport } from './routes/e/_employeeLayout/_dashboardLayout/index'
@@ -113,6 +114,12 @@ const AdminReportLayoutKiotvietRoute =
   AdminReportLayoutKiotvietRouteImport.update({
     id: '/kiotviet',
     path: '/kiotviet',
+    getParentRoute: () => AdminReportLayoutRoute,
+  } as any)
+const AdminReportLayoutIphoneInventoryRoute =
+  AdminReportLayoutIphoneInventoryRouteImport.update({
+    id: '/iphone-inventory',
+    path: '/iphone-inventory',
     getParentRoute: () => AdminReportLayoutRoute,
   } as any)
 const AdminReportLayoutDahahiRoute = AdminReportLayoutDahahiRouteImport.update({
@@ -243,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/e': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/u': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/admin/dahahi': typeof AdminReportLayoutDahahiRoute
+  '/admin/iphone-inventory': typeof AdminReportLayoutIphoneInventoryRoute
   '/admin/kiotviet': typeof AdminReportLayoutKiotvietRoute
   '/e/login': typeof EEmployeeLayoutLoginRoute
   '/u/login': typeof UUserLayoutLoginRoute
@@ -274,6 +282,7 @@ export interface FileRoutesByTo {
   '/e': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u': typeof UUserLayoutDashboardLayoutIndexRoute
   '/admin/dahahi': typeof AdminReportLayoutDahahiRoute
+  '/admin/iphone-inventory': typeof AdminReportLayoutIphoneInventoryRoute
   '/admin/kiotviet': typeof AdminReportLayoutKiotvietRoute
   '/e/login': typeof EEmployeeLayoutLoginRoute
   '/u/login': typeof UUserLayoutLoginRoute
@@ -307,6 +316,7 @@ export interface FileRoutesById {
   '/u': typeof URouteWithChildren
   '/u/_userLayout': typeof UUserLayoutRouteWithChildren
   '/admin/_reportLayout/dahahi': typeof AdminReportLayoutDahahiRoute
+  '/admin/_reportLayout/iphone-inventory': typeof AdminReportLayoutIphoneInventoryRoute
   '/admin/_reportLayout/kiotviet': typeof AdminReportLayoutKiotvietRoute
   '/e/_employeeLayout/_dashboardLayout': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/e/_employeeLayout/login': typeof EEmployeeLayoutLoginRoute
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/e'
     | '/u'
     | '/admin/dahahi'
+    | '/admin/iphone-inventory'
     | '/admin/kiotviet'
     | '/e/login'
     | '/u/login'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/e'
     | '/u'
     | '/admin/dahahi'
+    | '/admin/iphone-inventory'
     | '/admin/kiotviet'
     | '/e/login'
     | '/u/login'
@@ -405,6 +417,7 @@ export interface FileRouteTypes {
     | '/u'
     | '/u/_userLayout'
     | '/admin/_reportLayout/dahahi'
+    | '/admin/_reportLayout/iphone-inventory'
     | '/admin/_reportLayout/kiotviet'
     | '/e/_employeeLayout/_dashboardLayout'
     | '/e/_employeeLayout/login'
@@ -538,6 +551,13 @@ declare module '@tanstack/react-router' {
       path: '/kiotviet'
       fullPath: '/admin/kiotviet'
       preLoaderRoute: typeof AdminReportLayoutKiotvietRouteImport
+      parentRoute: typeof AdminReportLayoutRoute
+    }
+    '/admin/_reportLayout/iphone-inventory': {
+      id: '/admin/_reportLayout/iphone-inventory'
+      path: '/iphone-inventory'
+      fullPath: '/admin/iphone-inventory'
+      preLoaderRoute: typeof AdminReportLayoutIphoneInventoryRouteImport
       parentRoute: typeof AdminReportLayoutRoute
     }
     '/admin/_reportLayout/dahahi': {
@@ -685,11 +705,13 @@ declare module '@tanstack/react-router' {
 
 interface AdminReportLayoutRouteChildren {
   AdminReportLayoutDahahiRoute: typeof AdminReportLayoutDahahiRoute
+  AdminReportLayoutIphoneInventoryRoute: typeof AdminReportLayoutIphoneInventoryRoute
   AdminReportLayoutKiotvietRoute: typeof AdminReportLayoutKiotvietRoute
 }
 
 const AdminReportLayoutRouteChildren: AdminReportLayoutRouteChildren = {
   AdminReportLayoutDahahiRoute: AdminReportLayoutDahahiRoute,
+  AdminReportLayoutIphoneInventoryRoute: AdminReportLayoutIphoneInventoryRoute,
   AdminReportLayoutKiotvietRoute: AdminReportLayoutKiotvietRoute,
 }
 
