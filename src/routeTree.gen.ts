@@ -21,7 +21,6 @@ import { Route as UUserLayoutLoginRouteImport } from './routes/u/_userLayout/log
 import { Route as UUserLayoutDashboardLayoutRouteImport } from './routes/u/_userLayout/_dashboardLayout'
 import { Route as EEmployeeLayoutLoginRouteImport } from './routes/e/_employeeLayout/login'
 import { Route as EEmployeeLayoutDashboardLayoutRouteImport } from './routes/e/_employeeLayout/_dashboardLayout'
-import { Route as AdminReportLayoutVoucherRulesRouteImport } from './routes/admin/_reportLayout/voucher-rules'
 import { Route as AdminReportLayoutKiotvietRouteImport } from './routes/admin/_reportLayout/kiotviet'
 import { Route as AdminReportLayoutDahahiRouteImport } from './routes/admin/_reportLayout/dahahi'
 import { Route as UUserLayoutDashboardLayoutIndexRouteImport } from './routes/u/_userLayout/_dashboardLayout/index'
@@ -109,12 +108,6 @@ const EEmployeeLayoutDashboardLayoutRoute =
   EEmployeeLayoutDashboardLayoutRouteImport.update({
     id: '/_dashboardLayout',
     getParentRoute: () => EEmployeeLayoutRoute,
-  } as any)
-const AdminReportLayoutVoucherRulesRoute =
-  AdminReportLayoutVoucherRulesRouteImport.update({
-    id: '/voucher-rules',
-    path: '/voucher-rules',
-    getParentRoute: () => AdminReportLayoutRoute,
   } as any)
 const AdminReportLayoutKiotvietRoute =
   AdminReportLayoutKiotvietRouteImport.update({
@@ -251,7 +244,6 @@ export interface FileRoutesByFullPath {
   '/u': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/admin/dahahi': typeof AdminReportLayoutDahahiRoute
   '/admin/kiotviet': typeof AdminReportLayoutKiotvietRoute
-  '/admin/voucher-rules': typeof AdminReportLayoutVoucherRulesRoute
   '/e/login': typeof EEmployeeLayoutLoginRoute
   '/u/login': typeof UUserLayoutLoginRoute
   '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
@@ -283,7 +275,6 @@ export interface FileRoutesByTo {
   '/u': typeof UUserLayoutDashboardLayoutIndexRoute
   '/admin/dahahi': typeof AdminReportLayoutDahahiRoute
   '/admin/kiotviet': typeof AdminReportLayoutKiotvietRoute
-  '/admin/voucher-rules': typeof AdminReportLayoutVoucherRulesRoute
   '/e/login': typeof EEmployeeLayoutLoginRoute
   '/u/login': typeof UUserLayoutLoginRoute
   '/e/change-shift-requests': typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
@@ -317,7 +308,6 @@ export interface FileRoutesById {
   '/u/_userLayout': typeof UUserLayoutRouteWithChildren
   '/admin/_reportLayout/dahahi': typeof AdminReportLayoutDahahiRoute
   '/admin/_reportLayout/kiotviet': typeof AdminReportLayoutKiotvietRoute
-  '/admin/_reportLayout/voucher-rules': typeof AdminReportLayoutVoucherRulesRoute
   '/e/_employeeLayout/_dashboardLayout': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/e/_employeeLayout/login': typeof EEmployeeLayoutLoginRoute
   '/u/_userLayout/_dashboardLayout': typeof UUserLayoutDashboardLayoutRouteWithChildren
@@ -353,7 +343,6 @@ export interface FileRouteTypes {
     | '/u'
     | '/admin/dahahi'
     | '/admin/kiotviet'
-    | '/admin/voucher-rules'
     | '/e/login'
     | '/u/login'
     | '/e/change-shift-requests'
@@ -385,7 +374,6 @@ export interface FileRouteTypes {
     | '/u'
     | '/admin/dahahi'
     | '/admin/kiotviet'
-    | '/admin/voucher-rules'
     | '/e/login'
     | '/u/login'
     | '/e/change-shift-requests'
@@ -418,7 +406,6 @@ export interface FileRouteTypes {
     | '/u/_userLayout'
     | '/admin/_reportLayout/dahahi'
     | '/admin/_reportLayout/kiotviet'
-    | '/admin/_reportLayout/voucher-rules'
     | '/e/_employeeLayout/_dashboardLayout'
     | '/e/_employeeLayout/login'
     | '/u/_userLayout/_dashboardLayout'
@@ -545,13 +532,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/e'
       preLoaderRoute: typeof EEmployeeLayoutDashboardLayoutRouteImport
       parentRoute: typeof EEmployeeLayoutRoute
-    }
-    '/admin/_reportLayout/voucher-rules': {
-      id: '/admin/_reportLayout/voucher-rules'
-      path: '/voucher-rules'
-      fullPath: '/admin/voucher-rules'
-      preLoaderRoute: typeof AdminReportLayoutVoucherRulesRouteImport
-      parentRoute: typeof AdminReportLayoutRoute
     }
     '/admin/_reportLayout/kiotviet': {
       id: '/admin/_reportLayout/kiotviet'
@@ -706,13 +686,11 @@ declare module '@tanstack/react-router' {
 interface AdminReportLayoutRouteChildren {
   AdminReportLayoutDahahiRoute: typeof AdminReportLayoutDahahiRoute
   AdminReportLayoutKiotvietRoute: typeof AdminReportLayoutKiotvietRoute
-  AdminReportLayoutVoucherRulesRoute: typeof AdminReportLayoutVoucherRulesRoute
 }
 
 const AdminReportLayoutRouteChildren: AdminReportLayoutRouteChildren = {
   AdminReportLayoutDahahiRoute: AdminReportLayoutDahahiRoute,
   AdminReportLayoutKiotvietRoute: AdminReportLayoutKiotvietRoute,
-  AdminReportLayoutVoucherRulesRoute: AdminReportLayoutVoucherRulesRoute,
 }
 
 const AdminReportLayoutRouteWithChildren =
