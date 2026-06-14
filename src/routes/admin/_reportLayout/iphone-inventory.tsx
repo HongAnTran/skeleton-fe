@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import {
   Card,
   Table,
@@ -13,11 +14,14 @@ import {
   Typography,
   Space,
   Button,
+  Input,
+  Select,
 } from "antd";
 import {
   MobileOutlined,
   ShopOutlined,
   FileExcelOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import * as XLSX from "xlsx";
 import { useQuery } from "@tanstack/react-query";
@@ -25,10 +29,21 @@ import { IphoneInventoryService } from "@/services/iphone-inventory.service";
 import type {
   IphoneInventoryBranch,
   IphoneInventoryDetailRow,
+  IphoneInventoryReport,
 } from "@/types/iphone-inventory";
 import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
+
+const MARKET_ALL = "__all__" as const;
+const STORAGE_ALL = "__all__" as const;
+type MarketFilter = typeof MARKET_ALL | "lock" | "international" | "unknown";
+
+interface InventoryFilters {
+  market: MarketFilter;
+  model: string;
+  storage: string;
+}
 
 export const Route = createFileRoute("/admin/_reportLayout/iphone-inventory")({
   component: IphoneInventoryReportPage,
@@ -46,6 +61,64 @@ const renderMarketTag = (marketType: string) => {
   if (label === "Lock") return <Tag>Lock</Tag>;
   if (label === "Quốc tế") return <Tag color="blue">Quốc tế</Tag>;
   return <Text type="secondary">—</Text>;
+};
+
+/** Chuẩn hóa marketType backend (string) về union để so khớp filter. */
+const normalizeMarket = (marketType: string): MarketFilter => {
+  const t = marketType.toLowerCase();
+  if (t === "lock") return "lock";
+  if (t === "international") return "international";
+  return "unknown";
+};
+
+const computeMarketTotals = (rows: IphoneInventoryDetailRow[]) =>
+  rows.reduce(
+    (acc, r) => {
+      const kind = normalizeMarket(r.marketType);
+      if (kind === "lock") acc.lockQuantity += r.onHand;
+      else if (kind === "international") acc.internationalQuantity += r.onHand;
+      else acc.unknownMarketQuantity += r.onHand;
+      return acc;
+    },
+    { lockQuantity: 0, internationalQuantity: 0, unknownMarketQuantity: 0 },
+  );
+
+/**
+ * Áp filter local lên detailRows của từng chi nhánh, rồi tính lại
+ * totalOnHand / byMarket cho từng chi nhánh và toàn hệ thống để số liệu khớp
+ * với những gì đang hiển thị. Chi nhánh không còn dòng nào sẽ bị loại.
+ */
+const applyFilters = (
+  report: IphoneInventoryReport,
+  filters: InventoryFilters,
+): IphoneInventoryReport => {
+  const model = filters.model.trim().toLowerCase();
+  const branches = report.byBranch
+    .map((branch) => {
+      const detailRows = branch.detailRows.filter((r) => {
+        if (
+          filters.market !== MARKET_ALL &&
+          normalizeMarket(r.marketType) !== filters.market
+        )
+          return false;
+        if (filters.storage !== STORAGE_ALL && r.storage !== filters.storage)
+          return false;
+        if (model && !r.modelName.toLowerCase().includes(model)) return false;
+        return true;
+      });
+      return {
+        ...branch,
+        detailRows,
+        byMarket: computeMarketTotals(detailRows),
+        totalOnHand: detailRows.reduce((s, r) => s + r.onHand, 0),
+      };
+    })
+    .filter((branch) => branch.detailRows.length > 0);
+
+  return {
+    totalOnHand: branches.reduce((s, b) => s + b.totalOnHand, 0),
+    byBranch: branches,
+  };
 };
 
 const detailColumns = [
@@ -184,16 +257,70 @@ function IphoneInventoryReportPage() {
     staleTime: 60 * 3 * 1000, // 3 minutes
   });
 
-  const branches = data?.byBranch ?? [];
+  const [filters, setFilters] = useState<InventoryFilters>({
+    market: MARKET_ALL,
+    model: "",
+    storage: STORAGE_ALL,
+  });
+
+  // Tùy chọn dung lượng lấy từ toàn bộ dữ liệu gốc (không phụ thuộc filter).
+  const storageOptions = useMemo(() => {
+    const set = new Set<string>();
+    data?.byBranch.forEach((b) =>
+      b.detailRows.forEach((r) => r.storage && set.add(r.storage)),
+    );
+    return Array.from(set).sort((a, b) =>
+      a.localeCompare(b, "vi", { numeric: true }),
+    );
+  }, [data]);
+
+  const filtered = useMemo(
+    () => (data ? applyFilters(data, filters) : undefined),
+    [data, filters],
+  );
+
+  const branches = filtered?.byBranch ?? [];
 
   return (
     <div className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 bg-gray-50/50">
       <div className="max-w-6xl mx-auto">
         <Card className="shadow-sm mb-6">
-          <Title level={4} className="!mb-0">
+          <Title level={4} className="!mb-4">
             <MobileOutlined className="mr-2" />
             Tồn kho iPhone theo chi nhánh
           </Title>
+          <div className="flex flex-wrap gap-3 items-end">
+            <Input
+              allowClear
+              placeholder="Tìm dòng máy (vd: 16 Pro Max)"
+              prefix={<SearchOutlined className="text-gray-400" />}
+              value={filters.model}
+              onChange={(e) =>
+                setFilters((f) => ({ ...f, model: e.target.value }))
+              }
+              className="min-w-[240px] flex-1 lg:flex-none"
+            />
+            <Select<MarketFilter>
+              value={filters.market}
+              onChange={(v) => setFilters((f) => ({ ...f, market: v }))}
+              className="min-w-[160px]"
+              options={[
+                { value: MARKET_ALL, label: "Tất cả thị trường" },
+                { value: "lock", label: "Lock" },
+                { value: "international", label: "Quốc tế" },
+                { value: "unknown", label: "Chưa xác định" },
+              ]}
+            />
+            <Select<string>
+              value={filters.storage}
+              onChange={(v) => setFilters((f) => ({ ...f, storage: v }))}
+              className="min-w-[150px]"
+              options={[
+                { value: STORAGE_ALL, label: "Tất cả dung lượng" },
+                ...storageOptions.map((s) => ({ value: s, label: s })),
+              ]}
+            />
+          </div>
         </Card>
 
         {error && (
@@ -225,7 +352,7 @@ function IphoneInventoryReportPage() {
                         <span>Tổng tồn iPhone (toàn hệ thống)</span>
                       </Space>
                     }
-                    value={data.totalOnHand}
+                    value={filtered?.totalOnHand ?? 0}
                   />
                 </Card>
               </Col>
@@ -256,7 +383,11 @@ function IphoneInventoryReportPage() {
               {branches.length === 0 ? (
                 <Empty
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="Không có chi nhánh nào còn tồn iPhone."
+                  description={
+                    data && data.byBranch.length > 0
+                      ? "Không có máy nào khớp bộ lọc."
+                      : "Không có chi nhánh nào còn tồn iPhone."
+                  }
                 />
               ) : (
                 <Tabs
