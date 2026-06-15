@@ -10,7 +10,7 @@ import type { ApiError, RefreshTokenResponse } from "../../types/api";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
-const TIMEOUT = 30000;
+const TIMEOUT = 60000;
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: BASE_URL,
