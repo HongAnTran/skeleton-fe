@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WarrantyRouteImport } from './routes/warranty'
 import { Route as ChamCongRouteImport } from './routes/cham-cong'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUserLayoutRouteImport } from './routes/u/_userLayout'
 import { Route as EEmployeeLayoutRouteImport } from './routes/e/_employeeLayout'
@@ -46,7 +47,6 @@ import { Route as UUserLayoutDashboardLayoutEmployeesIdRouteImport } from './rou
 
 const URouteImport = createFileRoute('/u')()
 const ERouteImport = createFileRoute('/e')()
-const AdminRouteImport = createFileRoute('/admin')()
 
 const URoute = URouteImport.update({
   id: '/u',
@@ -58,11 +58,6 @@ const ERoute = ERouteImport.update({
   path: '/e',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const WarrantyRoute = WarrantyRouteImport.update({
   id: '/warranty',
   path: '/warranty',
@@ -71,6 +66,11 @@ const WarrantyRoute = WarrantyRouteImport.update({
 const ChamCongRoute = ChamCongRouteImport.update({
   id: '/cham-cong',
   path: '/cham-cong',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -88,7 +88,7 @@ const EEmployeeLayoutRoute = EEmployeeLayoutRouteImport.update({
 } as any)
 const AdminReportLayoutRoute = AdminReportLayoutRouteImport.update({
   id: '/_reportLayout',
-  getParentRoute: () => AdminRoute,
+  getParentRoute: () => AdminRouteRoute,
 } as any)
 const UUserLayoutLoginRoute = UUserLayoutLoginRouteImport.update({
   id: '/login',
@@ -244,9 +244,9 @@ const UUserLayoutDashboardLayoutEmployeesIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminReportLayoutRouteWithChildren
   '/cham-cong': typeof ChamCongRoute
   '/warranty': typeof WarrantyRoute
-  '/admin': typeof AdminReportLayoutRouteWithChildren
   '/e': typeof EEmployeeLayoutDashboardLayoutRouteWithChildren
   '/u': typeof UUserLayoutDashboardLayoutRouteWithChildren
   '/admin/dahahi': typeof AdminReportLayoutDahahiRoute
@@ -276,9 +276,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminReportLayoutRouteWithChildren
   '/cham-cong': typeof ChamCongRoute
   '/warranty': typeof WarrantyRoute
-  '/admin': typeof AdminReportLayoutRouteWithChildren
   '/e': typeof EEmployeeLayoutDashboardLayoutIndexRoute
   '/u': typeof UUserLayoutDashboardLayoutIndexRoute
   '/admin/dahahi': typeof AdminReportLayoutDahahiRoute
@@ -307,9 +307,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/cham-cong': typeof ChamCongRoute
   '/warranty': typeof WarrantyRoute
-  '/admin': typeof AdminRouteWithChildren
   '/admin/_reportLayout': typeof AdminReportLayoutRouteWithChildren
   '/e': typeof ERouteWithChildren
   '/e/_employeeLayout': typeof EEmployeeLayoutRouteWithChildren
@@ -346,9 +346,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/cham-cong'
     | '/warranty'
-    | '/admin'
     | '/e'
     | '/u'
     | '/admin/dahahi'
@@ -378,9 +378,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/cham-cong'
     | '/warranty'
-    | '/admin'
     | '/e'
     | '/u'
     | '/admin/dahahi'
@@ -408,9 +408,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/cham-cong'
     | '/warranty'
-    | '/admin'
     | '/admin/_reportLayout'
     | '/e'
     | '/e/_employeeLayout'
@@ -446,9 +446,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   ChamCongRoute: typeof ChamCongRoute
   WarrantyRoute: typeof WarrantyRoute
-  AdminRoute: typeof AdminRouteWithChildren
   ERoute: typeof ERouteWithChildren
   URoute: typeof URouteWithChildren
 }
@@ -469,13 +469,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ERouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/warranty': {
       id: '/warranty'
       path: '/warranty'
@@ -488,6 +481,13 @@ declare module '@tanstack/react-router' {
       path: '/cham-cong'
       fullPath: '/cham-cong'
       preLoaderRoute: typeof ChamCongRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -513,10 +513,10 @@ declare module '@tanstack/react-router' {
     }
     '/admin/_reportLayout': {
       id: '/admin/_reportLayout'
-      path: '/admin'
+      path: ''
       fullPath: '/admin'
       preLoaderRoute: typeof AdminReportLayoutRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof AdminRouteRoute
     }
     '/u/_userLayout/login': {
       id: '/u/_userLayout/login'
@@ -718,15 +718,17 @@ const AdminReportLayoutRouteChildren: AdminReportLayoutRouteChildren = {
 const AdminReportLayoutRouteWithChildren =
   AdminReportLayoutRoute._addFileChildren(AdminReportLayoutRouteChildren)
 
-interface AdminRouteChildren {
+interface AdminRouteRouteChildren {
   AdminReportLayoutRoute: typeof AdminReportLayoutRouteWithChildren
 }
 
-const AdminRouteChildren: AdminRouteChildren = {
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminReportLayoutRoute: AdminReportLayoutRouteWithChildren,
 }
 
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
 
 interface EEmployeeLayoutDashboardLayoutRouteChildren {
   EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute: typeof EEmployeeLayoutDashboardLayoutChangeShiftRequestsRoute
@@ -859,9 +861,9 @@ const URouteWithChildren = URoute._addFileChildren(URouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   ChamCongRoute: ChamCongRoute,
   WarrantyRoute: WarrantyRoute,
-  AdminRoute: AdminRouteWithChildren,
   ERoute: ERouteWithChildren,
   URoute: URouteWithChildren,
 }
